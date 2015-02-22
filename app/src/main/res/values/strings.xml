@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GiftWise</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_addcontact">Add contact</string>
+    <string name="action_createcontact">New contact</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContactsAccountType
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    inviteContactActivity="com.honu.giftwise.MainActivity"
+    inviteContactActionLabel="Add to my GiftWise contacts"
+    >
+    <!--
+    viewContactNotifyService="view_notify_service"
+    viewGroupActivity="group_view_activity"
+    viewGroupActionLabel="group_action_text"
+    viewStreamItemActivity="viewstream_activity_name"
+    viewStreamItemPhotoActivity="viewphotostream_activity_name"
+    -->
+
+    <!--
+    <ContactsDataKind
+        android:mimeType="MIMEtype"
+        android:icon="icon_resources"
+        android:summaryColumn="column_name"
+        android:detailColumn="column_name">
+    </ContactsDataKind>
+    -->
+
+</ContactsAccountType>
