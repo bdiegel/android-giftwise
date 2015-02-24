@@ -4,4 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_addcontact">Add contact</string>
     <string name="action_createcontact">New contact</string>
+
+    <string name="account_name">bdiegel@gmail.com</string>
+    <string name="account_type">com.honu.giftwise</string>
 </resources>
