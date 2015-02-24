@@ -56,7 +56,6 @@ public class ContactAdapter extends CursorAdapter {
         // Use ViewHolder
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         viewHolder.nameView.setText(cursor.getString(ContactsFragment.COL_CONTACT_NAME));
-        //viewHolder.iconView.setImageBitmap(getBitmapFromMemCache(cursor.getString(ContactsFragment.COL_CONTACT_ID)));
         loadBitmap(cursor.getInt(ContactsFragment.COL_CONTACT_ID), viewHolder.iconView);
     }
 
@@ -168,48 +167,4 @@ public class ContactAdapter extends CursorAdapter {
 
     }
 
-//    public Bitmap getRoundedShape(Bitmap scaleBitmapImage) {
-//        int targetWidth = 50;
-//        int targetHeight = 50;
-//        Bitmap targetBitmap = Bitmap.createBitmap(targetWidth,
-//              targetHeight,Bitmap.Config.ARGB_8888);
-//
-//        Canvas canvas = new Canvas(targetBitmap);
-//        Path path = new Path();
-//        path.addCircle(((float) targetWidth - 1) / 2,
-//              ((float) targetHeight - 1) / 2,
-//              (Math.min(((float) targetWidth),
-//                    ((float) targetHeight)) / 2),
-//              Path.Direction.CCW);
-//
-//        canvas.clipPath(path);
-//        Bitmap sourceBitmap = scaleBitmapImage;
-//        canvas.drawBitmap(sourceBitmap,
-//              new Rect(0, 0, sourceBitmap.getWidth(),
-//                    sourceBitmap.getHeight()),
-//              new Rect(0, 0, targetWidth, targetHeight), null);
-//        return targetBitmap;
-//    }
-//
-//    public static Bitmap getRoundedBitmap(Bitmap bitmap) {
-//        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-//        final Canvas canvas = new Canvas(output);
-//
-//        final int color = Color.RED;
-//        final Paint paint = new Paint();
-//        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-//        final RectF rectF = new RectF(rect);
-//
-//        paint.setAntiAlias(true);
-//        canvas.drawARGB(0, 0, 0, 0);
-//        paint.setColor(color);
-//        canvas.drawOval(rectF, paint);
-//
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-//        canvas.drawBitmap(bitmap, rect, rect, paint);
-//
-//        bitmap.recycle();
-//
-//        return output;
-//    }
 }
