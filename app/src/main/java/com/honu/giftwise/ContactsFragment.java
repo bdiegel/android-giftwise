@@ -1,5 +1,7 @@
 package com.honu.giftwise;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -8,32 +10,49 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.RawContacts;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public  class ContactsFragment extends Fragment {
+public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     private static final String LOG_TAG = ContactsFragment.class.getSimpleName();
 
-    private ContactAdapter mContactAdapater;
+    private static final int CONTACTS_LOADER = 0;
 
+    private ListView mListView;
+
+    private ContactAdapter mContactAdapter;
+
+    // query projection for contact profile
     final String[] projection = new String[] {
-          ContactsContract.Contacts._ID,
-          ContactsContract.Contacts.DISPLAY_NAME
+          RawContacts._ID,
+          RawContacts.CONTACT_ID,
+          RawContacts.DISPLAY_NAME_PRIMARY
+//          ContactsContract.Contacts._ID,
+//          ContactsContract.Contacts.DISPLAY_NAME
     };
 
     //static final String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
-    static final int COL_CONTACT_ID = 0;
-    static final int COL_CONTACT_NAME = 1;
+    static final int COL_RAW_CONTACT_ID = 0;
+    static final int COL_CONTACT_ID = 1;
+    static final int COL_CONTACT_NAME = 2;
 
     public ContactsFragment() {
     }
@@ -42,67 +61,36 @@ public  class ContactsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //final String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
+        //readRawAccountTypes();
+        //readRawAccounts();
 
-        Cursor curContacts = readContacts();
-        mContactAdapater = new ContactAdapter(getActivity(), curContacts, 0);
-
+        // initialize adapter (no data)
+        mContactAdapter = new ContactAdapter(getActivity(), null, 0);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.contacts_listview);
-        listView.setAdapter(mContactAdapater);
+        mListView = (ListView) rootView.findViewById(R.id.contacts_listview);
+        mListView.setAdapter(mContactAdapter);
 
         return rootView;
     }
 
-    private Cursor readContacts() {
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
-        final Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        // initialize loader of GiftWise contacts
+        getLoaderManager().initLoader(CONTACTS_LOADER, null, this);
 
+        // listen for contact selections
+        mListView.setOnItemClickListener(this);
 
-
-        String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
-
-        String[] selectionArgs = null;
-
-        final String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
-
-        Cursor contacts = getActivity().getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
-
-        return contacts;
-
-//        String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
-//
-//        SimpleCursorAdapter m_slvAdapter = new SimpleCursorAdapter(getActivity(),
-//              android.R.layout.simple_list_item_1,
-//              m_curContacts,
-//              fields,
-//              new int[] {android.R.id.text1},
-//              0);
-
-        // Filter by name:
-//        m_slvAdapter.setFilterQueryProvider(new FilterQueryProvider() {
-//
-//            public Cursor runQuery(CharSequence constraint) {
-//                Log.d(LOG_TAG, "runQuery constraint:" + constraint);
-//                String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'" +
-//                      " AND "+ ContactsContract.Contacts.DISPLAY_NAME + " LIKE '%"+constraint+"%'";
-//                String[] selectionArgs = null;
-//                Cursor cur = getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
-//                return cur;
-//            }
-//
-//        });
-
-//        m_lvContacts.setAdapter(m_slvAdapter);
+        super.onActivityCreated(savedInstanceState);
     }
+
 
     final public Bitmap getContactPhoto(int contactId)
     {
         ContentResolver cr = getActivity().getContentResolver();
-
         Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
-
         InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
 
         if (input == null) {
@@ -152,5 +140,192 @@ public  class ContactsFragment extends Fragment {
         }
     }
 
+    private void readRawAccounts() {
+        String accountName = getString(R.string.account_name);
+        String accountType = getString(R.string.account_type);
 
+        Uri rawContactUri = RawContacts.CONTENT_URI.buildUpon()
+              .appendQueryParameter(RawContacts.ACCOUNT_NAME, accountName)
+              .appendQueryParameter(RawContacts.ACCOUNT_TYPE, accountType)
+              .build();
+
+        Cursor cursor =  getActivity().getContentResolver().query(
+              rawContactUri,
+              new String[] { RawContacts._ID, RawContacts.ACCOUNT_NAME, RawContacts.ACCOUNT_TYPE, RawContacts.DISPLAY_NAME_PRIMARY },
+              null,
+              null,
+              null
+        );
+
+        while (cursor.moveToNext())
+        {
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts._ID));
+            String acctName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME));
+            String acctType = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
+            String dispName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY));
+            Log.i(LOG_TAG, "Found raw account: id=" + id + " name=" + acctName + " type=" + acctType + " display=" + dispName);
+        }
+        cursor.close();
+    }
+
+    private void readRawAccountTypes() {
+        String mAcccountName = "*";
+        String mAccountType = "*";
+
+        Cursor cursor =  getActivity().getContentResolver().query(
+              ContactsContract.RawContacts.CONTENT_URI,
+              new String[] { ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.RawContacts.ACCOUNT_TYPE, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY },
+              null,
+              null,
+              //ContactsContract.RawContacts.ACCOUNT_NAME + " = ? AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + " = ? ",
+              //new String[] { mAcccountName, mAccountType },
+              null
+        );
+
+        while (cursor.moveToNext())
+        {
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts._ID));
+            String acctName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME));
+            String acctType = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
+            String dispName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY));
+            Log.i(LOG_TAG, "Found account: id=" + id + " name=" + acctName + " type=" + acctType + " display=" + dispName);
+        }
+        cursor.close();
+    }
+
+
+
+    private Loader<Cursor> loadContacts() {
+        // defined query arguments:
+        final Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        final String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
+        final String[] selectionArgs = null;
+        final String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+
+        return new CursorLoader(
+              getActivity(),
+              uri,
+              projection,
+              selection,
+              selectionArgs,
+              sortOrder
+        );
+    }
+
+    private Loader<Cursor> loadRawContacts() {
+
+        String accountName = getString(R.string.account_name);
+        String accountType = getString(R.string.account_type);
+
+        Uri rawContactUri = RawContacts.CONTENT_URI.buildUpon()
+              .appendQueryParameter(RawContacts.ACCOUNT_NAME, accountName)
+              .appendQueryParameter(RawContacts.ACCOUNT_TYPE, accountType)
+              .appendQueryParameter(RawContacts.DELETED, "0")
+              .build();
+
+
+        return new CursorLoader(
+              getActivity(),
+              rawContactUri,
+              projection,
+              null,
+              null,
+              null
+        );
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return loadRawContacts();
+        //return loadContacts();
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        mContactAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // TODO: will open EditContactActivity
+        Log.i(LOG_TAG, "Item clicked: " + position);
+
+//        // Get the Cursor
+//        Cursor cursor = parent.getAdapter().getCursor();
+//        // Move to the selected contact
+//        cursor.moveToPosition(position);
+//        // Get the _ID value
+//        String mContactId = getLong(CONTACT_ID_INDEX);
+//        // Get the selected LOOKUP KEY
+//        String mContactKey = getString(CONTACT_KEY_INDEX);
+//        // Create the contact's content Uri
+//        Uri mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
+//
+//        /*
+//         * You can use mContactUri as the content URI for retrieving
+//         * the details for a contact.
+//         */
+    }
+
+//        String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
+//
+//        SimpleCursorAdapter m_slvAdapter = new SimpleCursorAdapter(getActivity(),
+//              android.R.layout.simple_list_item_1,
+//              m_curContacts,
+//              fields,
+//              new int[] {android.R.id.text1},
+//              0);
+//        // Filter by name:
+//        m_slvAdapter.setFilterQueryProvider(new FilterQueryProvider() {
+//
+//            public Cursor runQuery(CharSequence constraint) {
+//                Log.d(LOG_TAG, "runQuery constraint:" + constraint);
+//                String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'" +
+//                      " AND "+ ContactsContract.Contacts.DISPLAY_NAME + " LIKE '%"+constraint+"%'";
+//                String[] selectionArgs = null;
+//                Cursor cur = getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
+//                return cur;
+//            }
+//
+//        });
+//        m_lvContacts.setAdapter(m_slvAdapter);
+
+    // <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    public String getUsername() {
+        AccountManager manager = AccountManager.get(getActivity());
+        Account[] accounts = manager.getAccountsByType("com.google");
+        List<String> possibleEmails = new LinkedList<String>();
+
+        for (Account account : accounts) {
+            // TODO: Check possibleEmail against an email regex or treat
+            // account.name as an email address only for certain account.type
+            // values.
+
+            String possibleEmail = account.name;
+            String type = account.type;
+
+            if (type.equals("com.google")) {
+                Log.e("", "Emails: " + possibleEmail);
+                break;
+            }
+
+            possibleEmails.add(possibleEmail);
+        }
+
+        if (!possibleEmails.isEmpty() && possibleEmails.get(0) != null) {
+            String email = possibleEmails.get(0);
+            String[] parts = email.split("@");
+            if (parts.length > 0 && parts[0] != null)
+                return parts[0];
+            else
+                return null;
+        } else
+            return null;
+    }
 }

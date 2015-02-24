@@ -1,13 +1,22 @@
 package com.honu.giftwise;
 
+import android.content.ContentProviderOperation;
 import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -86,7 +95,11 @@ public class MainActivity extends ActionBarActivity {
         Log.i(LOG_TAG, "Intent data returned: " + data);
         if (requestCode == 0) {
             if(resultCode == RESULT_OK){
-                String result=data.getStringExtra("result");
+                Log.i(LOG_TAG, "Intent data.getData(): " + data.getData());
+                // TODO: should use a loader for all queries
+                String displayName = getDisplayNameForContactLookupUri(data.getData());
+                Log.i(LOG_TAG, "getDisplayName(): " + displayName);
+                createRawContact("bdiegel@gmail.com", displayName);
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -96,25 +109,77 @@ public class MainActivity extends ActionBarActivity {
 
     private void createContact() {
         Log.i(LOG_TAG, "Create contact");
-        /*
- ArrayList<ContentProviderOperation> ops =
-          new ArrayList<ContentProviderOperation>();
- ...
- int rawContactInsertIndex = ops.size();
- ops.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
-          .withValue(RawContacts.ACCOUNT_TYPE, accountType)
-          .withValue(RawContacts.ACCOUNT_NAME, accountName)
-          .build());
+    }
 
- ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
-          .withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex)
-          .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-          .withValue(StructuredName.DISPLAY_NAME, "Mike Sullivan")
-          .build());
+    private String getDisplayNameForContactLookupUri(Uri lookupUri)
+    {
+        final String DISPLAY_NAME_COL = Build.VERSION.SDK_INT
+              >= Build.VERSION_CODES.HONEYCOMB ?
+              Contacts.DISPLAY_NAME_PRIMARY :
+              Contacts.DISPLAY_NAME;
 
- getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+        final String[] projection = new String[] {
+              Contacts._ID,
+              DISPLAY_NAME_COL,
+        };
 
-         */
+        Cursor cursor = getContentResolver().query (
+              lookupUri,
+              projection,
+              null,
+              null,
+              null);
+
+        if (!cursor.moveToNext()) // move to first (and only) row.
+            throw new IllegalStateException ("contact no longer exists for key");
+
+        String name = cursor.getString(1);
+        cursor.close();
+
+        return name;
+    }
+
+    private void findOrCreateRawContact(Uri lookupUri) {
+
+        final String DISPLAY_NAME_COL = Build.VERSION.SDK_INT
+              >= Build.VERSION_CODES.HONEYCOMB ?
+              Contacts.DISPLAY_NAME_PRIMARY :
+              Contacts.DISPLAY_NAME;
+
+        final String[] projection = { DISPLAY_NAME_COL };
+
+             // getContentResolver().query(lookupUri,
+
+    }
+
+    private void createRawContact(String accountName, String displayName) {
+
+        String accountType = getString(R.string.account_type);
+
+        ArrayList<ContentProviderOperation> ops =
+              new ArrayList<ContentProviderOperation>();
+
+        int rawContactInsertIndex = ops.size();
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+              .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
+              .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
+              .build());
+
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+              .withValueBackReference(ContactsContract.RawContacts.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+              .withValue(ContactsContract.RawContacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+              .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, displayName)
+              .build());
+
+        try {
+            getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }
