@@ -1,7 +1,5 @@
 package com.honu.giftwise;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.database.Cursor;
@@ -24,8 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -40,19 +36,20 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
     private ContactAdapter mContactAdapter;
 
-    // query projection for contact profile
-    final String[] projection = new String[] {
-          RawContacts._ID,
-          RawContacts.CONTACT_ID,
-          RawContacts.DISPLAY_NAME_PRIMARY
-//          ContactsContract.Contacts._ID,
-//          ContactsContract.Contacts.DISPLAY_NAME
-    };
+    static class GiftwiseContactsQuery {
 
-    //static final String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
-    static final int COL_RAW_CONTACT_ID = 0;
-    static final int COL_CONTACT_ID = 1;
-    static final int COL_CONTACT_NAME = 2;
+        // query projection for contact profile
+        static final String[] projection = new String[]{
+              RawContacts._ID,
+              RawContacts.CONTACT_ID,
+              RawContacts.DISPLAY_NAME_PRIMARY
+        };
+
+        //static final String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
+        static final int COL_RAW_CONTACT_ID = 0;
+        static final int COL_CONTACT_ID = 1;
+        static final int COL_CONTACT_NAME = 2;
+    }
 
     public ContactsFragment() {
     }
@@ -168,49 +165,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         cursor.close();
     }
 
-    private void readRawAccountTypes() {
-        String mAcccountName = "*";
-        String mAccountType = "*";
-
-        Cursor cursor =  getActivity().getContentResolver().query(
-              ContactsContract.RawContacts.CONTENT_URI,
-              new String[] { ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.RawContacts.ACCOUNT_TYPE, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY },
-              null,
-              null,
-              //ContactsContract.RawContacts.ACCOUNT_NAME + " = ? AND " + ContactsContract.RawContacts.ACCOUNT_TYPE + " = ? ",
-              //new String[] { mAcccountName, mAccountType },
-              null
-        );
-
-        while (cursor.moveToNext())
-        {
-            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts._ID));
-            String acctName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME));
-            String acctType = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
-            String dispName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY));
-            Log.i(LOG_TAG, "Found account: id=" + id + " name=" + acctName + " type=" + acctType + " display=" + dispName);
-        }
-        cursor.close();
-    }
-
-
-
-    private Loader<Cursor> loadContacts() {
-        // defined query arguments:
-        final Uri uri = ContactsContract.Contacts.CONTENT_URI;
-        final String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
-        final String[] selectionArgs = null;
-        final String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
-
-        return new CursorLoader(
-              getActivity(),
-              uri,
-              projection,
-              selection,
-              selectionArgs,
-              sortOrder
-        );
-    }
 
     private Loader<Cursor> loadRawContacts() {
 
@@ -227,7 +181,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         return new CursorLoader(
               getActivity(),
               rawContactUri,
-              projection,
+              GiftwiseContactsQuery.projection,
               null,
               null,
               null
@@ -238,7 +192,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return loadRawContacts();
-        //return loadContacts();
     }
 
     @Override
@@ -297,35 +250,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 //        m_lvContacts.setAdapter(m_slvAdapter);
 
     // <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    public String getUsername() {
-        AccountManager manager = AccountManager.get(getActivity());
-        Account[] accounts = manager.getAccountsByType("com.google");
-        List<String> possibleEmails = new LinkedList<String>();
 
-        for (Account account : accounts) {
-            // TODO: Check possibleEmail against an email regex or treat
-            // account.name as an email address only for certain account.type
-            // values.
 
-            String possibleEmail = account.name;
-            String type = account.type;
-
-            if (type.equals("com.google")) {
-                Log.e("", "Emails: " + possibleEmail);
-                break;
-            }
-
-            possibleEmails.add(possibleEmail);
-        }
-
-        if (!possibleEmails.isEmpty() && possibleEmails.get(0) != null) {
-            String email = possibleEmails.get(0);
-            String[] parts = email.split("@");
-            if (parts.length > 0 && parts[0] != null)
-                return parts[0];
-            else
-                return null;
-        } else
-            return null;
-    }
 }
