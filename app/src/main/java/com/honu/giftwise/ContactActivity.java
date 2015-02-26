@@ -12,9 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.honu.giftwise.view.*;
+import com.honu.giftwise.view.SlidingTabLayout;
 
 
 public class ContactActivity extends ActionBarActivity {
@@ -76,7 +75,7 @@ public class ContactActivity extends ActionBarActivity {
 
         public CustomPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
-            mTabTitles = getResources().getStringArray(R.array.contatct_tabs);
+            mTabTitles = getResources().getStringArray(R.array.contact_tabs);
             mContext = context;
         }
 
@@ -85,9 +84,9 @@ public class ContactActivity extends ActionBarActivity {
 
             switch (position) {
                 case 0:
-                    return DemoFragment.getInstance(position);
+                    return IdeasFragment.getInstance(position);
                 case 1:
-                    return DemoFragment.getInstance(position);
+                    return ProfileFragment.getInstance(position);
             }
 
             return  null;
@@ -104,10 +103,10 @@ public class ContactActivity extends ActionBarActivity {
         }
     }
 
-    public static class DemoFragment extends Fragment {
+    public static class IdeasFragment extends Fragment {
 
-        public static DemoFragment getInstance(int position) {
-            DemoFragment fragment = new DemoFragment();
+        public static IdeasFragment getInstance(int position) {
+            IdeasFragment fragment = new IdeasFragment();
             // Attach some data to the fragment
             // that we'll use to populate our fragment layouts
             Bundle args = new Bundle();
@@ -123,13 +122,44 @@ public class ContactActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
-            View rootView = inflater.inflate(R.layout.fragment_contact, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_contact_ideas, container, false);
 
             // Get the arguments that was supplied when
             // the fragment was instantiated in the
             // CustomPagerAdapter
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(R.id.textView)).setText("Page " + args.getInt("page_position"));
+//            Bundle args = getArguments();
+//            ((TextView) rootView.findViewById(R.id.textView)).setText("Page " + args.getInt("page_position"));
+
+            return rootView;
+        }
+    }
+
+    public static class ProfileFragment extends Fragment {
+
+        public static ProfileFragment getInstance(int position) {
+            ProfileFragment fragment = new ProfileFragment();
+            // Attach some data to the fragment
+            // that we'll use to populate our fragment layouts
+            Bundle args = new Bundle();
+            args.putInt("page_position", position + 1);
+
+            // Set the arguments on the fragment
+            // that will be fetched in the
+            // DemoFragment@onCreateView
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            // Inflate the layout resource that'll be returned
+            View rootView = inflater.inflate(R.layout.fragment_contact_profile, container, false);
+
+            // Get the arguments that was supplied when
+            // the fragment was instantiated in the
+            // CustomPagerAdapter
+//            Bundle args = getArguments();
+//            ((TextView) rootView.findViewById(R.id.textView)).setText("Page " + args.getInt("page_position"));
 
             return rootView;
         }

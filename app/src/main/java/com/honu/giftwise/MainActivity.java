@@ -34,8 +34,13 @@ public class MainActivity extends ActionBarActivity {
         Log.i(LOG_TAG, "toolbar: " + toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolbar.setTitle("Title");
+            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            //toolbar.setTitle("Title");
+            //toolbar.setSubtitle("subtitle");
+            toolbar.setNavigationIcon(null);
+            //toolbar.setNavigationContentDescription("Test");
+            toolbar.setNavigationIcon(R.mipmap.ic_launcher);
         }
 
 
@@ -109,6 +114,8 @@ public class MainActivity extends ActionBarActivity {
 
     private void createContact() {
         Log.i(LOG_TAG, "Create contact");
+        Intent intent = new Intent(this, CreateContactActivity.class);
+        startActivity(intent);
     }
 
     private String getDisplayNameForContactLookupUri(Uri lookupUri)

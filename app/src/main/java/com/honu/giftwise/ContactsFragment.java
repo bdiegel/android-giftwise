@@ -208,7 +208,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // TODO: will open EditContactActivity
         Log.i(LOG_TAG, "Item clicked: " + position);
 
         Intent intent = new Intent(getActivity(), ContactActivity.class);

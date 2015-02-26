@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/profile_dates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SPECIAL DATES"
+        style="?android:attr/listSeparatorTextViewStyle">
+    </TextView>
+
+    <TextView
+        android:id="@+id/profile_likes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LIKES"
+        style="?android:attr/listSeparatorTextViewStyle">
+    </TextView>
+
+    <TextView
+        android:id="@+id/profile_dislikes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DISLIKES"
+        style="?android:attr/listSeparatorTextViewStyle">
+    </TextView>
+
+    <TextView
+        android:id="@+id/profile_sizes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SIZES"
+        style="?android:attr/listSeparatorTextViewStyle">
+    </TextView>
+
+
+</LinearLayout>
