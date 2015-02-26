@@ -8,4 +8,9 @@
     <string name="account_name">bdiegel@gmail.com</string>
     <string name="account_type">com.honu.giftwise</string>
     <string name="title_activity_contact">ContactActivity</string>
+
+    <string-array name="contatct_tabs">
+        <item>IDEAS</item>
+        <item>PROFILE</item>
+    </string-array>
 </resources>

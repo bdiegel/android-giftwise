@@ -14,11 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.honu.giftwise.view.*;
+
 
 public class ContactActivity extends ActionBarActivity {
 
     private CustomPagerAdapter mCustomPagerAdapter;
     private ViewPager mViewPager;
+    private SlidingTabLayout mTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +34,14 @@ public class ContactActivity extends ActionBarActivity {
 //        }
         setContentView(R.layout.activity_contact);
 
-        mCustomPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
+        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mTabs.setDistributeEvenly(true);
+
+        mCustomPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
         mViewPager.setAdapter(mCustomPagerAdapter);
+        mTabs.setViewPager(mViewPager);
     }
 
 
@@ -64,37 +71,25 @@ public class ContactActivity extends ActionBarActivity {
 
         Context mContext;
 
+        String[] mTabTitles;
+
         public CustomPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
+            mTabTitles = getResources().getStringArray(R.array.contatct_tabs);
             mContext = context;
         }
 
         @Override
         public Fragment getItem(int position) {
 
-//            switch (position) {
-//                case 0:
-//                    return new FirstFragment();
-//                case 1:
-//                    return new SecondFragment();
-//                case 2:
-//                    return new ThirdFragment();
-//            }
+            switch (position) {
+                case 0:
+                    return DemoFragment.getInstance(position);
+                case 1:
+                    return DemoFragment.getInstance(position);
+            }
 
-            // Create fragment object
-            Fragment fragment = new DemoFragment();
-
-            // Attach some data to the fragment
-            // that we'll use to populate our fragment layouts
-            Bundle args = new Bundle();
-            args.putInt("page_position", position + 1);
-
-            // Set the arguments on the fragment
-            // that will be fetched in the
-            // DemoFragment@onCreateView
-            fragment.setArguments(args);
-
-            return fragment;
+            return  null;
         }
 
         @Override
@@ -104,11 +99,26 @@ public class ContactActivity extends ActionBarActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "PAGE " + (position + 1);
+            return mTabTitles[position];
         }
     }
 
     public static class DemoFragment extends Fragment {
+
+        public static DemoFragment getInstance(int position) {
+            DemoFragment fragment = new DemoFragment();
+            // Attach some data to the fragment
+            // that we'll use to populate our fragment layouts
+            Bundle args = new Bundle();
+            args.putInt("page_position", position + 1);
+
+            // Set the arguments on the fragment
+            // that will be fetched in the
+            // DemoFragment@onCreateView
+            fragment.setArguments(args);
+            return fragment;
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             // Inflate the layout resource that'll be returned
