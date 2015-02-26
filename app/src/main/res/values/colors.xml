@@ -28,5 +28,7 @@
     <color name="colorSecondary">@color/md_yellow_400</color>
     <color name="colorSecondaryDark">@color/md_yellow_500</color>
 
+    <color name="tabsScrollColor">@color/md_yellow_300</color>
+
 
 </resources>

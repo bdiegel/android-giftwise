@@ -26,18 +26,19 @@ public class ContactActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_contact);
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                  .add(R.id.container, new PlaceholderFragment())
-//                  .commit();
-//        }
         setContentView(R.layout.activity_contact);
-
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true);
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
+            }
+        });
 
         mCustomPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
         mViewPager.setAdapter(mCustomPagerAdapter);
