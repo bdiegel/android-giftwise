@@ -2,6 +2,7 @@ package com.honu.giftwise;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -60,6 +61,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         //readRawAccountTypes();
         //readRawAccounts();
+
 
         // initialize adapter (no data)
         mContactAdapter = new ContactAdapter(getActivity(), null, 0);
@@ -208,6 +210,10 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // TODO: will open EditContactActivity
         Log.i(LOG_TAG, "Item clicked: " + position);
+
+        Intent intent = new Intent(getActivity(), ContactActivity.class);
+        getActivity().startActivity(intent);
+
 
 //        // Get the Cursor
 //        Cursor cursor = parent.getAdapter().getCursor();
