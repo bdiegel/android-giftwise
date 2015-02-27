@@ -1,13 +1,10 @@
 package com.honu.giftwise;
 
-import android.content.ContentProviderOperation;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
@@ -15,8 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -104,7 +99,10 @@ public class MainActivity extends ActionBarActivity {
                 // TODO: should use a loader for all queries
                 String displayName = getDisplayNameForContactLookupUri(data.getData());
                 Log.i(LOG_TAG, "getDisplayName(): " + displayName);
-                createRawContact("bdiegel@gmail.com", displayName);
+                //ContactsUtils.createRawContact(this, "bdiegel@gmail.com", displayName);
+                Intent intent = new Intent(this, CreateContactActivity.class);
+                intent.putExtra("DISPLAY_NAME", displayName);
+                startActivity(intent);
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -159,34 +157,34 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private void createRawContact(String accountName, String displayName) {
-
-        String accountType = getString(R.string.account_type);
-
-        ArrayList<ContentProviderOperation> ops =
-              new ArrayList<ContentProviderOperation>();
-
-        int rawContactInsertIndex = ops.size();
-        ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-              .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
-              .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
-              .build());
-
-        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-              .withValueBackReference(ContactsContract.RawContacts.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-              .withValue(ContactsContract.RawContacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-              .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, displayName)
-              .build());
-
-        try {
-            getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (OperationApplicationException e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//    private void createRawContact(String accountName, String displayName) {
+//
+//        String accountType = getString(R.string.account_type);
+//
+//        ArrayList<ContentProviderOperation> ops =
+//              new ArrayList<ContentProviderOperation>();
+//
+//        int rawContactInsertIndex = ops.size();
+//        ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+//              .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
+//              .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
+//              .build());
+//
+//        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+//              .withValueBackReference(ContactsContract.RawContacts.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+//              .withValue(ContactsContract.RawContacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+//              .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, displayName)
+//              .build());
+//
+//        try {
+//            getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        } catch (OperationApplicationException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
 }

@@ -5,11 +5,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 
 public class CreateContactActivity extends ActionBarActivity {
@@ -25,21 +27,17 @@ public class CreateContactActivity extends ActionBarActivity {
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            toolbar.setTitle("Title");
+            toolbar.setNavigationIcon(R.drawable.ic_action_accept);
         }
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
         if (savedInstanceState == null) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
-                  .add(R.id.container, new PlaceholderFragment())
+                  .add(R.id.container, fragment)
                   .commit();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,11 +58,25 @@ public class CreateContactActivity extends ActionBarActivity {
             return true;
         }
 
+        // navigation icon selected (done)
         if (id == android.R.id.home) {
+            Log.i(LOG_TAG, "navigation icon clicked");
+            EditText nameEditText = (EditText) findViewById(R.id.contact_display_name);
+            createRawContact(nameEditText.getText().toString());
             NavUtils.navigateUpFromSameTask(this);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Create a new RawContact for this account name and type
+     * @param displayName
+     */
+    private void createRawContact(String displayName) {
+        // TODO:
+        Log.i(LOG_TAG, "display name: " + displayName);
+        ContactsUtils.createRawContact(this, "bdiegel@gmail.com", displayName);
     }
 
     /**
@@ -76,9 +88,14 @@ public class CreateContactActivity extends ActionBarActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            String displayName = getArguments().getString("DISPLAY_NAME");
             View rootView = inflater.inflate(R.layout.fragment_create_contact, container, false);
+            if (displayName != null) {
+                Log.i(LOG_TAG, "Set displayName: " + displayName);
+                EditText nameEditText = (EditText) rootView.findViewById(R.id.contact_display_name);
+                nameEditText.setText(displayName);
+            }
             return rootView;
         }
     }

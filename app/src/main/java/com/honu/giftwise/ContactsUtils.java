@@ -2,14 +2,18 @@ package com.honu.giftwise;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,20 +24,49 @@ public class ContactsUtils {
 
     private static final String LOG_TAG = ContactsUtils.class.getSimpleName();
 
+    public static void createRawContact(Context context, String accountName, String displayName) {
+
+        String accountType = context.getString(R.string.account_type);
+
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+        int rawContactInsertIndex = ops.size();
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+              .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
+              .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
+              .build());
+
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+              .withValueBackReference(ContactsContract.RawContacts.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+              .withValue(ContactsContract.RawContacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+              .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, displayName)
+              .build());
+
+        try {
+            context.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
     public static void readRawAccountTypes(Context context) {
         String mAcccountName = "*";
         String mAccountType = "*";
 
-        Cursor cursor =  context.getContentResolver().query(
+        Cursor cursor = context.getContentResolver().query(
               ContactsContract.RawContacts.CONTENT_URI,
-              new String[] { ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.RawContacts.ACCOUNT_TYPE, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY },
+              new String[]{ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.RawContacts.ACCOUNT_TYPE, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY},
               null,
               null,
               null
         );
 
-        while (cursor.moveToNext())
-        {
+        while (cursor.moveToNext()) {
             String id = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts._ID));
             String acctName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME));
             String acctType = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
