@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class CreateContactActivity extends ActionBarActivity {
@@ -73,10 +75,25 @@ public class CreateContactActivity extends ActionBarActivity {
      * Create a new RawContact for this account name and type
      * @param displayName
      */
-    private void createRawContact(String displayName) {
-        // TODO:
+    private void createRawContact(final String displayName) {
         Log.i(LOG_TAG, "display name: " + displayName);
-        ContactsUtils.createRawContact(this, "bdiegel@gmail.com", displayName);
+
+        if (TextUtils.isEmpty(displayName)) {
+            Toast.makeText(this, "Enter a valid contact name",Toast.LENGTH_LONG ).show();
+            return;
+        }
+
+        final String accountName = getResources().getString(R.string.account_name);
+
+        // Create RawContact
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                ContactsUtils.createRawContact(CreateContactActivity.this, accountName, displayName);
+            }
+        }).start();
+
     }
 
     /**
@@ -89,12 +106,17 @@ public class CreateContactActivity extends ActionBarActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            String displayName = getArguments().getString("DISPLAY_NAME");
             View rootView = inflater.inflate(R.layout.fragment_create_contact, container, false);
-            if (displayName != null) {
-                Log.i(LOG_TAG, "Set displayName: " + displayName);
-                EditText nameEditText = (EditText) rootView.findViewById(R.id.contact_display_name);
-                nameEditText.setText(displayName);
+
+            Bundle args = getArguments();
+            if (args != null) {
+                String displayName = args.getString(ContactsUtils.DISPLAY_NAME);
+
+                if (!TextUtils.isEmpty(displayName)) {
+                    Log.i(LOG_TAG, "Set displayName: " + displayName);
+                    EditText nameEditText = (EditText) rootView.findViewById(R.id.contact_display_name);
+                    nameEditText.setText(displayName);
+                }
             }
             return rootView;
         }
