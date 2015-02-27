@@ -101,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
                 Log.i(LOG_TAG, "getDisplayName(): " + displayName);
                 //ContactsUtils.createRawContact(this, "bdiegel@gmail.com", displayName);
                 Intent intent = new Intent(this, CreateContactActivity.class);
-                intent.putExtra("DISPLAY_NAME", displayName);
+                intent.putExtra(ContactsUtils.DISPLAY_NAME, displayName);
                 startActivity(intent);
             }
             if (resultCode == RESULT_CANCELED) {

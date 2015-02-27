@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +21,8 @@ import com.honu.giftwise.view.SlidingTabLayout;
 
 public class ContactActivity extends ActionBarActivity {
 
+    private static final String LOG_TAG = ContactActivity.class.getSimpleName();
+
     private CustomPagerAdapter mCustomPagerAdapter;
     private ViewPager mViewPager;
     private SlidingTabLayout mTabs;
@@ -27,9 +32,20 @@ public class ContactActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationIcon(R.drawable.ic_action_accept);
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true);
+
+        mTabs.setSelectedIndicatorColors(R.color.selector);
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -62,6 +78,12 @@ public class ContactActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+
+        // navigation icon selected (done)
+        if (id == android.R.id.home) {
+            Log.i(LOG_TAG, "navigation icon clicked");
+            NavUtils.navigateUpFromSameTask(this);
         }
 
         return super.onOptionsItemSelected(item);

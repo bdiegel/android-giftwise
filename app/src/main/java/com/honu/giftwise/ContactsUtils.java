@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class ContactsUtils {
 
+    public static final String DISPLAY_NAME = "display_name";
+
     private static final String LOG_TAG = ContactsUtils.class.getSimpleName();
 
     public static void createRawContact(Context context, String accountName, String displayName) {

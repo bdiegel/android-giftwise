@@ -25,6 +25,9 @@
         <activity
             android:name=".ContactActivity"
             android:label="@string/title_activity_contact" >
+
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
+
         </activity>
 
         <activity
