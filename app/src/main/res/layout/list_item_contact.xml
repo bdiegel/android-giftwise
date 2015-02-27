@@ -5,18 +5,17 @@
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
-    android:padding="16dp"
     android:orientation="horizontal">
 
     <FrameLayout
-        android:layout_width="60dp"
-        android:layout_height="wrap_content">
+        android:layout_width="72dp"
+        android:layout_height="72dp">
 
         <ImageView
             android:id="@+id/list_item_contact_image"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
 
     </FrameLayout>
 
