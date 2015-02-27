@@ -29,6 +29,7 @@
 
         <activity
             android:name=".CreateContactActivity"
+            android:windowSoftInputMode="stateVisible"
             android:label="@string/title_activity_create_contact" >
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
