@@ -38,6 +38,7 @@ public class MainActivity extends ActionBarActivity {
             //toolbar.setSubtitle("subtitle");
             toolbar.setNavigationIcon(null);
             //toolbar.setNavigationContentDescription("Test");
+            //toolbar.setNavigationIcon(R.mipmap.ic_launcher);
             toolbar.setNavigationIcon(R.mipmap.ic_launcher);
         }
 
@@ -96,11 +97,13 @@ public class MainActivity extends ActionBarActivity {
 
             // TODO: should use a loader for all queries
             if(resultCode == RESULT_OK) {
-                String displayName = getDisplayNameForContactLookupUri(data.getData());
+                Uri lookupUri = data.getData();
+                String displayName = getDisplayNameForContactLookupUri(lookupUri);
                 Log.i(LOG_TAG, "getDisplayName(): " + displayName);
 
                 Intent intent = new Intent(this, CreateContactActivity.class);
                 intent.putExtra(ContactsUtils.DISPLAY_NAME, displayName);
+                intent.putExtra(ContactsUtils.LOOKUP_URI, lookupUri);
                 startActivity(intent);
             }
 
