@@ -107,42 +107,28 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         Intent intent = new Intent(getActivity(), ContactActivity.class);
         getActivity().startActivity(intent);
-
-
-//        // Get the Cursor
-//        Cursor cursor = parent.getAdapter().getCursor();
-//        // Move to the selected contact
-//        cursor.moveToPosition(position);
-//        // Get the _ID value
-//        String mContactId = getLong(CONTACT_ID_INDEX);
-//        // Get the selected LOOKUP KEY
-//        String mContactKey = getString(CONTACT_KEY_INDEX);
-//        // Create the contact's content Uri
-//        Uri mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
-//
-//        /*
-//         * You can use mContactUri as the content URI for retrieving
-//         * the details for a contact.
-//         */
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-        //        // TODO: delete RawContact and associated Data (with confirmation)
+        // TODO: delete RawContact and associated Data (with confirmation)
         Log.i(LOG_TAG, "Item long clicked: " + position);
 
-        // Get the Cursor
+        // Get cursor from the adapter
         Cursor cursor = ((ContactAdapter)parent.getAdapter()).getCursor();
 
-        // Extract data from the item in the Cursor:
+        // Extract data from the selected item
         cursor.moveToPosition(position);
-        //String mContactId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
         int contactId = cursor.getInt(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
+
+        Log.i(LOG_TAG, "Lookup dates for contactId: " + contactId);
+
+        // TODO: remove - this is simple test of the date query
         Cursor c = ContactsUtils.getContactSpecialDates(getActivity(), contactId);
-        while (c.moveToNext()) {
-            String date = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
-            String type = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
+        while ( c != null && c.moveToNext()) {
+            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
+            int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
             Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
         }
         c.close();

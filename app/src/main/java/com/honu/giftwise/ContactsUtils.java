@@ -211,8 +211,12 @@ public class ContactsUtils {
 
         Cursor cursor =  context.getContentResolver().query(
               rawContactUri,
-              new String[] { ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_NAME,
-                    ContactsContract.RawContacts.ACCOUNT_TYPE, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY },
+              new String[] {
+                    ContactsContract.RawContacts._ID,
+                    ContactsContract.RawContacts.ACCOUNT_NAME,
+                    ContactsContract.RawContacts.ACCOUNT_TYPE,
+                    ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY
+              },
               null,
               null,
               null
@@ -242,7 +246,13 @@ public class ContactsUtils {
         return BitmapFactory.decodeStream(input);
     }
 
-
+//    String[] selection = { ContactsContract.Contacts.DISPLAY_NAME,
+//          ContactsContract.CommonDataKinds.Event.START_DATE,
+//          ContactsContract.CommonDataKinds.Event.CONTACT_ID,
+//          ContactsContract.CommonDataKinds.Event.TYPE };
+//    String where = ContactsContract.Data.MIMETYPE + "= ? "
+// + "AND " +  ContactsContract.CommonDataKinds.Event.TYPE + " IN (" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY + ", " + ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY + ") " + "AND substr(" + ContactsContract.CommonDataKinds.Event.START_DATE + ", -5, 5)= ?";
+//    String[] args = { ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE, dateFormat };
     public static Cursor getContactSpecialDates(Context context, int contactId)
     {
         ContentResolver cr = context.getContentResolver();
@@ -259,14 +269,17 @@ public class ContactsUtils {
             };
 
             String where = ContactsContract.Data.CONTACT_ID + "=?"
-                  + " AND " + ContactsContract.Data.MIMETYPE + "=?";
+                  + " AND " + ContactsContract.Data.MIMETYPE + "=?"
+                  + " AND " +  ContactsContract.CommonDataKinds.Event.TYPE +
+                    " IN (" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY + ", "
+                            + ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY + ") ";
                   //+ " AND " + ContactsContract.CommonDataKinds.Event.TYPE + "=?";
 
             // Add contactId filter.
             String[] selectionArgs = new String[] {
                   String.valueOf(contactId),
                   ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
-                  String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
+                  //String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
             };
 
             String sortOrder = null;
@@ -276,7 +289,7 @@ public class ContactsUtils {
         catch (Exception ex)
         {
             String message = ex.getMessage();
-            Log.d(LOG_TAG, "Error: " + message);
+            Log.e(LOG_TAG, "Error reading dates: " + message);
 
             return null;
         }
