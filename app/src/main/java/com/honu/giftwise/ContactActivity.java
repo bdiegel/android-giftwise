@@ -1,7 +1,11 @@
 package com.honu.giftwise;
 
+
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,8 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.Spinner;
+import android.widget.TimePicker;
 
 import com.honu.giftwise.view.SlidingTabLayout;
+
+import java.util.Calendar;
 
 
 public class ContactActivity extends ActionBarActivity {
@@ -87,6 +97,11 @@ public class ContactActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(this.getSupportFragmentManager(), "datePicker");
     }
 
     class CustomPagerAdapter extends FragmentPagerAdapter {
@@ -177,6 +192,10 @@ public class ContactActivity extends ActionBarActivity {
             // Inflate the layout resource that'll be returned
             View rootView = inflater.inflate(R.layout.fragment_contact_profile, container, false);
 
+            initDateInput(rootView);
+            initClothingSpinner(rootView);
+            initSizeSpinner(rootView);
+
             // Get the arguments that was supplied when
             // the fragment was instantiated in the
             // CustomPagerAdapter
@@ -184,6 +203,74 @@ public class ContactActivity extends ActionBarActivity {
 //            ((TextView) rootView.findViewById(R.id.textView)).setText("Page " + args.getInt("page_position"));
 
             return rootView;
+        }
+
+        private void initSizeSpinner(View rootView) {
+            Spinner spinner = (Spinner) rootView.findViewById(R.id.size_spinner);
+
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                  R.array.size_choices, android.R.layout.simple_spinner_item);
+
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinner.setAdapter(adapter);
+        }
+
+        private void initClothingSpinner(View rootView) {
+            Spinner spinner = (Spinner) rootView.findViewById(R.id.item_spinner);
+
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                  R.array.clothing_choices, android.R.layout.simple_spinner_item);
+
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinner.setAdapter(adapter);
+        }
+
+        private void initDateInput(View rootView) {
+            Spinner spinner = (Spinner) rootView.findViewById(R.id.special_date_spinner);
+
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                  R.array.special_dates, android.R.layout.simple_spinner_item);
+
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinner.setAdapter(adapter);
+        }
+
+
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+          implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+//            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+//            int hour = c.get(Calendar.HOUR_OF_DAY);
+//            int minute = c.get(Calendar.MINUTE);
+            c.get(Calendar.YEAR);
+
+            // Create a new instance of TimePickerDialog and return it
+//            return new DatePickerDialog(getActivity(), this, hour, minute,
+//                  DateFormat.is24HourFormat(getActivity()));
+            return new DatePickerDialog(getActivity(), this, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) );
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            // Do something with the time chosen by the user
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            // TODO: handle selection
         }
     }
 

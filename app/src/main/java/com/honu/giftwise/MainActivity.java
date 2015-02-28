@@ -46,7 +46,6 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -82,7 +81,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void addContact() {
+    protected void addContact() {
         Log.i(LOG_TAG, "Add contact");
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setData(ContactsContract.Contacts.CONTENT_URI);

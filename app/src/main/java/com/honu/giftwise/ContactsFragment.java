@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.honu.giftwise.view.FloatingActionButton;
+
 import java.io.InputStream;
 
 /**
@@ -69,6 +71,14 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ListView) rootView.findViewById(R.id.contacts_listview);
         mListView.setAdapter(mContactAdapter);
+
+        FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_contact_fab);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).addContact();
+            }
+        });
 
         return rootView;
     }
