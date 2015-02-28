@@ -26,6 +26,14 @@ public class ContactsUtils {
 
     private static final String LOG_TAG = ContactsUtils.class.getSimpleName();
 
+
+    /**
+     * Create a new RawContact for our app-specific account type.
+     *
+     * @param context
+     * @param accountName
+     * @param displayName
+     */
     public static void createRawContact(Context context, String accountName, String displayName) {
 
         String accountType = context.getString(R.string.account_type);
@@ -55,10 +63,12 @@ public class ContactsUtils {
 
     }
 
-
+    /**
+     * List all the RawContacts from the content provider. Convenience function to quickly check contents.
+     *
+     * @param context
+     */
     public static void readRawAccountTypes(Context context) {
-        String mAcccountName = "*";
-        String mAccountType = "*";
 
         Cursor cursor = context.getContentResolver().query(
               ContactsContract.RawContacts.CONTENT_URI,
@@ -110,7 +120,15 @@ public class ContactsUtils {
             return null;
     }
 
+    /**
+     * Load all visible Contacts from the content provider
+     *
+     * @param context
+     * @param projection
+     * @return
+     */
     private Loader<Cursor> loadContacts(Context context, String[] projection) {
+
         // defined query arguments:
         final Uri uri = ContactsContract.Contacts.CONTENT_URI;
         final String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
