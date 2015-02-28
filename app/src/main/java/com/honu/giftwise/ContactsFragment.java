@@ -3,6 +3,7 @@ package com.honu.giftwise;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -20,7 +21,7 @@ import com.honu.giftwise.view.FloatingActionButton;
  * A placeholder fragment containing a simple view.
  */
 public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-      AdapterView.OnItemClickListener, AdapterView.OnLongClickListener {
+      AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private static final String LOG_TAG = ContactsFragment.class.getSimpleName();
 
@@ -67,7 +68,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         // listen for contact selections
         mListView.setOnItemClickListener(this);
-        mListView.setOnLongClickListener(this);
+        mListView.setOnItemLongClickListener(this);
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -94,6 +95,16 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.i(LOG_TAG, "Item clicked: " + position);
 
+        // Get the Cursor
+        Cursor cursor = ((ContactAdapter)parent.getAdapter()).getCursor();
+
+        // Extract data from the item in the Cursor:
+        cursor.moveToPosition(position);
+        String mContactId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
+        //String mContactKey = getString(CONTACT_KEY_INDEX);
+        // Create the contact's content Uri
+        //Uri mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
+
         Intent intent = new Intent(getActivity(), ContactActivity.class);
         getActivity().startActivity(intent);
 
@@ -116,8 +127,27 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public boolean onLongClick(View v) {
-        // TODO: delete RawContact and associated Data (with confirmation)
-        return false;
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+        //        // TODO: delete RawContact and associated Data (with confirmation)
+        Log.i(LOG_TAG, "Item long clicked: " + position);
+
+        // Get the Cursor
+        Cursor cursor = ((ContactAdapter)parent.getAdapter()).getCursor();
+
+        // Extract data from the item in the Cursor:
+        cursor.moveToPosition(position);
+        //String mContactId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
+        int contactId = cursor.getInt(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
+        Cursor c = ContactsUtils.getContactSpecialDates(getActivity(), contactId);
+        while (c.moveToNext()) {
+            String date = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
+            String type = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
+            Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
+        }
+        c.close();
+
+        return true;
     }
+
 }

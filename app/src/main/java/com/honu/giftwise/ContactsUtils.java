@@ -28,6 +28,7 @@ import java.util.List;
 public class ContactsUtils {
 
     public static final String DISPLAY_NAME = "display_name";
+    public static final String LOOKUP_URI = "lookup_uri";
 
     private static final String LOG_TAG = ContactsUtils.class.getSimpleName();
 
@@ -241,7 +242,47 @@ public class ContactsUtils {
         return BitmapFactory.decodeStream(input);
     }
 
-    // or: ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY
+
+    public static Cursor getContactSpecialDates(Context context, int contactId)
+    {
+        ContentResolver cr = context.getContentResolver();
+
+        try
+        {
+            Uri uri = ContactsContract.Data.CONTENT_URI;
+
+            String[] projection = new String[] {
+                  ContactsContract.Data.CONTACT_ID,
+                  ContactsContract.CommonDataKinds.Event.START_DATE,
+                  ContactsContract.Data.MIMETYPE,
+                  ContactsContract.CommonDataKinds.Event.TYPE
+            };
+
+            String where = ContactsContract.Data.CONTACT_ID + "=?"
+                  + " AND " + ContactsContract.Data.MIMETYPE + "=?";
+                  //+ " AND " + ContactsContract.CommonDataKinds.Event.TYPE + "=?";
+
+            // Add contactId filter.
+            String[] selectionArgs = new String[] {
+                  String.valueOf(contactId),
+                  ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+                  String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
+            };
+
+            String sortOrder = null;
+
+            return cr.query(uri, projection, where, selectionArgs, sortOrder);
+        }
+        catch (Exception ex)
+        {
+            String message = ex.getMessage();
+            Log.d(LOG_TAG, "Error: " + message);
+
+            return null;
+        }
+    }
+
+    // or: ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY, TYPE_OTHER, TYPE_CUSTOM
     public static Cursor getContactBirthday(Context context, int contactId)
     {
         ContentResolver cr = context.getContentResolver();
@@ -280,4 +321,13 @@ public class ContactsUtils {
             return null;
         }
     }
+
+//    String [] PROJECTION = new String [] {  ContactsContract.Contacts.LOOKUP_KEY };
+//
+//    Cursor cursor = this.managedQuery(ContactsContract.Contacts.CONTENT_URI, PROJECTION, null, null, null);
+//
+//
+//    for(cursor.moveToFirst(); cursor.moveToNext(); cursor.isAfterLast()) {
+//        Log.d(LOG_TAG, "lookupKey for contact:  " + cursor.getString(1) + ", is: " + cursor.getString(0));
+//    }
 }
