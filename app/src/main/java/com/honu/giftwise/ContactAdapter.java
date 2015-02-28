@@ -55,8 +55,8 @@ public class ContactAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         // Use ViewHolder
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-        viewHolder.nameView.setText(cursor.getString(ContactsFragment.GiftwiseContactsQuery.COL_CONTACT_NAME));
-        loadBitmap(cursor.getInt(ContactsFragment.GiftwiseContactsQuery.COL_CONTACT_ID), viewHolder.iconView);
+        viewHolder.nameView.setText(cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME));
+        loadBitmap(cursor.getInt(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID), viewHolder.iconView);
     }
 
     public static class ViewHolder{

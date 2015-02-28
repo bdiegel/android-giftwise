@@ -1,19 +1,11 @@
 package com.honu.giftwise;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.RawContacts;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,12 +16,11 @@ import android.widget.ListView;
 
 import com.honu.giftwise.view.FloatingActionButton;
 
-import java.io.InputStream;
-
 /**
  * A placeholder fragment containing a simple view.
  */
-public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+      AdapterView.OnItemClickListener, AdapterView.OnLongClickListener {
 
     private static final String LOG_TAG = ContactsFragment.class.getSimpleName();
 
@@ -38,21 +29,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     private ListView mListView;
 
     private ContactAdapter mContactAdapter;
-
-    static class GiftwiseContactsQuery {
-
-        // query projection for contact profile
-        static final String[] projection = new String[]{
-              RawContacts._ID,
-              RawContacts.CONTACT_ID,
-              RawContacts.DISPLAY_NAME_PRIMARY
-        };
-
-        //static final String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
-        static final int COL_RAW_CONTACT_ID = 0;
-        static final int COL_CONTACT_ID = 1;
-        static final int COL_CONTACT_NAME = 2;
-    }
 
     public ContactsFragment() {
     }
@@ -91,119 +67,17 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         // listen for contact selections
         mListView.setOnItemClickListener(this);
+        mListView.setOnLongClickListener(this);
 
         super.onActivityCreated(savedInstanceState);
     }
 
 
-    final public Bitmap getContactPhoto(int contactId)
-    {
-        ContentResolver cr = getActivity().getContentResolver();
-        Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
-        InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
-
-        if (input == null) {
-            return null;
-        }
-
-        return BitmapFactory.decodeStream(input);
-    }
-
-    // or: ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY
-    public Cursor getContactBirthday(int contactId)
-    {
-        ContentResolver cr = getActivity().getContentResolver();
-
-        try
-        {
-            Uri uri = ContactsContract.Data.CONTENT_URI;
-
-            String[] projection = new String[] {
-                  ContactsContract.Data.CONTACT_ID,
-                  ContactsContract.CommonDataKinds.Event.START_DATE,
-                  ContactsContract.Data.MIMETYPE,
-                  ContactsContract.CommonDataKinds.Event.TYPE
-            };
-
-            String where = ContactsContract.Data.CONTACT_ID + "=?"
-                  + " AND " + ContactsContract.Data.MIMETYPE + "=?"
-                  + " AND " + ContactsContract.CommonDataKinds.Event.TYPE + "=?";
-
-            // Add contactId filter.
-            String[] selectionArgs = new String[] {
-                  String.valueOf(contactId),
-                  ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
-                  String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
-            };
-
-            String sortOrder = null;
-
-            return cr.query(uri, projection, where, selectionArgs, sortOrder);
-        }
-        catch (Exception ex)
-        {
-            String message = ex.getMessage();
-            Log.d(LOG_TAG, "Error: " + message);
-
-            return null;
-        }
-    }
-
-    private void readRawAccounts() {
-        String accountName = getString(R.string.account_name);
-        String accountType = getString(R.string.account_type);
-
-        Uri rawContactUri = RawContacts.CONTENT_URI.buildUpon()
-              .appendQueryParameter(RawContacts.ACCOUNT_NAME, accountName)
-              .appendQueryParameter(RawContacts.ACCOUNT_TYPE, accountType)
-              .build();
-
-        Cursor cursor =  getActivity().getContentResolver().query(
-              rawContactUri,
-              new String[] { RawContacts._ID, RawContacts.ACCOUNT_NAME, RawContacts.ACCOUNT_TYPE, RawContacts.DISPLAY_NAME_PRIMARY },
-              null,
-              null,
-              null
-        );
-
-        while (cursor.moveToNext())
-        {
-            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts._ID));
-            String acctName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME));
-            String acctType = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
-            String dispName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY));
-            Log.i(LOG_TAG, "Found raw account: id=" + id + " name=" + acctName + " type=" + acctType + " display=" + dispName);
-        }
-        cursor.close();
-    }
-
-
-    private Loader<Cursor> loadRawContacts() {
-
-        String accountName = getString(R.string.account_name);
-        String accountType = getString(R.string.account_type);
-
-        Uri rawContactUri = RawContacts.CONTENT_URI.buildUpon()
-              .appendQueryParameter(RawContacts.ACCOUNT_NAME, accountName)
-              .appendQueryParameter(RawContacts.ACCOUNT_TYPE, accountType)
-              .appendQueryParameter(RawContacts.DELETED, "0")
-              .build();
-
-
-        return new CursorLoader(
-              getActivity(),
-              rawContactUri,
-              GiftwiseContactsQuery.projection,
-              null,
-              null,
-              null
-        );
-    }
-
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return loadRawContacts();
+        String accountName = getString(R.string.account_name);
+        String accountType = getString(R.string.account_type);
+        return ContactsUtils.loadRawContacts(getActivity(), accountName, accountType);
     }
 
     @Override
@@ -241,30 +115,9 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 //         */
     }
 
-//        String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
-//
-//        SimpleCursorAdapter m_slvAdapter = new SimpleCursorAdapter(getActivity(),
-//              android.R.layout.simple_list_item_1,
-//              m_curContacts,
-//              fields,
-//              new int[] {android.R.id.text1},
-//              0);
-//        // Filter by name:
-//        m_slvAdapter.setFilterQueryProvider(new FilterQueryProvider() {
-//
-//            public Cursor runQuery(CharSequence constraint) {
-//                Log.d(LOG_TAG, "runQuery constraint:" + constraint);
-//                String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'" +
-//                      " AND "+ ContactsContract.Contacts.DISPLAY_NAME + " LIKE '%"+constraint+"%'";
-//                String[] selectionArgs = null;
-//                Cursor cur = getContentResolver().query(uri, projection, selection, selectionArgs, sortOrder);
-//                return cur;
-//            }
-//
-//        });
-//        m_lvContacts.setAdapter(m_slvAdapter);
-
-    // <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-
-
+    @Override
+    public boolean onLongClick(View v) {
+        // TODO: delete RawContact and associated Data (with confirmation)
+        return false;
+    }
 }

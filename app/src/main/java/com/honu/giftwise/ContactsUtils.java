@@ -3,9 +3,13 @@ package com.honu.giftwise;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
@@ -13,6 +17,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +30,50 @@ public class ContactsUtils {
     public static final String DISPLAY_NAME = "display_name";
 
     private static final String LOG_TAG = ContactsUtils.class.getSimpleName();
+
+    // Query parameters for loading RawContacts
+    public static class SimpleRawContactQuery {
+
+        // query projection for contact profile
+        static final String[] projection = new String[]{
+              ContactsContract.RawContacts._ID,
+              ContactsContract.RawContacts.CONTACT_ID,
+              ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY
+        };
+
+        //static final String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
+        static final int COL_RAW_CONTACT_ID = 0;
+        static final int COL_CONTACT_ID = 1;
+        static final int COL_CONTACT_NAME = 2;
+    }
+
+
+    /**
+     * Load RawContacts for specified account from content provider.
+     *
+     * @param context
+     * @param accountName
+     * @param accountType
+     * @return
+     */
+    public static Loader<Cursor> loadRawContacts(Context context, String accountName, String accountType) {
+
+        Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon()
+              .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
+              .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
+              .appendQueryParameter(ContactsContract.RawContacts.DELETED, "0")
+              .build();
+
+
+        return new CursorLoader(
+              context,
+              rawContactUri,
+              SimpleRawContactQuery.projection,
+              null,
+              null,
+              null
+        );
+    }
 
 
     /**
@@ -127,7 +176,7 @@ public class ContactsUtils {
      * @param projection
      * @return
      */
-    private Loader<Cursor> loadContacts(Context context, String[] projection) {
+    public static Loader<Cursor> loadContacts(Context context, String[] projection) {
 
         // defined query arguments:
         final Uri uri = ContactsContract.Contacts.CONTENT_URI;
@@ -143,5 +192,92 @@ public class ContactsUtils {
               selectionArgs,
               sortOrder
         );
+    }
+
+    /**
+     * List all RawContacts for specified account. Convenient for checking contents.
+     *
+     * @param context
+     * @param accountName
+     * @param accountType
+     */
+    public static void printRawAccounts(Context context, String accountName, String accountType) {
+
+        Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon()
+              .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
+              .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
+              .build();
+
+        Cursor cursor =  context.getContentResolver().query(
+              rawContactUri,
+              new String[] { ContactsContract.RawContacts._ID, ContactsContract.RawContacts.ACCOUNT_NAME,
+                    ContactsContract.RawContacts.ACCOUNT_TYPE, ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY },
+              null,
+              null,
+              null
+        );
+
+        while (cursor.moveToNext())
+        {
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts._ID));
+            String acctName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_NAME));
+            String acctType = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
+            String dispName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY));
+            Log.i(LOG_TAG, "Found raw account: id=" + id + " name=" + acctName + " type=" + acctType + " display=" + dispName);
+        }
+        cursor.close();
+    }
+
+    public static Bitmap getContactPhoto(Context context, int contactId)
+    {
+        ContentResolver cr = context.getContentResolver();
+        Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
+        InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
+
+        if (input == null) {
+            return null;
+        }
+
+        return BitmapFactory.decodeStream(input);
+    }
+
+    // or: ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY
+    public static Cursor getContactBirthday(Context context, int contactId)
+    {
+        ContentResolver cr = context.getContentResolver();
+
+        try
+        {
+            Uri uri = ContactsContract.Data.CONTENT_URI;
+
+            String[] projection = new String[] {
+                  ContactsContract.Data.CONTACT_ID,
+                  ContactsContract.CommonDataKinds.Event.START_DATE,
+                  ContactsContract.Data.MIMETYPE,
+                  ContactsContract.CommonDataKinds.Event.TYPE
+            };
+
+            String where = ContactsContract.Data.CONTACT_ID + "=?"
+                  + " AND " + ContactsContract.Data.MIMETYPE + "=?"
+                  + " AND " + ContactsContract.CommonDataKinds.Event.TYPE + "=?";
+
+            // Add contactId filter.
+            String[] selectionArgs = new String[] {
+                  String.valueOf(contactId),
+                  ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
+                  String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
+            };
+
+            String sortOrder = null;
+
+            return cr.query(uri, projection, where, selectionArgs, sortOrder);
+        }
+        catch (Exception ex)
+        {
+            String message = ex.getMessage();
+            Log.d(LOG_TAG, "Error: " + message);
+
+            return null;
+        }
     }
 }
