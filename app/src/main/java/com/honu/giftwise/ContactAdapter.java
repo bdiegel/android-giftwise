@@ -119,7 +119,7 @@ public class ContactAdapter extends CursorAdapter {
     private Drawable getPlaceholderImage(Resources res) {
 
         if (mPlaceholderImage == null) {
-            Bitmap src = BitmapFactory.decodeResource(res, R.drawable.ic_contact_picture_2);
+            Bitmap src = BitmapFactory.decodeResource(res, R.drawable.ic_face_grey600_48dp);
             RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(res, src);
             roundBitmap.setCornerRadius(Math.min(roundBitmap.getMinimumWidth(),roundBitmap.getMinimumHeight()) / 2.0f);
             mPlaceholderImage = roundBitmap;
