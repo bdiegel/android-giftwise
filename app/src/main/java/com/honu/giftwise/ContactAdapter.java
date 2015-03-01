@@ -64,13 +64,14 @@ public class ContactAdapter extends CursorAdapter {
         // Use ViewHolder
         ContentResolver contentResolver = context.getContentResolver();
         ViewHolder viewHolder = (ViewHolder) view.getTag();
+        int contactId = cursor.getInt(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
         viewHolder.nameView.setText(cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME));
-        loadBitmap(contentResolver, cursor.getInt(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID), viewHolder.iconView);
+        loadBitmap(contentResolver, contactId, viewHolder.iconView);
+        //Log.d(LOG_TAG, "bindView at cursor position: " + cursor.getPosition() + " contactId: " + contactId);
     }
 
     public static class ViewHolder{
         public final ImageView iconView;
-        //public final TextView dateView;
         public final TextView nameView;
 
         public ViewHolder(View view) {
@@ -110,6 +111,9 @@ public class ContactAdapter extends CursorAdapter {
 
     public void addBitmapToMemoryCache(String key, RoundedBitmapDrawable bitmap) {
         if (getBitmapFromMemCache(key) == null) {
+            if (!bitmap.equals(mPlaceholderImage)) {
+                Log.i(LOG_TAG, "Caching bitmap for contactId: " + key);
+            }
             mImageCache.put(key, bitmap);
         }
     }
@@ -164,7 +168,6 @@ public class ContactAdapter extends CursorAdapter {
                 RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(mImageView.getResources(), bitmap);
                 roundBitmap.setCornerRadius(Math.min(roundBitmap.getMinimumWidth(), roundBitmap.getMinimumHeight()) / 2.0f);
                 addBitmapToMemoryCache(String.valueOf(contactId), roundBitmap);
-                Log.i(LOG_TAG, "Caching bitmap for contactId: " + contactId);
                 return roundBitmap;
             } else {
                 addBitmapToMemoryCache(String.valueOf(contactId), mPlaceholderImage);
