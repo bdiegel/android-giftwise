@@ -42,7 +42,10 @@ public class ContactsUtils {
               ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY
         };
 
-        //static final String[] fields = new String[] {ContactsContract.Data.DISPLAY_NAME};
+        // sort by display name
+        static final String sortOrder = ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " COLLATE LOCALIZED ASC";
+
+        // column ids for extracting data from cursor returned (matches project order)
         static final int COL_RAW_CONTACT_ID = 0;
         static final int COL_CONTACT_ID = 1;
         static final int COL_CONTACT_NAME = 2;
@@ -72,7 +75,7 @@ public class ContactsUtils {
               SimpleRawContactQuery.projection,
               null,
               null,
-              null
+              SimpleRawContactQuery.sortOrder
         );
     }
 
