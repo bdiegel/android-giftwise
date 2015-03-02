@@ -33,7 +33,7 @@ public class MainActivity extends ActionBarActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
             //toolbar.setTitle("Title");
             //toolbar.setSubtitle("subtitle");
             toolbar.setNavigationIcon(null);

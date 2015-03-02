@@ -1,101 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+
+<ScrollView
+    android:id="@+id/scrollView"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_gravity="left"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/profile_dates"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SPECIAL DATES"
-            style="?android:attr/listSeparatorTextViewStyle">
-        </TextView>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
-            android:id="@+id/special_date_item"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                style="?android:attr/spinnerStyle"
-                android:onClick="showDatePickerDialog"
-                />
-            <!--style="@android:style/Widget.DeviceDefault.Light.Spinner"-->
-            <Spinner
-                android:id="@+id/special_date_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:id="@+id/profile_dates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SPECIAL DATES"
+                style="?android:attr/listSeparatorTextViewStyle"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceLarge"
                 >
-            </Spinner>
+            </TextView>
+
+            <LinearLayout
+                android:id="@+id/special_date_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    style="?android:attr/spinnerStyle"
+                    android:onClick="showDatePickerDialog"
+                    />
+                <!--style="@android:style/Widget.DeviceDefault.Light.Spinner"-->
+                <Spinner
+                    android:id="@+id/special_date_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    >
+                </Spinner>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/profile_likes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="LIKES"
-        style="?android:attr/listSeparatorTextViewStyle">
-    </TextView>
-
-    <TextView
-        android:id="@+id/profile_dislikes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="DISLIKES"
-        style="?android:attr/listSeparatorTextViewStyle">
-    </TextView>
-
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/profile_sizes"
+            android:id="@+id/profile_likes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SIZES"
-            style="?android:attr/listSeparatorTextViewStyle">
+            android:text="LIKES"
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            >
+        </TextView>
+
+        <TextView
+            android:id="@+id/profile_dislikes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DISLIKES"
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            >
         </TextView>
 
         <LinearLayout
-            android:id="@+id/size_item"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <Spinner
-                android:id="@+id/item_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+            <TextView
+                android:id="@+id/profile_sizes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SIZES"
+                style="?android:attr/listSeparatorTextViewStyle"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceLarge"
                 >
-            </Spinner>
-            <Spinner
-                android:id="@+id/size_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                >
-            </Spinner>
+            </TextView>
+
+            <LinearLayout
+                android:id="@+id/size_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/item_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    >
+                </Spinner>
+                <Spinner
+                    android:id="@+id/size_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    >
+                </Spinner>
+            </LinearLayout>
         </LinearLayout>
+
+
     </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>
