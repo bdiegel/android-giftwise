@@ -18,7 +18,9 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -346,4 +348,17 @@ public class ContactsUtils {
 //    for(cursor.moveToFirst(); cursor.moveToNext(); cursor.isAfterLast()) {
 //        Log.d(LOG_TAG, "lookupKey for contact:  " + cursor.getString(1) + ", is: " + cursor.getString(0));
 //    }
+
+
+    public static String formatPrice(Context context, String currencyCode,
+                                     double price) {
+//        if (price == 0) {
+//            return context.getString(R.string.free);
+//        }
+        Currency currency = Currency.getInstance(currencyCode);
+        NumberFormat format = NumberFormat.getCurrencyInstance();
+        format.setCurrency(currency);
+        return format.format(price);
+    }
+
 }

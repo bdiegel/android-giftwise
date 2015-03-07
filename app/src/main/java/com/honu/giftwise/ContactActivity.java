@@ -4,6 +4,7 @@ package com.honu.giftwise;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -37,19 +38,34 @@ public class ContactActivity extends ActionBarActivity {
     private ViewPager mViewPager;
     private SlidingTabLayout mTabs;
 
+    private String mContactName = "Contact";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
+        if (savedInstanceState != null) {
+
+        }
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            mContactName = intent.getStringExtra("name");
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.drawable.ic_action_accept);
+            //getSupportActionBar().setDisplayShowTitleEnabled(true);
+            //toolbar.setNavigationIcon(R.drawable.ic_action_accept);
+            //toolbar.setTitle(mContactName);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle(mContactName);
+
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -137,37 +153,6 @@ public class ContactActivity extends ActionBarActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             return mTabTitles[position];
-        }
-    }
-
-    public static class IdeasFragment extends Fragment {
-
-        public static IdeasFragment getInstance(int position) {
-            IdeasFragment fragment = new IdeasFragment();
-            // Attach some data to the fragment
-            // that we'll use to populate our fragment layouts
-            Bundle args = new Bundle();
-            args.putInt("page_position", position + 1);
-
-            // Set the arguments on the fragment
-            // that will be fetched in the
-            // DemoFragment@onCreateView
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            // Inflate the layout resource that'll be returned
-            View rootView = inflater.inflate(R.layout.fragment_contact_ideas, container, false);
-
-            // Get the arguments that was supplied when
-            // the fragment was instantiated in the
-            // CustomPagerAdapter
-//            Bundle args = getArguments();
-//            ((TextView) rootView.findViewById(R.id.textView)).setText("Page " + args.getInt("page_position"));
-
-            return rootView;
         }
     }
 

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="72dp"
+        android:layout_height="72dp">
+
+        <ImageView
+            android:id="@+id/list_item_gift_image"
+            android:layout_gravity="center"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/gift_gray"
+            />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/list_item_gift_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gift Name"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceLarge"
+            />
+
+        <TextView
+            android:id="@+id/list_item_gift_url_textview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="URL"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceMedium"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/list_item_gift_price_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="2"
+        android:gravity="right"
+        android:paddingRight="15dp"
+        android:text="Price"
+        android:fontFamily="sans-serif-condensed"
+        android:textAppearance="?android:textAppearanceMedium"
+        />
+
+</LinearLayout>

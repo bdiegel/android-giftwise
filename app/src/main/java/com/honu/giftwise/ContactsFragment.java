@@ -40,6 +40,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         //readRawAccountTypes();
         //readRawAccounts();
+        ContactsUtils.readRawAccountTypes(getActivity());
 
 
         // initialize adapter (no data)
@@ -100,12 +101,17 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         // Extract data from the item in the Cursor:
         cursor.moveToPosition(position);
-        String mContactId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
+        String contactId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
+        String contactName = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME);
+        String rawId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
         //String mContactKey = getString(CONTACT_KEY_INDEX);
         // Create the contact's content Uri
         //Uri mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
 
         Intent intent = new Intent(getActivity(), ContactActivity.class);
+        intent.putExtra("name", contactName );
+        intent.putExtra("contactId", contactId );
+        intent.putExtra("rawId", rawId );
         getActivity().startActivity(intent);
     }
 

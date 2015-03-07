@@ -1,4 +1,4 @@
-package com.honu.giftwise;
+package com.honu.giftwise.data;
 
 import android.content.ContentUris;
 import android.net.Uri;
@@ -6,7 +6,7 @@ import android.net.Uri;
 /**
  * Created by bdiegel on 2/27/15.
  */
-public class GiftwiseCcontract {
+public class GiftwiseContract {
 
     // CONTENT_AUTHORITY is the base of all URI's
     public static final String CONTENT_AUTHORITY = "com.honu.giftwise";
