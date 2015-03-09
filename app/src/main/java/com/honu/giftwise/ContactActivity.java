@@ -39,6 +39,7 @@ public class ContactActivity extends ActionBarActivity {
     private SlidingTabLayout mTabs;
 
     private String mContactName = "Contact";
+    private long mRawContactId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,8 @@ public class ContactActivity extends ActionBarActivity {
         Intent intent = getIntent();
         if (intent != null) {
             mContactName = intent.getStringExtra("name");
+            //mRawContactId = intent.getLongExtra("rawId", -1);
+            mRawContactId = Long.parseLong(intent.getStringExtra("rawId"));
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -137,7 +140,7 @@ public class ContactActivity extends ActionBarActivity {
 
             switch (position) {
                 case 0:
-                    return IdeasFragment.getInstance(position);
+                    return IdeasFragment.getInstance(position, mRawContactId);
                 case 1:
                     return ProfileFragment.getInstance(position);
             }
