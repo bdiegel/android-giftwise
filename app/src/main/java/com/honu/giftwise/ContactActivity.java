@@ -52,6 +52,7 @@ public class ContactActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
+            Log.i(LOG_TAG, "Activity with Intent: " + intent.toString());
             mContactName = intent.getStringExtra("name");
             //mRawContactId = intent.getLongExtra("rawId", -1);
             mRawContactId = Long.parseLong(intent.getStringExtra("rawId"));
@@ -113,6 +114,7 @@ public class ContactActivity extends ActionBarActivity {
         if (id == android.R.id.home) {
             Log.i(LOG_TAG, "navigation icon clicked");
             NavUtils.navigateUpFromSameTask(this);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

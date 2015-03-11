@@ -19,6 +19,7 @@
         <item>PROFILE</item>
     </string-array>
     <string name="title_activity_create_contact">Create contact</string>
+    <string name="title_activity_edit_gift">Edit Gift</string>
 
     <string-array name="special_dates">
         <item>Birthday</item>

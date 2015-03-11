@@ -1,6 +1,6 @@
 package com.honu.giftwise;
 
-import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -89,39 +89,29 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private void addGift() {
         Log.i(LOG_TAG, "Add Gift for: " + mRawContactId);
-        // TODO: Intent to launch EditGiftIdeaActivity
-//        ContentValues weatherValues = new ContentValues();
-//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationId);
-//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE, dateTime);
-//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, humidity);
-//        weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, pressure);
-        //this.getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cvArray);
 
-        ContentValues values = new ContentValues();
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, "Gift1");
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE, 49.99);
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL, "http//bestgifts.com/gift1");
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, mRawContactId);
-        this.getActivity().getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
+        // start activity to add/edit gift idea
+        Intent intent = new Intent(getActivity(), EditGiftActivity.class);
+        //startActivity(intent);
+        startActivityForResult(intent, 1);
+
+        // Example: inserting new gift
+        // Example: inserting new gift
+//        ContentValues values = new ContentValues();
+//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, "Gift1");
+//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE, 49.99);
+//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL, "http//bestgifts.com/gift1");
+//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, mRawContactId);
+//        this.getActivity().getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-//        long startDate = System.currentTimeMillis();
-//
-//        // Sort order:  Ascending, by date.
-//        String sortOrder = WeatherEntry.COLUMN_DATE + " ASC";
-//
-//        String locationSetting = Utility.getPreferredLocation(getActivity());
 
-//        Uri weatherForLocationUri = WeatherEntry.buildWeatherLocationWithStartDate(
-//              locationSetting, startDate);
-
+        // uri for all gifts for a raw contact
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
 
-        // Now create and return a CursorLoader that will take care of
-        // creating a Cursor for the data being displayed.
-        // use column indices to specify a projection
+        // create CursorLoader that will take care of creating a Cursor for the data being displayed
         return new CursorLoader(
               getActivity(),
               giftsForRawContactUri,
