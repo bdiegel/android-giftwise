@@ -55,7 +55,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
         Bundle args = getArguments();
         mRawContactId =  args.getLong("rawContactId");
-
+        Log.i(LOG_TAG, "onCreateView");
 
         // initialize adapter (no data)
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
@@ -92,7 +92,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        //startActivity(intent);
+        intent.putExtra("rawContactId", mRawContactId);
         startActivityForResult(intent, 1);
 
         // Example: inserting new gift
@@ -107,6 +107,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+        Log.i(LOG_TAG, "onCreateLoader");
 
         // uri for all gifts for a raw contact
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);

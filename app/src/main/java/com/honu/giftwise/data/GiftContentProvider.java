@@ -86,12 +86,16 @@ public class GiftContentProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
+        Uri giftsForRawContactUri;
 
         switch (match) {
             case GIFT: {
                 long _id = db.insert(GiftwiseContract.GiftEntry.TABLE_NAME, null, values);
-                if ( _id > 0 )
+                long rawContactId =  values.getAsLong(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID);
+                if ( _id > 0 ) {
                     returnUri = GiftwiseContract.GiftEntry.buildGiftUri(_id);
+                    giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(rawContactId);
+                }
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -99,7 +103,9 @@ public class GiftContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        //Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
         getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(giftsForRawContactUri, null);
         return returnUri;
     }
 
