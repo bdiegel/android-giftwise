@@ -21,7 +21,7 @@ import com.honu.giftwise.view.FloatingActionButton;
 /**
 * Created by bdiegel on 3/4/15.
 */
-public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> { //}, PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = IdeasFragment.class.getSimpleName();
 
@@ -32,6 +32,9 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     private int mPosition = ListView.INVALID_POSITION;
 
     private long mRawContactId;
+
+    // loader id
+    private static final int GIFT_IDEAS_LOADER = 1;
 
     public static IdeasFragment getInstance(int position, long rawContactId) {
         IdeasFragment fragment = new IdeasFragment();
@@ -73,8 +76,50 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
                 mPosition = position;
+
+                Log.i(LOG_TAG, "Item selected at position: " + position);
+                Log.i(LOG_TAG, "View clicked: " + view.getId());
+                Object item = mIdeasAdapter.getItem(position);
+
+                // Get cursor from the adapter
+                Cursor cursor = mIdeasAdapter.getCursor();
+
+                // Extract data from the selected item
+                cursor.moveToPosition(position);
+                int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
+                Log.i(LOG_TAG, "GiftId: " + giftId);
+
+                // TODO: open item
+
+                // start activity to add/edit gift idea
+                Intent intent = new Intent(getActivity(), EditGiftActivity.class);
+                intent.putExtra("rawContactId", mRawContactId);
+                intent.putExtra("giftId", giftId);
+                //intent.putExtra("giftName", giftId);
+                startActivityForResult(intent, 1);
             }
         });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(LOG_TAG, "Item LONG pressed at position: " + position);
+
+                // Get cursor from the adapter
+                Cursor cursor = mIdeasAdapter.getCursor();
+
+                // Extract data from the selected item
+                cursor.moveToPosition(position);
+                int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
+                Log.i(LOG_TAG, "GiftId: " + giftId);
+
+                // TODO: delete item
+                deleteGift(giftId);
+
+                return true;
+            }
+        });
+
 
         FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_gift_fab);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +130,18 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(GIFT_IDEAS_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    private void deleteGift(long giftId) {
+        Log.i(LOG_TAG, "Delete Gift id: " + giftId);
+        Uri uri = GiftwiseContract.GiftEntry.buildGiftUri(giftId);
+        getActivity().getContentResolver().delete(uri, null, null);
     }
 
     private void addGift() {
