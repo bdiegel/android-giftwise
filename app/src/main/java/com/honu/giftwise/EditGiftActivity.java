@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.honu.giftwise.data.GiftwiseContract;
 
@@ -38,9 +39,12 @@ public class EditGiftActivity extends ActionBarActivity {
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            toolbar.setNavigationIcon(R.drawable.ic_action_accept);
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setHomeButtonEnabled(true);
+
+
         // TODO: title change depending on if we are in add or edit mode
         //getSupportActionBar().setTitle(mContactName);
 
@@ -110,17 +114,40 @@ public class EditGiftActivity extends ActionBarActivity {
         // name is required
         String name = name_tv.getText().toString();
         if (TextUtils.isEmpty(name)) {
+            Toast.makeText(this, "Name is required", Toast.LENGTH_LONG).show();
             return false;
         }
+        String priceTxt = price_tv.getText().toString();
+        String url = url_tv.getText().toString();
+        String notes = notes_tv.getText().toString();
+
+        long price = 0;
+
+        if (!TextUtils.isEmpty(priceTxt)) {
+            try {
+                price = Long.parseLong(priceTxt);
+            } catch (NumberFormatException nfe) {
+                Toast.makeText(this, "Invalid price", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
 
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
 
-        // insert new entry into table
+        // create content values
         ContentValues values = new ContentValues();
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, name);
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE, 49.99);
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL, "http//bestgifts.com/gift1");
         values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, mRawContactId);
+        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, name);
+
+        if (price != 0)
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE, price);
+        if (!TextUtils.isEmpty(url))
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL, url);
+        if (!TextUtils.isEmpty(notes))
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NOTES, notes);
+
+        // insert new entry into table
         getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
         //getContentResolver().insert(giftsForRawContactUri, values);
 
