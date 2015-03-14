@@ -38,15 +38,13 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public static IdeasFragment getInstance(int position, long rawContactId) {
         IdeasFragment fragment = new IdeasFragment();
-        // Attach some data to the fragment
-        // that we'll use to populate our fragment layouts
+        
+        // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
         args.putInt("page_position", position + 1);
         args.putLong("rawContactId", rawContactId);
 
-        // Set the arguments on the fragment
-        // that will be fetched in the
-        // DemoFragment@onCreateView
+        // Set the arguments on the fragment that will be fetched by the edit activity
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,8 +62,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
         Cursor cur = getActivity().getContentResolver().query(giftsForRawContactUri, null, null, null, null);
         mIdeasAdapter = new IdeasAdapter(getActivity(), cur, 0);
-        //mIdeasAdapter = new IdeasAdapter(getActivity(), matrixCursor, 0);
-        //mIdeasAdapter = new IdeasAdapter(getActivity(), null, 0);
 
         // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ListView) rootView.findViewById(R.id.gifts_listview);
@@ -113,7 +109,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
                 int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
                 Log.i(LOG_TAG, "GiftId: " + giftId);
 
-                // TODO: delete item
+                // delete item
                 deleteGift(giftId);
 
                 return true;
@@ -151,15 +147,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
         intent.putExtra("rawContactId", mRawContactId);
         startActivityForResult(intent, 1);
-
-        // Example: inserting new gift
-        // Example: inserting new gift
-//        ContentValues values = new ContentValues();
-//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, "Gift1");
-//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE, 49.99);
-//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL, "http//bestgifts.com/gift1");
-//        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, mRawContactId);
-//        this.getActivity().getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
     }
 
     @Override
