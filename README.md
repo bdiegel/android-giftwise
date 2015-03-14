@@ -1,4 +1,7 @@
-## Explanation of files
+## Working on the icon artwork
+
+
+### Explanation of files
 
     ic_launcher.blend         Blender source artwork. Work begins here.
     ic_launcher-render.png    Blender render output saved to a PNG
@@ -7,7 +10,7 @@
     ic_launcher.zip           Artifacts made with the Android Asset Studio
 
 
-## How to make the icon artwork
+### How to make the icon artwork
 
 First, we need to render the scene to a still PNG image
 
@@ -48,4 +51,13 @@ Icon Generator
      other files (it gets committed to source control as well)
 
 
-That's it, the contents of the zip file are suitable for inclusion in your Android project.
+The next step is to deploy the files in this ZIP to their proper
+locations in the repository. Inside the ZIP, they're almost in the
+right directory structure already, we can unpack in-place like this
+(starting in the project root dir):
+
+    $ pushd app/src/main/
+    $ unzip /path/to/ic_launcher.zip
+    $ mv web_hi_res_512.png ../../../res/prod/
+    $ popd
+    $ git commit ...
