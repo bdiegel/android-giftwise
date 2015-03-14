@@ -63,4 +63,21 @@
         android:textAppearance="?android:textAppearanceMedium"
         />
 
+    <ImageView
+        android:id="@+id/list_item_gift_overflow_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_overflow"
+        android:contentDescription="@string/gift_overflow_menu"
+        />
+
+    <!--<ImageButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/ic_action_overflow"-->
+        <!--android:background="@android:color/transparent"-->
+        <!--android:contentDescription="@string/gift_overflow_menu"-->
+        <!--/>-->
+        <!--android:onClick="showPopup" />-->
+
 </LinearLayout>
