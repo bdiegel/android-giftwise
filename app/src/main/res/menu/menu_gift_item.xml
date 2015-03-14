@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="Edit"
+        android:id="@+id/gift_edit"
+        android:icon="@android:drawable/ic_menu_edit"/>
+
+    <item
+        android:title="Delete"
+        android:id="@+id/gift_delete"
+        android:icon="@android:drawable/ic_menu_delete"/>
+
+    <item
+        android:title="Open URL"
+        android:id="@+id/gift_open_url"
+        />
+
+</menu>
