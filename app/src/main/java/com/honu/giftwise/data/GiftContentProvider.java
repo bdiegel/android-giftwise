@@ -105,7 +105,7 @@ public class GiftContentProvider extends ContentProvider {
         }
         //Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
         getContext().getContentResolver().notifyChange(uri, null);
-        getContext().getContentResolver().notifyChange(giftsForRawContactUri, null);
+        //getContext().getContentResolver().notifyChange(giftsForRawContactUri, null);
         return returnUri;
     }
 
@@ -117,14 +117,16 @@ public class GiftContentProvider extends ContentProvider {
         int rowsDeleted;
         switch (match) {
             case GIFT_WITH_ID:
-                rowsDeleted = db.delete(GiftwiseContract.GiftEntry.TABLE_NAME, selection, selectionArgs);
+                //rowsDeleted = db.delete(GiftwiseContract.GiftEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = deleteGiftById(uri);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         // Because a null deletes all rows
         if (selection == null || rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(uri, null);
+            //getContext().getContentResolver().notifyChange(uri, null);
+            getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
         }
         return rowsDeleted;
     }
@@ -197,6 +199,19 @@ public class GiftContentProvider extends ContentProvider {
               null,
               null,
               sortOrder
+        );
+    }
+
+    private int deleteGiftById(Uri uri) {
+        long giftId = GiftwiseContract.GiftEntry.getIdFromUri(uri);
+
+        String selection = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry._ID + " = ? ";
+        String[] selectionArgs =  new String[]{  Long.toString(giftId) };
+
+        return mDbHelper.getReadableDatabase().delete(
+              GiftwiseContract.GiftEntry.TABLE_NAME,
+              selection,
+              selectionArgs
         );
     }
 }
