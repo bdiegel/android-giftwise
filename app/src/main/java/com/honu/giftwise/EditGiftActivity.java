@@ -4,17 +4,13 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,14 +42,15 @@ public class EditGiftActivity extends ActionBarActivity {
 
 
         // TODO: title change depending on if we are in add or edit mode
-        //getSupportActionBar().setTitle(mContactName);
+        getSupportActionBar().setTitle("Save Gift");
 
         Intent intent = getIntent();
         mRawContactId = intent.getLongExtra("rawContactId", -1);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                  .add(R.id.container, new EditGiftFragment())
+                  //.add(R.id.container, new EditGiftFragment())
+                  .add(R.id.container, EditGiftFragment.getInstance(mRawContactId))
                   .commit();
         }
 
@@ -154,15 +151,5 @@ public class EditGiftActivity extends ActionBarActivity {
         return true;
     }
 
-    public static class EditGiftFragment extends Fragment {
-        public static EditGiftFragment getInstance() {
-            return new EditGiftFragment();
-        }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_edit_gift, container, false);
-            return rootView;
-        }
-    }
 }

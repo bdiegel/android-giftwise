@@ -82,6 +82,22 @@ public class ContactsUtils {
     }
 
 
+    public static Cursor queryRawContacts(Context context, String accountName, String accountType) {
+
+        Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon()
+              .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
+              .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
+              .appendQueryParameter(ContactsContract.RawContacts.DELETED, "0")
+              .build();
+
+        return context.getContentResolver().query(rawContactUri,
+            SimpleRawContactQuery.projection,
+            null,
+            null,
+            SimpleRawContactQuery.sortOrder);
+    }
+
+
     /**
      * Create a new RawContact for our app-specific account type.
      *

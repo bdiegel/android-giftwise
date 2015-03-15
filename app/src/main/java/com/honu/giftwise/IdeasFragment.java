@@ -38,7 +38,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public static IdeasFragment getInstance(int position, long rawContactId) {
         IdeasFragment fragment = new IdeasFragment();
-        
+
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
         args.putInt("page_position", position + 1);

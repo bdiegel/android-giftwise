@@ -10,11 +10,32 @@
                 >
                 <!--tools:context="com.honu.giftwise.CreateContactActivity$PlaceholderFragment">-->
 
+    <TextView
+        android:id="@+id/gift_recipient_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recipient"
+        style="?android:attr/listSeparatorTextViewStyle"/>
+
+    <Spinner
+        android:id="@+id/contacts_spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/gift_details_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:text="Gift"
+        style="?android:attr/listSeparatorTextViewStyle"/>
+
     <EditText
         android:id="@+id/gift_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Name"/>
+
 
     <EditText
         android:id="@+id/gift_url"
@@ -28,10 +49,18 @@
         android:layout_height="wrap_content"
         android:hint="Price"/>
 
+    <TextView
+        android:id="@+id/gift_notes_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:text="Notes"
+        style="?android:attr/listSeparatorTextViewStyle"/>
+
     <EditText
         android:id="@+id/gift_notes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Notes"/>
+        android:layout_height="60dp"
+        android:hint=""/>
 
 </LinearLayout>
