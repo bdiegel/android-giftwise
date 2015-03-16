@@ -40,8 +40,8 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         //readRawAccountTypes();
         //readRawAccounts();
-        ContactsUtils.readRawAccountTypes(getActivity());
-
+        //ContactsUtils.readRawAccountTypes(getActivity());
+        Log.i(LOG_TAG, "=> ContactsFragment: onCreateView");
 
         // initialize adapter (no data)
         mContactAdapter = new ContactAdapter(getActivity(), null, 0);

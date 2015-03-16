@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 /**
 * Created by bdiegel on 3/15/15.
@@ -23,15 +24,19 @@ public class EditGiftFragment extends Fragment {
 
     private long mRawContactId;
 
+    // Url received from Intent
+    private String mUrl;
+
     /**
      * Create Fragment and setup the Bundle arguments
      */
-    public static EditGiftFragment getInstance(long rawContactId) {
+    public static EditGiftFragment getInstance(long rawContactId, String url) {
         EditGiftFragment fragment = new EditGiftFragment();
 
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
         args.putLong("rawContactId", rawContactId);
+        args.putString("url", url);
 
         // Set the arguments on the fragment that will be fetched by the edit activity
         fragment.setArguments(args);
@@ -45,7 +50,11 @@ public class EditGiftFragment extends Fragment {
 
         // Get the Id of the raw contact
         Bundle args = getArguments();
-        mRawContactId =  args.getLong("rawContactId");
+        mRawContactId =  args.getLong("rawContactId", -1);
+        mUrl =  args.getString("url");
+
+        TextView urlTV = (TextView)rootView.findViewById(R.id.gift_url);
+        urlTV.setText(mUrl);
 
         populateContactsSpinner(rootView);
 
@@ -72,7 +81,12 @@ public class EditGiftFragment extends Fragment {
         mContactSpinner.setAdapter(mContactAdapter);
 
         //selectSpinnerItemByValue(name);
-        selectSpinnerItemByContactId(mRawContactId);
+        if (mRawContactId == -1) {
+            mContactSpinner.setSelection(0);
+            mRawContactId = mContactSpinner.getSelectedItemId();
+        } else {
+            selectSpinnerItemByContactId(mRawContactId);
+        }
     }
 
     public void selectSpinnerItemByContactName(String value)
@@ -83,9 +97,11 @@ public class EditGiftFragment extends Fragment {
         for (int i=0; i<mContactAdapter.getCount(); i++) {
             cursor.moveToPosition(i);
             String temp = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME);
+            long rawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
 
             if ( temp.contentEquals(value) ) {
                 Log.d("TAG", "Found match at index: " + i);
+                mRawContactId = rawContactId;
                 position = i;
                 break;
             }

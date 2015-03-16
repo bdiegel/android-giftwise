@@ -2,6 +2,7 @@ package com.honu.giftwise;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -11,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,8 @@ public class EditGiftActivity extends ActionBarActivity {
     private static final String LOG_TAG = EditGiftActivity.class.getSimpleName();
 
     private long mRawContactId;
+
+    private String mUrl;
 
 
     @Override
@@ -40,17 +44,35 @@ public class EditGiftActivity extends ActionBarActivity {
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setHomeButtonEnabled(true);
 
-
-        // TODO: title change depending on if we are in add or edit mode
+        // Set title (for both add or edit mode):
         getSupportActionBar().setTitle("Save Gift");
 
         Intent intent = getIntent();
-        mRawContactId = intent.getLongExtra("rawContactId", -1);
+        String receivedAction = intent.getAction();
+
+        if (receivedAction != null && receivedAction.equals(Intent.ACTION_SEND)) {
+            String receivedType = intent.getType();
+            if (receivedType.startsWith("text/")) {
+                //handle sent text
+                String receivedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (receivedText != null) {
+                    //set the text
+                    //txtView.setText(receivedText);
+                    mUrl = receivedText;
+                }
+            }
+            else if (receivedType.startsWith("image/")) {
+                //handle sent image
+            }
+        } else {
+            mRawContactId = intent.getLongExtra("rawContactId", -1);
+        }
+
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                   //.add(R.id.container, new EditGiftFragment())
-                  .add(R.id.container, EditGiftFragment.getInstance(mRawContactId))
+                  .add(R.id.container, EditGiftFragment.getInstance(mRawContactId, mUrl))
                   .commit();
         }
 
@@ -70,7 +92,9 @@ public class EditGiftActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        Log.i(LOG_TAG, "onOptionsItemSelected id: " + id );
+
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -102,6 +126,13 @@ public class EditGiftActivity extends ActionBarActivity {
     private boolean createOrSaveGift() {
         Log.i(LOG_TAG, "create or save gift idea");
 
+        Spinner contact_spin = (Spinner) findViewById(R.id.contacts_spinner);
+        //contact_spin.getSelectedItemId();
+        Cursor cursor = (Cursor)(contact_spin.getSelectedItem());
+        if (cursor != null) {
+            //contact_spin = cc.getString(cc.getColumnIndex("Drug"));
+            mRawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
+        }
 
         TextView name_tv = (TextView) findViewById(R.id.gift_name);
         TextView url_tv = (TextView) findViewById(R.id.gift_url);
