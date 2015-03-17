@@ -21,6 +21,7 @@
     <string name="title_activity_create_contact">Create contact</string>
     <string name="title_activity_edit_gift">GiftWise</string>
     <string name="gift_overflow_menu">Options</string>
+    <string name="gift_name">Name</string>
 
     <string-array name="special_dates">
         <item>Birthday</item>
