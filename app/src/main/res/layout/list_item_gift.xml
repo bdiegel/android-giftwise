@@ -65,7 +65,7 @@
         android:id="@+id/list_item_gift_overflow_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_action_overflow"
+        android:src="@drawable/ic_more_vert_grey600_24dp"
         android:contentDescription="@string/gift_overflow_menu"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
