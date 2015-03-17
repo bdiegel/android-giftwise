@@ -149,11 +149,11 @@ public class EditGiftActivity extends ActionBarActivity {
         String url = url_tv.getText().toString();
         String notes = notes_tv.getText().toString();
 
-        long price = 0;
+        double price = 0;
 
         if (!TextUtils.isEmpty(priceTxt)) {
             try {
-                price = Long.parseLong(priceTxt);
+                price = Double.parseDouble(priceTxt);
             } catch (NumberFormatException nfe) {
                 Toast.makeText(this, "Invalid price", Toast.LENGTH_LONG).show();
                 return false;
