@@ -54,10 +54,8 @@
         android:id="@+id/list_item_gift_price_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_weight="2"
         android:gravity="right"
-        android:paddingRight="15dp"
         android:text="Price"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:textAppearanceMedium"
@@ -69,6 +67,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_overflow"
         android:contentDescription="@string/gift_overflow_menu"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         />
 
     <!--<ImageButton-->
