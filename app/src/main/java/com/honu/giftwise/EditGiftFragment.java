@@ -1,8 +1,12 @@
 package com.honu.giftwise;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
@@ -10,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.honu.giftwise.data.Gift;
@@ -20,6 +25,8 @@ import com.honu.giftwise.data.Gift;
 public class EditGiftFragment extends Fragment {
 
     private static final String LOG_TAG = EditGiftFragment.class.getSimpleName();
+
+    public static final int SELECT_IMAGE = 1;
 
     private Spinner mContactSpinner;
 
@@ -62,10 +69,40 @@ public class EditGiftFragment extends Fragment {
         EditText notesTxt = (EditText)rootView.findViewById(R.id.gift_notes);
         notesTxt.setText(gift.getNotes());
 
+        ImageView imageView = (ImageView)rootView.findViewById(R.id.gift_image);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,"Select image"), SELECT_IMAGE);
+            }
+        });
+
         // populate values for the recipient spin control:
         populateContactsSpinner(rootView);
 
         return rootView;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == EditGiftFragment.SELECT_IMAGE) {
+                Uri selectedImageUri = data.getData();
+                Log.i(LOG_TAG, "Image Path : " + getPath(selectedImageUri));
+                ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
+                imageView.setImageURI(selectedImageUri);
+            }
+        }
+    }
+
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     private void populateContactsSpinner(View root) {
@@ -133,5 +170,4 @@ public class EditGiftFragment extends Fragment {
         }
         mContactSpinner.setSelection(position);
     }
-
 }
