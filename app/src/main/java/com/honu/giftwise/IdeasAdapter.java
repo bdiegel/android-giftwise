@@ -4,27 +4,31 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v7.widget.PopupMenu;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.honu.giftwise.data.GiftwiseContract;
 
 /**
- * Created by bdiegel on 3/4/15.
+ * Adapts Cursor with gift ideas for the ListView
  */
 public class IdeasAdapter extends CursorAdapter {
 
     private static final String LOG_TAG = IdeasAdapter.class.getSimpleName();
 
+    // handler to attach to the image view with the overflow icon
+    private static View.OnClickListener mOverflowMenuClickListener;
+
     public IdeasAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+    }
+
+    public void setOverflowMenuListener(View.OnClickListener listener) {
+        mOverflowMenuClickListener = listener;
     }
 
     @Override
@@ -45,9 +49,12 @@ public class IdeasAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         //viewHolder.nameView.setText(cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME));
-        viewHolder.nameView.setText(cursor.getString(cursor.getColumnIndex("name")));
-        viewHolder.urlView.setText(cursor.getString(cursor.getColumnIndex("url")));
-        viewHolder.priceView.setText(cursor.getString(cursor.getColumnIndex("price")));
+        viewHolder.nameView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME)));
+        viewHolder.urlView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL)));
+        viewHolder.priceView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE)));
+
+        // tag the menu view with the GiftId for retrieval in the menu selection handler later
+        viewHolder.menuView.setTag(cursor.getLong(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID)));
     }
 
     public static class ViewHolder {
@@ -65,46 +72,7 @@ public class IdeasAdapter extends CursorAdapter {
             menuView = (ImageView) view.findViewById(R.id.list_item_gift_overflow_icon);
             Linkify.addLinks(urlView, Linkify.WEB_URLS);
 
-            menuView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.i(LOG_TAG, "MENU PRESSED: " + view.getParent().toString());
-                    Log.i(LOG_TAG, "activity: " + view.getContext().toString());
-                    showPopup(v);
-                }
-            });
-
-            //((Activity)view.getContext()).registerForContextMenu(menuView);
-        }
-
-        public void showPopup(View v) {
-            Log.i(LOG_TAG, "Show popup");
-            PopupMenu popup = new PopupMenu(v.getContext(), v);
-
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.gift_edit:
-                            //archive(item);
-                            Log.i(LOG_TAG, "Edit pressed");
-                            return true;
-                        case R.id.gift_delete:
-                            Log.i(LOG_TAG, "Delete pressed");
-                            //delete(item);
-                            return true;
-                        case R.id.gift_open_url:
-                            Log.i(LOG_TAG, "Open url pressed");
-                            //delete(item);
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-            });
-            MenuInflater inflater = popup.getMenuInflater();
-            inflater.inflate(R.menu.menu_gift_item, popup.getMenu());
-            popup.show();
+            menuView.setOnClickListener(mOverflowMenuClickListener);
         }
     }
 

@@ -8,8 +8,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -63,6 +66,14 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
         Cursor cur = getActivity().getContentResolver().query(giftsForRawContactUri, null, null, null, null);
         mIdeasAdapter = new IdeasAdapter(getActivity(), cur, 0);
+        mIdeasAdapter.setOverflowMenuListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(LOG_TAG, "MENU PRESSED: " + view.getParent().toString());
+                Log.i(LOG_TAG, "activity: " + view.getContext().toString());
+                showPopup(view);
+            }
+        });
 
         // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ListView) rootView.findViewById(R.id.gifts_listview);
@@ -76,6 +87,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
                 Log.i(LOG_TAG, "Item selected at position: " + position);
                 Log.i(LOG_TAG, "View clicked: " + view.getId());
+                openGift(position);
                 Object item = mIdeasAdapter.getItem(position);
 
                 // Get cursor from the adapter
@@ -86,12 +98,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
                 int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
                 Log.i(LOG_TAG, "GiftId: " + giftId);
 
-                // start activity to add/edit gift idea
-                Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-                Gift gift = Gift.createFromCursor(cursor);
-                intent.putExtra("gift", gift);
-
-                startActivityForResult(intent, 1);
+                openGift(giftId);
             }
         });
 
@@ -131,6 +138,20 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(GIFT_IDEAS_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    private void openGift(long giftId) {
+        Log.i(LOG_TAG, "GiftId: " + giftId);
+
+        // Get cursor from the adapter
+        Cursor cursor = mIdeasAdapter.getCursor();
+
+        // start activity to add/edit gift idea
+        Intent intent = new Intent(getActivity(), EditGiftActivity.class);
+        Gift gift = Gift.createFromCursor(cursor);
+        intent.putExtra("gift", gift);
+
+        startActivityForResult(intent, 1);
     }
 
     private void deleteGift(long giftId) {
@@ -181,6 +202,38 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
+    }
+
+    public void showPopup(View v) {
+        Log.i(LOG_TAG, "Show popup");
+        PopupMenu popup = new PopupMenu(v.getContext(), v);
+
+        final long giftId = (long) v.getTag();
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.gift_edit:
+                        openGift(giftId);
+                        Log.i(LOG_TAG, "Edit pressed");
+                        return true;
+                    case R.id.gift_delete:
+                        Log.i(LOG_TAG, "Delete pressed");
+                        deleteGift(giftId);
+                        return true;
+                    case R.id.gift_open_url:
+                        Log.i(LOG_TAG, "Open url pressed");
+                        // TODO: open URL Intent
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_gift_item, popup.getMenu());
+        popup.show();
     }
 
 }
