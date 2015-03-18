@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
 
 /**
@@ -25,9 +26,7 @@ public class EditGiftActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = EditGiftActivity.class.getSimpleName();
 
-    private long mRawContactId;
-
-    private String mUrl;
+    private Gift gift;
 
 
     @Override
@@ -50,29 +49,28 @@ public class EditGiftActivity extends ActionBarActivity {
         Intent intent = getIntent();
         String receivedAction = intent.getAction();
 
+        // Started from external app sending a URL:
         if (receivedAction != null && receivedAction.equals(Intent.ACTION_SEND)) {
             String receivedType = intent.getType();
             if (receivedType.startsWith("text/")) {
-                //handle sent text
+                // get the URL from the text
                 String receivedText = intent.getStringExtra(Intent.EXTRA_TEXT);
                 if (receivedText != null) {
-                    //set the text
-                    //txtView.setText(receivedText);
-                    mUrl = receivedText;
+                    gift = new Gift();
+                    gift.setUrl(receivedText);
                 }
             }
             else if (receivedType.startsWith("image/")) {
-                //handle sent image
+                gift = new Gift();
             }
         } else {
-            mRawContactId = intent.getLongExtra("rawContactId", -1);
+            gift = intent.getExtras().getParcelable("gift");
         }
 
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                  //.add(R.id.container, new EditGiftFragment())
-                  .add(R.id.container, EditGiftFragment.getInstance(mRawContactId, mUrl))
+                  .add(R.id.container, EditGiftFragment.getInstance(gift))
                   .commit();
         }
 
@@ -102,10 +100,8 @@ public class EditGiftActivity extends ActionBarActivity {
         // navigation icon selected (done)
         if (id == android.R.id.home) {
             Log.i(LOG_TAG, "navigation icon clicked");
-            //EditText nameEditText = (EditText) findViewById(R.id.gift_name);
-            //createOrSaveGift(nameEditText.getText().toString());
-            if (createOrSaveGift()) {
 
+            if (createOrSaveGift()) {
 //            NavUtils.navigateUpFromSameTask(this);
                 Intent intent = NavUtils.getParentActivityIntent(this);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -118,11 +114,6 @@ public class EditGiftActivity extends ActionBarActivity {
     }
 
 
-//    android:id="@+id/gift_name"
-//    android:id="@+id/gift_url"
-//    android:id="@+id/gift_price"
-//    android:id="@+id/gift_notes"
-
     private boolean createOrSaveGift() {
         Log.i(LOG_TAG, "create or save gift idea");
 
@@ -131,7 +122,8 @@ public class EditGiftActivity extends ActionBarActivity {
         Cursor cursor = (Cursor)(contact_spin.getSelectedItem());
         if (cursor != null) {
             //contact_spin = cc.getString(cc.getColumnIndex("Drug"));
-            mRawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
+            long rawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
+            gift.setRawContactId(rawContactId);
         }
 
         TextView name_tv = (TextView) findViewById(R.id.gift_name);
@@ -161,11 +153,11 @@ public class EditGiftActivity extends ActionBarActivity {
         }
 
 
-        Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
+        Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(gift.getRawContactId());
 
         // create content values
         ContentValues values = new ContentValues();
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, mRawContactId);
+        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, gift.getRawContactId());
         values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, name);
 
         if (price != 0)

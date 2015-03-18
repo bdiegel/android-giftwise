@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
+
+import com.honu.giftwise.data.Gift;
 
 /**
 * Created by bdiegel on 3/15/15.
@@ -20,23 +22,21 @@ public class EditGiftFragment extends Fragment {
     private static final String LOG_TAG = EditGiftFragment.class.getSimpleName();
 
     private Spinner mContactSpinner;
+
     private SimpleCursorAdapter mContactAdapter;
 
-    private long mRawContactId;
-
-    // Url received from Intent
-    private String mUrl;
+    private Gift gift;
 
     /**
      * Create Fragment and setup the Bundle arguments
      */
-    public static EditGiftFragment getInstance(long rawContactId, String url) {
+    //public static EditGiftFragment getInstance(long rawContactId, String url) {
+    public static EditGiftFragment getInstance(Gift gift) {
         EditGiftFragment fragment = new EditGiftFragment();
 
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
-        args.putLong("rawContactId", rawContactId);
-        args.putString("url", url);
+        args.putParcelable("gift", gift);
 
         // Set the arguments on the fragment that will be fetched by the edit activity
         fragment.setArguments(args);
@@ -50,12 +50,19 @@ public class EditGiftFragment extends Fragment {
 
         // Get the Id of the raw contact
         Bundle args = getArguments();
-        mRawContactId =  args.getLong("rawContactId", -1);
-        mUrl =  args.getString("url");
+        gift = args.getParcelable("gift");
 
-        TextView urlTV = (TextView)rootView.findViewById(R.id.gift_url);
-        urlTV.setText(mUrl);
+        // populate form with value:
+        EditText nameTxt = (EditText)rootView.findViewById(R.id.gift_name);
+        nameTxt.setText(gift.getName());
+        EditText priceTxt = (EditText)rootView.findViewById(R.id.gift_price);
+        priceTxt.setText("" + gift.getPrice());
+        EditText urlTxt = (EditText)rootView.findViewById(R.id.gift_url);
+        urlTxt.setText(gift.getUrl());
+        EditText notesTxt = (EditText)rootView.findViewById(R.id.gift_notes);
+        notesTxt.setText(gift.getNotes());
 
+        // populate values for the recipient spin control:
         populateContactsSpinner(rootView);
 
         return rootView;
@@ -80,12 +87,12 @@ public class EditGiftFragment extends Fragment {
         // Apply the adapter to the spinner
         mContactSpinner.setAdapter(mContactAdapter);
 
-        //selectSpinnerItemByValue(name);
-        if (mRawContactId == -1) {
+        // If a contact id is available set the spinner selection:
+        long rawContactId = gift.getRawContactId();
+        if (rawContactId == -1) {
             mContactSpinner.setSelection(0);
-            mRawContactId = mContactSpinner.getSelectedItemId();
         } else {
-            selectSpinnerItemByContactId(mRawContactId);
+            selectSpinnerItemByContactId(rawContactId);
         }
     }
 
@@ -101,7 +108,7 @@ public class EditGiftFragment extends Fragment {
 
             if ( temp.contentEquals(value) ) {
                 Log.d("TAG", "Found match at index: " + i);
-                mRawContactId = rawContactId;
+                gift.setRawContactId(rawContactId);
                 position = i;
                 break;
             }

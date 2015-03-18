@@ -1,5 +1,6 @@
 package com.honu.giftwise.data;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -10,10 +11,16 @@ public class Gift implements Parcelable {
 
     private String name;
     private long giftId;
-    private long rawContactId;
-    private long price;
+    private long rawContactId = -1;
+    private double price = 0;
     private String url;
     private String notes;
+
+    public Gift() {}
+
+    public Gift(long rawContactId) {
+        this.rawContactId = rawContactId;
+    }
 
     public Gift(String name) {
         this.name = name;
@@ -43,11 +50,11 @@ public class Gift implements Parcelable {
         this.rawContactId = rawContactId;
     }
 
-    public long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -72,7 +79,7 @@ public class Gift implements Parcelable {
         name = in.readString();
         giftId = in.readLong();
         rawContactId = in.readLong();
-        price = in.readLong();
+        price = in.readDouble();
         url = in.readString();
         notes = in.readString();
     }
@@ -87,7 +94,7 @@ public class Gift implements Parcelable {
         dest.writeString(name);
         dest.writeLong(giftId);
         dest.writeLong(rawContactId);
-        dest.writeLong(price);
+        dest.writeDouble(price);
         dest.writeString(url);
         dest.writeString(notes);
     }
@@ -104,4 +111,22 @@ public class Gift implements Parcelable {
             return new Gift[size];
         }
     };
+
+    public static final Gift createFromCursor(Cursor cursor) {
+        int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
+        int rawContactId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID));
+        String giftName = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME));
+        String giftNotes = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NOTES));
+        String giftUrl = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL));
+        double price = cursor.getDouble(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE));
+
+        Gift gift = new Gift(giftName);
+        gift.setGiftId(giftId);
+        gift.setNotes(giftNotes);
+        gift.setUrl(giftUrl);
+        gift.setPrice(price);
+        gift.setRawContactId(rawContactId);
+
+        return gift;
+    }
 }

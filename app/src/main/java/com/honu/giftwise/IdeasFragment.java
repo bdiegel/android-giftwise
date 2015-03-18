@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.view.FloatingActionButton;
 
@@ -85,13 +86,11 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
                 int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
                 Log.i(LOG_TAG, "GiftId: " + giftId);
 
-                // TODO: open item
-
                 // start activity to add/edit gift idea
                 Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-                intent.putExtra("rawContactId", mRawContactId);
-                intent.putExtra("giftId", giftId);
-                //intent.putExtra("giftName", giftId);
+                Gift gift = Gift.createFromCursor(cursor);
+                intent.putExtra("gift", gift);
+
                 startActivityForResult(intent, 1);
             }
         });
@@ -145,7 +144,9 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        intent.putExtra("rawContactId", mRawContactId);
+        Gift gift = new Gift(mRawContactId);
+        intent.putExtra("gift", gift);
+
         startActivityForResult(intent, 1);
     }
 
