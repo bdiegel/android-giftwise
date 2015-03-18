@@ -20,11 +20,13 @@ import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
 
 /**
- * Created by bdiegel on 3/9/15.
+ * Edit details of gift item
  */
 public class EditGiftActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = EditGiftActivity.class.getSimpleName();
+
+    private static final String EDIT_GIFT_FRAGMENT_TAG = "EDIT_GIFT_FRAGMENT_TAG";
 
     private Gift gift;
 
@@ -70,7 +72,7 @@ public class EditGiftActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                  .add(R.id.container, EditGiftFragment.getInstance(gift))
+                  .add(R.id.container, EditGiftFragment.getInstance(gift), EDIT_GIFT_FRAGMENT_TAG)
                   .commit();
         }
 
@@ -173,6 +175,4 @@ public class EditGiftActivity extends ActionBarActivity {
 
         return true;
     }
-
-
 }
