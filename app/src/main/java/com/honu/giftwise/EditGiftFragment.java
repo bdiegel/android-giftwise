@@ -52,7 +52,6 @@ public class EditGiftFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_edit_gift, container, false);
 
         // Get the Id of the raw contact
@@ -75,8 +74,9 @@ public class EditGiftFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,"Select image"), SELECT_IMAGE);
+                intent.setAction(Intent.ACTION_PICK);
+                intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(Intent.createChooser(intent, "Select image"), SELECT_IMAGE);
             }
         });
 
@@ -87,22 +87,24 @@ public class EditGiftFragment extends Fragment {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == EditGiftFragment.SELECT_IMAGE) {
-                Uri selectedImageUri = data.getData();
-                Log.i(LOG_TAG, "Image Path : " + getPath(selectedImageUri));
-                ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
-                imageView.setImageURI(selectedImageUri);
-            }
-        }
-    }
 
-    public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getActivity().managedQuery(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+        if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+//            Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+//                  filePathColumn, null, null, null);
+//            cursor.moveToFirst();
+//
+//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//            String picturePath = cursor.getString(columnIndex);
+//            cursor.close();
+
+            // String picturePath contains the path of selected Image
+            ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
+            imageView.setImageURI(selectedImage);
+            //imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+        }
     }
 
     private void populateContactsSpinner(View root) {
