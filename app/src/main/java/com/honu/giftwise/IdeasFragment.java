@@ -87,7 +87,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
                 Log.i(LOG_TAG, "Item selected at position: " + position);
                 Log.i(LOG_TAG, "View clicked: " + view.getId());
-                openGift(position);
                 Object item = mIdeasAdapter.getItem(position);
 
                 // Get cursor from the adapter
@@ -96,7 +95,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
                 // Extract data from the selected item
                 cursor.moveToPosition(position);
                 int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
-                Log.i(LOG_TAG, "GiftId: " + giftId);
+                Log.i(LOG_TAG, "Id of selected gift: " + giftId);
 
                 openGift(giftId);
             }
@@ -141,7 +140,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void openGift(long giftId) {
-        Log.i(LOG_TAG, "GiftId: " + giftId);
+        Log.i(LOG_TAG, "Open GiftId: " + giftId);
 
         // Get cursor from the adapter
         Cursor cursor = mIdeasAdapter.getCursor();
