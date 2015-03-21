@@ -48,31 +48,6 @@ public class GiftContentProvider extends ContentProvider {
                 retCursor = getGiftsForRawContactId(uri, projection, sortOrder);
                 break;
             }
-            // "weather/*/*"
-//            case WEATHER_WITH_LOCATION_AND_DATE:
-//            {
-//                retCursor = getWeatherByLocationSettingAndDate(uri, projection, sortOrder);
-//                break;
-//            }
-//            // "weather/*"
-//            case WEATHER_WITH_LOCATION: {
-//                retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
-//                break;
-//            }
-//            // "location/*"
-//            case LOCATION_ID: {
-//                long id = ContentUris.parseId(uri);
-//                retCursor = mOpenHelper.getReadableDatabase().query(
-//                      WeatherContract.LocationEntry.TABLE_NAME,
-//                      projection,
-//                      WeatherContract.LocationEntry._ID + " = '" + id + "'",
-//                      null,
-//                      null,
-//                      null,
-//                      sortOrder
-//                );
-//                break;
-//            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         };
@@ -86,7 +61,6 @@ public class GiftContentProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         Uri returnUri;
-        Uri giftsForRawContactUri;
 
         switch (match) {
             case GIFT: {
@@ -94,7 +68,6 @@ public class GiftContentProvider extends ContentProvider {
                 long rawContactId =  values.getAsLong(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID);
                 if ( _id > 0 ) {
                     returnUri = GiftwiseContract.GiftEntry.buildGiftUri(_id);
-                    giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(rawContactId);
                 }
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -103,9 +76,8 @@ public class GiftContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        //Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
         getContext().getContentResolver().notifyChange(uri, null);
-        //getContext().getContentResolver().notifyChange(giftsForRawContactUri, null);
+
         return returnUri;
     }
 
@@ -117,7 +89,6 @@ public class GiftContentProvider extends ContentProvider {
         int rowsDeleted;
         switch (match) {
             case GIFT_WITH_ID:
-                //rowsDeleted = db.delete(GiftwiseContract.GiftEntry.TABLE_NAME, selection, selectionArgs);
                 rowsDeleted = deleteGiftById(uri);
                 break;
             default:
@@ -125,7 +96,6 @@ public class GiftContentProvider extends ContentProvider {
         }
         // Because a null deletes all rows
         if (selection == null || rowsDeleted != 0) {
-            //getContext().getContentResolver().notifyChange(uri, null);
             getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
         }
         return rowsDeleted;
@@ -138,7 +108,8 @@ public class GiftContentProvider extends ContentProvider {
         int rowsUpdated;
 
         switch (match) {
-            case GIFT_WITH_ID: {
+            // ??? case GIFT_WITH_ID: {
+            case GIFT: {
                 rowsUpdated = db.update(GiftwiseContract.GiftEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             }
