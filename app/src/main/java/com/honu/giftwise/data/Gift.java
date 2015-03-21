@@ -10,7 +10,7 @@ import android.os.Parcelable;
 public class Gift implements Parcelable {
 
     private String name;
-    private long giftId;
+    private long giftId = -1;
     private long rawContactId = -1;
     private double price = 0;
     private String url;
