@@ -11,7 +11,7 @@ import android.util.Log;
 import com.honu.giftwise.R;
 
 /**
- * Created by bdiegel on 3/21/15.
+ * Cache for Gift images
  */
 public class GiftImageCache {
 
@@ -48,7 +48,6 @@ public class GiftImageCache {
             @Override
             protected int sizeOf(String key, BitmapDrawable drawable) {
                 // The cache size will be measured in kilobytes rather than number of items.
-                // return bitmap.getByteCount() / 1024;
                 Bitmap bitmap = drawable.getBitmap();
                 return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
             }
@@ -57,17 +56,19 @@ public class GiftImageCache {
 
     protected void createPlaceholderImage(Resources res) {
         Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.gift_gray);
-        //RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(res, src);
-        //roundBitmap.setCornerRadius(Math.min(roundBitmap.getMinimumWidth(),roundBitmap.getMinimumHeight()) / 2.0f);
         mPlaceholderImage = new BitmapDrawable(res, bitmap);
     }
 
-    public void addBitmapToMemoryCache(String key, BitmapDrawable drawable) {
-        if (getBitmapFromMemCache(key) == null) {
+    public void updateBitmapToMemoryCache(String key, BitmapDrawable drawable) {
+
+        if (drawable != null) {
             if (!drawable.equals(mPlaceholderImage)) {
                 Log.i(LOG_TAG, "Caching bitmap for giftId: " + key);
+                BitmapDrawable r = mImageCache.put(key, drawable);
+                if (r == null) {
+                    Log.i(LOG_TAG, "Put failed for image cache");
+                }
             }
-            mImageCache.put(key, drawable);
         }
     }
 

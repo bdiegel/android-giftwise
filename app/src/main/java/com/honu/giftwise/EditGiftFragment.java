@@ -3,6 +3,8 @@ package com.honu.giftwise;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -17,7 +19,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.honu.giftwise.data.BitmapUtils;
 import com.honu.giftwise.data.Gift;
+import com.honu.giftwise.data.GiftImageCache;
+
+import java.io.IOException;
 
 /**
 * Created by bdiegel on 3/15/15.
@@ -33,6 +39,8 @@ public class EditGiftFragment extends Fragment {
     private SimpleCursorAdapter mContactAdapter;
 
     private Gift gift;
+
+    private GiftImageCache mImageCache;
 
     /**
      * Create Fragment and setup the Bundle arguments
@@ -54,6 +62,8 @@ public class EditGiftFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_gift, container, false);
 
+        mImageCache = ((GiftwiseApplication)getActivity().getApplicationContext()).getGiftImageCache();
+
         // Get the Id of the raw contact
         Bundle args = getArguments();
         gift = args.getParcelable("gift");
@@ -68,6 +78,7 @@ public class EditGiftFragment extends Fragment {
         EditText notesTxt = (EditText)rootView.findViewById(R.id.gift_notes);
         notesTxt.setText(gift.getNotes());
 
+        // select image from gallery on click:
         ImageView imageView = (ImageView)rootView.findViewById(R.id.gift_image);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +90,13 @@ public class EditGiftFragment extends Fragment {
                 startActivityForResult(Intent.createChooser(intent, "Select image"), SELECT_IMAGE);
             }
         });
+
+        // set image from cache if exists
+        BitmapDrawable bitmap = mImageCache.getBitmapFromMemCache(gift.getGiftId() + "");
+        if (bitmap != null ) {
+            //imageView.setImageBitmap(bitmap);
+            imageView.setImageDrawable(bitmap);
+        }
 
         // populate values for the recipient spin control:
         populateContactsSpinner(rootView);
@@ -100,10 +118,27 @@ public class EditGiftFragment extends Fragment {
 //            String picturePath = cursor.getString(columnIndex);
 //            cursor.close();
 
-            // String picturePath contains the path of selected Image
-            ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
-            imageView.setImageURI(selectedImage);
-            //imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
+
+                Bitmap resizedBitmap = BitmapUtils.createScaledBitmap(bitmap);
+
+                ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
+                //imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(resizedBitmap);
+                Log.i(LOG_TAG, "Saving image to cahce for giftId: " + gift.getGiftId());
+                //mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), bitmap));
+                mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
+            } catch (IOException e) {
+                Log.d(LOG_TAG, "Exception: ", e);
+                e.printStackTrace();
+            }
+
+//            // String picturePath contains the path of selected Image
+//            ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
+//            imageView.setImageURI(selectedImage);
+//            //imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+
         }
     }
 

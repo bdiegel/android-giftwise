@@ -105,7 +105,7 @@ public class IdeasAdapter extends CursorAdapter {
             if (blob != null && blob.length > 0 ) {
                 Bitmap bm = BitmapUtils.getImage(blob);
                 imageView.setImageBitmap(bm);
-                mImageCache.addBitmapToMemoryCache(imageKey, new BitmapDrawable(imageView.getResources(), bm) );
+                mImageCache.updateBitmapToMemoryCache(imageKey, new BitmapDrawable(imageView.getResources(), bm));
             } else {
                 // set temporary placeholder image
                 imageView.setImageDrawable(mImageCache.getPlaceholderImage());

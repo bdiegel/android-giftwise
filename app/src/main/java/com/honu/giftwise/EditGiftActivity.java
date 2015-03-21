@@ -3,6 +3,8 @@ package com.honu.giftwise;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -16,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.honu.giftwise.data.BitmapUtils;
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
 
@@ -169,10 +172,34 @@ public class EditGiftActivity extends ActionBarActivity {
         if (!TextUtils.isEmpty(notes))
             values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NOTES, notes);
 
-        // insert new entry into table
-        getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
-        //getContentResolver().insert(giftsForRawContactUri, values);
+        byte[] bitmap = getImageData(gift.getGiftId());
+        if (bitmap != null) {
+            Log.i(LOG_TAG, "Adding GIFT_IMAGE to ContentValues");
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_IMAGE, bitmap);
+        } else {
+            Log.i(LOG_TAG, "No GIFT_IMAGE for ContentValues");
+        }
+
+        if (gift.getGiftId() == -1) {
+            // insert new entry into table
+            getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
+        } else {
+            String selection = GiftwiseContract.GiftEntry._ID + " = ?";
+            String[] selectionArgs = new String[] { gift.getGiftId() + "" };
+            getContentResolver().update(GiftwiseContract.GiftEntry.GIFT_URI, values, selection, selectionArgs);
+        }
 
         return true;
+    }
+
+    private byte[] getImageData(long giftId) {
+        BitmapDrawable drawableBitmap = ((GiftwiseApplication)getApplicationContext()).getGiftImageCache().getBitmapFromMemCache(""+giftId);
+        if (drawableBitmap != null) {
+            Log.i(LOG_TAG, "Image data loaded from cache for giftId: " + giftId);
+            Bitmap bitmap = drawableBitmap.getBitmap();
+            return BitmapUtils.getBytes(bitmap);
+        }
+        Log.i(LOG_TAG, "No image data found for giftId: " + giftId);
+        return null;
     }
 }
