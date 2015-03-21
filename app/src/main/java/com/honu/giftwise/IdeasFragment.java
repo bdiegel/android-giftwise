@@ -9,6 +9,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.PopupMenu;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
@@ -159,6 +161,28 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         getActivity().getContentResolver().delete(uri, null, null);
     }
 
+    private void openUrl(long giftId) {
+        // Get cursor from the adapter
+        Cursor cursor = mIdeasAdapter.getCursor();
+
+        // get url from gift item
+        String url = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL));
+
+        // if empty, do nothing
+        if (TextUtils.isEmpty(url)) {
+            Toast.makeText(getActivity(), "No URL found", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // add prefix if necessary
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://" + url;
+
+        // start activity to launch browser
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
+    }
+
     private void addGift() {
         Log.i(LOG_TAG, "Add Gift for: " + mRawContactId);
 
@@ -223,7 +247,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
                         return true;
                     case R.id.gift_open_url:
                         Log.i(LOG_TAG, "Open url pressed");
-                        // TODO: open URL Intent
+                        openUrl(giftId);
                         return true;
                     default:
                         return false;
