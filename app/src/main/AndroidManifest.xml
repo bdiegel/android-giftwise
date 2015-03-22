@@ -40,9 +40,9 @@
 
         </activity>
 
+        <!--android:windowSoftInputMode="stateVisible"-->
         <activity
             android:name=".EditGiftActivity"
-            android:windowSoftInputMode="stateVisible"
             android:label="@string/title_activity_edit_gift" >
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".ContactActivity" />
