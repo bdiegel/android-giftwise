@@ -35,7 +35,7 @@ public class BitmapUtils {
             height = maxSize;
             width = Math.round(height * aspectRatio);
         }
-        //return Bitmap.createScaledBitmap(image, width, height, true);
-        return Bitmap.createScaledBitmap(image, width, height, false);
+
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }
