@@ -72,8 +72,8 @@
             <ImageView
                 android:id="@+id/gift_image"
                 android:layout_gravity="bottom|right"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
                 android:background="@drawable/image_border"
                 android:src="@drawable/gift_gray"
                 />
