@@ -11,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,8 +26,8 @@ import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.view.FloatingActionButton;
 
 /**
-* Created by bdiegel on 3/4/15.
-*/
+ * Fragments that displays Gift items in a ListView.
+ */
 public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> { //}, PopupMenu.OnMenuItemClickListener {
 
     private static final String LOG_TAG = IdeasFragment.class.getSimpleName();
@@ -103,25 +104,25 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(LOG_TAG, "Item LONG pressed at position: " + position);
-
-                // Get cursor from the adapter
-                Cursor cursor = mIdeasAdapter.getCursor();
-
-                // Extract data from the selected item
-                cursor.moveToPosition(position);
-                int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
-                Log.i(LOG_TAG, "GiftId: " + giftId);
-
-                // delete item
-                deleteGift(giftId);
-
-                return true;
-            }
-        });
+//        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                Log.i(LOG_TAG, "Item LONG pressed at position: " + position);
+//
+//                // Get cursor from the adapter
+//                Cursor cursor = mIdeasAdapter.getCursor();
+//
+//                // Extract data from the selected item
+//                cursor.moveToPosition(position);
+//                int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
+//                Log.i(LOG_TAG, "GiftId: " + giftId);
+//
+//                // delete item
+//                deleteGift(giftId);
+//
+//                return true;
+//            }
+//        });
 
 
         FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_gift_fab);
@@ -132,6 +133,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
+        registerForContextMenu(mListView);
+
         return rootView;
     }
 
@@ -139,6 +142,57 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(GIFT_IDEAS_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_gift_item, menu);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+        // Get cursor from the adapter
+        Cursor cursor = mIdeasAdapter.getCursor();
+
+        // Extract Name from the selected item for menu title
+        cursor.moveToPosition(info.position);
+        String name = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME));
+        menu.setHeaderTitle(name);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        Log.i(LOG_TAG, "Selected itemId: " + item.getItemId());
+        Log.i(LOG_TAG, "Selected info.position: " + info.position);
+
+        // Get cursor from the adapter
+        Cursor cursor = mIdeasAdapter.getCursor();
+
+        // Extract data from the selected item
+        cursor.moveToPosition(info.position);
+        int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
+
+
+        switch (item.getItemId()) {
+            case R.id.gift_edit:
+                openGift(giftId);
+                Log.i(LOG_TAG, "Edit pressed");
+                return true;
+            case R.id.gift_delete:
+                Log.i(LOG_TAG, "Delete pressed");
+                deleteGift(giftId);
+                return true;
+            case R.id.gift_open_url:
+                Log.i(LOG_TAG, "Open url pressed");
+                openUrl(giftId);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     private void openGift(long giftId) {

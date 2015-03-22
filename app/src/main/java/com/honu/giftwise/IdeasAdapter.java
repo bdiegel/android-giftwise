@@ -63,7 +63,7 @@ public class IdeasAdapter extends CursorAdapter {
         viewHolder.priceView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE)));
 
         // tag the menu view with the GiftId for retrieval in the menu selection handler later
-        viewHolder.menuView.setTag(giftId);
+        //viewHolder.menuView.setTag(giftId);
 
         // display gift image
         loadBitmap(contentResolver, giftId, viewHolder.iconView, cursor);
@@ -74,17 +74,17 @@ public class IdeasAdapter extends CursorAdapter {
         public final TextView nameView;
         public final TextView urlView;
         public final TextView priceView;
-        public final ImageView menuView;
+        //public final ImageView menuView;
 
         public ViewHolder(final View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_gift_image);
             nameView = (TextView)view.findViewById(R.id.list_item_gift_name_textview);
             urlView = (TextView)view.findViewById(R.id.list_item_gift_url_textview);
             priceView = (TextView)view.findViewById(R.id.list_item_gift_price_textview);
-            menuView = (ImageView) view.findViewById(R.id.list_item_gift_overflow_icon);
+            //menuView = (ImageView) view.findViewById(R.id.list_item_gift_overflow_icon);
             Linkify.addLinks(urlView, Linkify.WEB_URLS);
 
-            menuView.setOnClickListener(mOverflowMenuClickListener);
+            //menuView.setOnClickListener(mOverflowMenuClickListener);
         }
     }
 

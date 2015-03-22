@@ -26,7 +26,7 @@ public class BitmapUtils {
     public static Bitmap resizeBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
-        float aspectRatio = width / height;
+        float aspectRatio = width / (float) height;
 
         if (aspectRatio > 1) {
             width = maxSize;
