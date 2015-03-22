@@ -27,4 +27,18 @@
         <!--<item name="android:textColor">#FFF</item>-->
     <!--</style>-->
 
+    <style name="ListSeparatorTextView" parent="@android:style/Theme">
+        <item name="android:textColor">@color/colorPrimary</item>
+
+        <!--<item name="background">@drawable/dark_header_dither</item>-->
+        <!--<item name="android:background">@android:drawable/dark_header</item>-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <!--<item name="textColor">?textColorSecondary</item>-->
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">8dip</item>
+    </style>
+
 </resources>
