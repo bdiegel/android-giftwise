@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,7 +104,49 @@ public class EditGiftFragment extends Fragment {
         // populate values for the recipient spin control:
         populateContactsSpinner(rootView);
 
+        // repopulate form fields from state:
+        if (savedInstanceState != null) {
+            nameTxt.setText(savedInstanceState.getString("gift_name"));
+            urlTxt.setText(savedInstanceState.getString("gift_url"));
+            notesTxt.setText(savedInstanceState.getString("gift_notes"));
+            double price = savedInstanceState.getDouble("gift_price");
+            if (price > 0) {
+                EditText priceTxt = (EditText) rootView.findViewById(R.id.gift_price);
+                priceTxt.setText(savedInstanceState.getDouble("gift_price") + "");
+            }
+            mContactSpinner.setSelection((int)savedInstanceState.getLong("contact_index"));
+        }
+
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // get values from all fields:
+        View rootView = getView();
+        EditText nameEdit = (EditText)rootView.findViewById(R.id.gift_name);
+        EditText priceEdit = (EditText) rootView.findViewById(R.id.gift_price);
+        EditText urlEdit = (EditText)rootView.findViewById(R.id.gift_url);
+        EditText notesEdit = (EditText)rootView.findViewById(R.id.gift_notes);
+
+        double price = 0;
+        String priceTxt = priceEdit.getText().toString();
+        if (!TextUtils.isEmpty(priceTxt)) {
+            try {
+                price = Double.parseDouble(priceTxt);
+            } catch (NumberFormatException nfe) {
+                price = 0;
+            }
+        }
+
+        // save values to bundle
+        outState.putString("gift_name", nameEdit.getText().toString());
+        outState.putString("gift_url", urlEdit.getText().toString());
+        outState.putString("gift_notes", notesEdit.getText().toString());
+        outState.putDouble("gift_price", price);
+        outState.putLong("contact_index", mContactSpinner.getSelectedItemId());
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -111,14 +154,6 @@ public class EditGiftFragment extends Fragment {
         if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-//            Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-//                  filePathColumn, null, null, null);
-//            cursor.moveToFirst();
-//
-//            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//            String picturePath = cursor.getString(columnIndex);
-//            cursor.close();
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
@@ -128,19 +163,12 @@ public class EditGiftFragment extends Fragment {
                 ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
                 //imageView.setImageBitmap(bitmap);
                 imageView.setImageBitmap(resizedBitmap);
-                Log.i(LOG_TAG, "Saving image to cahce for giftId: " + gift.getGiftId());
-                //mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), bitmap));
+                Log.i(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
                 mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
             } catch (IOException e) {
                 Log.d(LOG_TAG, "Exception: ", e);
                 e.printStackTrace();
             }
-
-//            // String picturePath contains the path of selected Image
-//            ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
-//            imageView.setImageURI(selectedImage);
-//            //imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-
         }
     }
 
