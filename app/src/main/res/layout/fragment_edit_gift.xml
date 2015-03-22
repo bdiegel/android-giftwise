@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/gift_name"
-                android:inputType="text"
+                android:inputType="text|textCapWords"
                 android:imeOptions="actionNext"/>
 
             <EditText
@@ -103,7 +103,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:hint=""
-        android:inputType="textMultiLine"
+        android:inputType="text|textLongMessage|textCapSentences"
         android:imeOptions="actionDone"/>
 
 </LinearLayout>
