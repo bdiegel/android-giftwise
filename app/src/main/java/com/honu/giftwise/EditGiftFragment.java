@@ -71,8 +71,10 @@ public class EditGiftFragment extends Fragment {
         // populate form with value:
         EditText nameTxt = (EditText)rootView.findViewById(R.id.gift_name);
         nameTxt.setText(gift.getName());
-        EditText priceTxt = (EditText)rootView.findViewById(R.id.gift_price);
-        priceTxt.setText("" + gift.getPrice());
+        if (gift.getPrice() > 0) {
+            EditText priceTxt = (EditText) rootView.findViewById(R.id.gift_price);
+            priceTxt.setText("" + gift.getPrice());
+        }
         EditText urlTxt = (EditText)rootView.findViewById(R.id.gift_url);
         urlTxt.setText(gift.getUrl());
         EditText notesTxt = (EditText)rootView.findViewById(R.id.gift_notes);
