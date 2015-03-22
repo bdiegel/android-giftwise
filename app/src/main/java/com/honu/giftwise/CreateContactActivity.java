@@ -33,7 +33,7 @@ public class CreateContactActivity extends ActionBarActivity {
         }
 
         if (savedInstanceState == null) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+            CreateContactFragment fragment = new CreateContactFragment();
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
                   .add(R.id.container, fragment)
@@ -99,9 +99,9 @@ public class CreateContactActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class CreateContactFragment extends Fragment {
 
-        public PlaceholderFragment() {
+        public CreateContactFragment() {
         }
 
         @Override
@@ -118,7 +118,20 @@ public class CreateContactActivity extends ActionBarActivity {
                     nameEditText.setText(displayName);
                 }
             }
+
+            if (savedInstanceState != null) {
+                EditText nameEditText = (EditText) rootView.findViewById(R.id.contact_display_name);
+                nameEditText.setText(savedInstanceState.getString("contact_display_name"));
+            }
+
             return rootView;
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            EditText nameEditText = (EditText) getView().findViewById(R.id.contact_display_name);
+            outState.putString("contact_display_name", nameEditText.getText().toString());
         }
     }
 }
