@@ -44,12 +44,20 @@ public class GiftImageCache {
         // Use 1/8th of the available memory for this memory cache.
         final int cacheSize = maxMemory / 8;
 
+        Log.i(LOG_TAG, "CacheSize: " + cacheSize);
+
         mImageCache = new LruCache<String, BitmapDrawable>(cacheSize) {
             @Override
             protected int sizeOf(String key, BitmapDrawable drawable) {
                 // The cache size will be measured in kilobytes rather than number of items.
                 Bitmap bitmap = drawable.getBitmap();
-                return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
+                int size = (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
+                Log.i(LOG_TAG, "sizeOf: " + size);
+
+                Log.i(LOG_TAG, "CacheSize: " + size() + " createCount: " + createCount() + " putCount: " + putCount());
+                Log.i(LOG_TAG, "Cache: " + this.toString());
+
+                return size;
             }
         };
     }
