@@ -98,7 +98,10 @@ public class EditGiftFragment extends Fragment {
         BitmapDrawable bitmap = mImageCache.getBitmapFromMemCache(gift.getGiftId() + "");
         if (bitmap != null ) {
             //imageView.setImageBitmap(bitmap);
+            Log.i(LOG_TAG, "Bitmap loaded from cache for giftId: " + gift.getGiftId());
             imageView.setImageDrawable(bitmap);
+        } else {
+            Log.i(LOG_TAG, "No bitmap found in cache for giftId: " + gift.getGiftId());
         }
 
         // populate values for the recipient spin control:
@@ -116,6 +119,9 @@ public class EditGiftFragment extends Fragment {
             }
             mContactSpinner.setSelection((int)savedInstanceState.getLong("contact_index"));
         }
+
+        //nameTxt.clearFocus();
+        //nameTxt.setBackgroundColor(0);
 
         return rootView;
     }
