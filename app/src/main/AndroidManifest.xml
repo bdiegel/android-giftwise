@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
+    <!-- account needed to create RawContacts -->
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+
     <application
         android:name=".GiftwiseApplication"
         android:allowBackup="true"
@@ -40,9 +43,9 @@
 
         </activity>
 
-        <!--android:windowSoftInputMode="stateVisible"-->
         <activity
             android:name=".EditGiftActivity"
+            android:windowSoftInputMode="stateVisible"
             android:label="@string/title_activity_edit_gift" >
 
             <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".ContactActivity" />
@@ -61,6 +64,16 @@
             android:name=".data.GiftContentProvider"
             android:exported="false"
             android:syncable="false" />
+
+        <!-- dummy authentication service -->
+        <service android:name=".sync.GiftwiseAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
 
     </application>
 

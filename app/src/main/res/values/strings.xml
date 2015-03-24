@@ -9,8 +9,10 @@
     <string name="content_authority">com.honu.giftwise</string>
 
     <!-- account information -->
-    <string name="account_name">bdiegel@gmail.com</string>
-    <string name="account_type">com.honu.giftwise</string>
+    <!--<string name="account_name">bdiegel@gmail.com</string>-->
+    <!--<string name="account_type">com.honu.giftwise</string>-->
+    <string name="account_name">GiftWise</string>
+    <string name="account_type">giftwise.honu.com</string>
 
     <string name="title_activity_contact">Contact</string>
 

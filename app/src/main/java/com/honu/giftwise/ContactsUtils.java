@@ -377,4 +377,34 @@ public class ContactsUtils {
         return format.format(price);
     }
 
+    public static Account getOrCreateAccount(Context context) {
+        // Get an instance of the Android account manager
+        AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
+
+        // Create the account type and default account
+        Account newAccount = new Account(
+              context.getString(R.string.account_name),
+              context.getString(R.string.account_type));
+
+        // If the password doesn't exist, the account doesn't exist
+        if (null == accountManager.getPassword(newAccount) ) {
+
+            /*
+             * Add the account and account type, no password or user data
+             * If successful, return the Account object, otherwise report an error.
+             */
+            if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
+                return null;
+            }
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call ContentResolver.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+            //onAccountCreated(newAccount, context);
+        }
+        return newAccount;
+    }
+
 }
