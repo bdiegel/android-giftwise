@@ -10,15 +10,21 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.honu.giftwise.data.BitmapUtils;
 import com.honu.giftwise.data.Gift;
@@ -27,8 +33,8 @@ import com.honu.giftwise.data.GiftImageCache;
 import java.io.IOException;
 
 /**
-* Created by bdiegel on 3/15/15.
-*/
+ * Fragment for the gift editor
+ */
 public class EditGiftFragment extends Fragment {
 
     private static final String LOG_TAG = EditGiftFragment.class.getSimpleName();
@@ -43,10 +49,11 @@ public class EditGiftFragment extends Fragment {
 
     private GiftImageCache mImageCache;
 
+    private ShareActionProvider mShareActionProvider;
+
     /**
      * Create Fragment and setup the Bundle arguments
      */
-    //public static EditGiftFragment getInstance(long rawContactId, String url) {
     public static EditGiftFragment getInstance(Gift gift) {
         EditGiftFragment fragment = new EditGiftFragment();
 
@@ -78,6 +85,7 @@ public class EditGiftFragment extends Fragment {
         }
         EditText urlTxt = (EditText)rootView.findViewById(R.id.gift_url);
         urlTxt.setText(gift.getUrl());
+        //Linkify.addLinks(urlTxt, Linkify.WEB_URLS);
         EditText notesTxt = (EditText)rootView.findViewById(R.id.gift_notes);
         notesTxt.setText(gift.getNotes());
 
@@ -122,6 +130,8 @@ public class EditGiftFragment extends Fragment {
 
         //nameTxt.clearFocus();
         //nameTxt.setBackgroundColor(0);
+
+        setHasOptionsMenu(true);
 
         return rootView;
     }
@@ -177,6 +187,100 @@ public class EditGiftFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // inflate the fragment menu
+        inflater.inflate(R.menu.menu_edit_gift_fragment, menu);
+
+        // Retrieve the share menu item
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+
+        // Now get the ShareActionProvider from the item
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(createtShareIntent());
+            //mShareActionProvider.setShareHistoryFileName(null);
+        } else {
+            Log.d(LOG_TAG, "Problem finding ShareActionProvider");
+            //shareActionProvider = new ShareActionProvider(getActivity());
+            //MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+//            case R.id.action_share:
+//                newGame();
+//                return true;
+            case R.id.action_browse:
+                openUrl();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private Intent createtShareIntent() {
+        Log.d(LOG_TAG, "Share gift item: " );
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        // prevents Activity selected for sharing from being placed on app stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, getTextDescription());
+        return intent;
+    }
+
+    private String getTextDescription() {
+        View rootView = getView();
+        EditText nameEdit = (EditText)rootView.findViewById(R.id.gift_name);
+        EditText priceEdit = (EditText) rootView.findViewById(R.id.gift_price);
+        EditText urlEdit = (EditText)rootView.findViewById(R.id.gift_url);
+        EditText notesEdit = (EditText)rootView.findViewById(R.id.gift_notes);
+
+        double price = 0;
+        String priceTxt = priceEdit.getText().toString();
+        if (!TextUtils.isEmpty(priceTxt)) {
+            try {
+                price = Double.parseDouble(priceTxt);
+            } catch (NumberFormatException nfe) {
+                price = 0;
+            }
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(String.format("Gift: %s\n", nameEdit.getText().toString()));
+        buffer.append(String.format("Price: %s\n", ContactsUtils.formatPrice(getActivity(), "USD", price)));
+        buffer.append(String.format("Notes: %s\n", notesEdit.getText().toString()));
+        buffer.append(String.format(urlEdit.getText().toString()));
+
+        return buffer.toString();
+    }
+
+    private void openUrl() {
+        // get the url from the EditText field
+        View rootView = getView();
+        EditText urlEdit = (EditText)rootView.findViewById(R.id.gift_url);
+        String url = urlEdit.getText().toString();
+
+        // if empty, do nothing
+        if (TextUtils.isEmpty(url)) {
+            Toast.makeText(getActivity(), "No URL found", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // add prefix if necessary
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://" + url;
+
+        // start activity to launch browser
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
     }
 
     private void populateContactsSpinner(View root) {
