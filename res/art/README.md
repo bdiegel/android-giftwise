@@ -66,7 +66,7 @@ Generator
       * Source TRIM: TRIM
       * Source PADDING: 0%
       * Size: 48dp
-      * Padding: 0dp
+      * Padding: 4dp
       * Color: #dadada
       * Name: gift_silhouette_48dp
    * Confirm that the artwork looks amazing
