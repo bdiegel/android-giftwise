@@ -40,16 +40,19 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private long mRawContactId;
 
+    private String mContactName;
+
     // loader id
     private static final int GIFT_IDEAS_LOADER = 1;
 
-    public static IdeasFragment getInstance(int position, long rawContactId) {
+    public static IdeasFragment getInstance(int position, long rawContactId, String contactName) {
         IdeasFragment fragment = new IdeasFragment();
 
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
         args.putInt("page_position", position + 1);
         args.putLong("rawContactId", rawContactId);
+        args.putString("contactName", contactName);
 
         // Set the arguments on the fragment that will be fetched by the edit activity
         fragment.setArguments(args);
@@ -63,6 +66,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
         Bundle args = getArguments();
         mRawContactId =  args.getLong("rawContactId");
+        mContactName =  args.getString("contactName");
         Log.i(LOG_TAG, "onCreateView");
 
         // initialize adapter (no data)
@@ -203,8 +207,10 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
+        //Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
         Gift gift = Gift.createFromCursor(cursor);
         intent.putExtra("gift", gift);
+        intent.putExtra("contactName", mContactName);
 
         startActivityForResult(intent, 1);
     }

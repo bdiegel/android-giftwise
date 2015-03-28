@@ -142,7 +142,7 @@ public class ContactActivity extends ActionBarActivity {
 
             switch (position) {
                 case 0:
-                    return IdeasFragment.getInstance(position, mRawContactId);
+                    return IdeasFragment.getInstance(position, mRawContactId, mContactName);
                 case 1:
                     return ProfileFragment.getInstance(position);
             }
