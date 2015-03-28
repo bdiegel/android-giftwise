@@ -9,8 +9,10 @@
     <string name="content_authority">com.honu.giftwise</string>
 
     <!-- account information -->
-    <string name="account_name">bdiegel@gmail.com</string>
-    <string name="account_type">com.honu.giftwise</string>
+    <!--<string name="account_name">bdiegel@gmail.com</string>-->
+    <!--<string name="account_type">com.honu.giftwise</string>-->
+    <string name="account_name">GiftWise</string>
+    <string name="account_type">giftwise.honu.com</string>
 
     <string name="title_activity_contact">Contact</string>
 
@@ -19,7 +21,11 @@
         <item>PROFILE</item>
     </string-array>
     <string name="title_activity_create_contact">Create contact</string>
-    <string name="title_activity_edit_gift">Edit Gift</string>
+    <string name="title_activity_edit_gift">GiftWise</string>
+    <string name="gift_overflow_menu">Options</string>
+    <string name="gift_name">Name</string>
+    <string name="action_share">Share</string>
+    <string name="action_browse">Open URL</string>
 
     <string-array name="special_dates">
         <item>Birthday</item>
@@ -41,4 +47,5 @@
         <item>dress</item>
         <item>other</item>
     </string-array>
+    <string name="title_activity_view_gift">ViewGiftActivity</string>
 </resources>

@@ -37,8 +37,6 @@ public class MainActivity extends ActionBarActivity {
             //toolbar.setTitle("Title");
             //toolbar.setSubtitle("subtitle");
             toolbar.setNavigationIcon(null);
-            //toolbar.setNavigationContentDescription("Test");
-            //toolbar.setNavigationIcon(R.mipmap.ic_launcher);
             toolbar.setNavigationIcon(R.mipmap.ic_launcher);
         }
 
@@ -48,6 +46,9 @@ public class MainActivity extends ActionBarActivity {
                   .add(R.id.container, new ContactsFragment())
                   .commit();
         }
+
+        // make sure the account is created
+        ContactsUtils.getOrCreateAccount(this);
     }
 
     @Override

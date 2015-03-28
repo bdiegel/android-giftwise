@@ -5,55 +5,82 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
+    <!-- account needed to create RawContacts -->
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
     <application
+        android:name=".GiftwiseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
-
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ContactActivity"
             android:label="@string/title_activity_contact" >
-
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".CreateContactActivity"
-            android:windowSoftInputMode="stateVisible"
-            android:label="@string/title_activity_create_contact" >
-
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity" />
-
+            android:label="@string/title_activity_create_contact"
+            android:windowSoftInputMode="stateVisible" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".EditGiftActivity"
-            android:windowSoftInputMode="stateVisible"
-            android:label="@string/title_activity_edit_gift" >
+            android:label="@string/title_activity_edit_gift"
+            android:windowSoftInputMode="stateVisible" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ContactActivity" />
 
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".ContactActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
         </activity>
 
         <provider
-            android:authorities="@string/content_authority"
             android:name=".data.GiftContentProvider"
+            android:authorities="@string/content_authority"
             android:exported="false"
             android:syncable="false" />
 
+        <!-- dummy authentication service -->
+        <service android:name=".sync.GiftwiseAuthenticatorService" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <activity
+            android:name=".ViewGiftActivity"
+            android:label="@string/title_activity_view_gift"
+            android:parentActivityName=".ContactActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.honu.giftwise.ContactActivity" />
+        </activity>
     </application>
 
 </manifest>

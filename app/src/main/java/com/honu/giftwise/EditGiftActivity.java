@@ -2,31 +2,36 @@ package com.honu.giftwise;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.honu.giftwise.data.BitmapUtils;
+import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
 
 /**
- * Created by bdiegel on 3/9/15.
+ * Edit details of gift item
  */
 public class EditGiftActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = EditGiftActivity.class.getSimpleName();
 
-    private long mRawContactId;
+    private static final String EDIT_GIFT_FRAGMENT_TAG = "EDIT_GIFT_FRAGMENT_TAG";
+
+    private Gift gift;
 
 
     @Override
@@ -38,18 +43,39 @@ public class EditGiftActivity extends ActionBarActivity {
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            toolbar.setNavigationIcon(R.drawable.ic_action_accept);
         }
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        // TODO: title change depending on if we are in add or edit mode
-        //getSupportActionBar().setTitle(mContactName);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setHomeButtonEnabled(true);
+
+        // Set title (for both add or edit mode):
+        getSupportActionBar().setTitle("Save Gift");
 
         Intent intent = getIntent();
-        mRawContactId = intent.getLongExtra("rawContactId", -1);
+        String receivedAction = intent.getAction();
+
+        // Started from external app sending a URL:
+        if (receivedAction != null && receivedAction.equals(Intent.ACTION_SEND)) {
+            String receivedType = intent.getType();
+            if (receivedType.startsWith("text/")) {
+                // get the URL from the text
+                String receivedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (receivedText != null) {
+                    gift = new Gift();
+                    gift.setUrl(receivedText);
+                }
+            }
+            else if (receivedType.startsWith("image/")) {
+                gift = new Gift();
+            }
+        } else {
+            gift = intent.getExtras().getParcelable("gift");
+        }
+
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                  .add(R.id.container, new EditGiftFragment())
+                  .add(R.id.container, EditGiftFragment.getInstance(gift), EDIT_GIFT_FRAGMENT_TAG)
                   .commit();
         }
 
@@ -58,7 +84,7 @@ public class EditGiftActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //TODO: getMenuInflater().inflate(R.menu.menu_contact, menu);
+        //getMenuInflater().inflate(R.menu.menu_edit_gift, menu);
         return true;
     }
 
@@ -69,7 +95,9 @@ public class EditGiftActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        Log.i(LOG_TAG, "onOptionsItemSelected id: " + id );
+
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -77,10 +105,8 @@ public class EditGiftActivity extends ActionBarActivity {
         // navigation icon selected (done)
         if (id == android.R.id.home) {
             Log.i(LOG_TAG, "navigation icon clicked");
-            //EditText nameEditText = (EditText) findViewById(R.id.gift_name);
-            //createOrSaveGift(nameEditText.getText().toString());
-            if (createOrSaveGift()) {
 
+            if (createOrSaveGift()) {
 //            NavUtils.navigateUpFromSameTask(this);
                 Intent intent = NavUtils.getParentActivityIntent(this);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -93,14 +119,17 @@ public class EditGiftActivity extends ActionBarActivity {
     }
 
 
-//    android:id="@+id/gift_name"
-//    android:id="@+id/gift_url"
-//    android:id="@+id/gift_price"
-//    android:id="@+id/gift_notes"
-
     private boolean createOrSaveGift() {
         Log.i(LOG_TAG, "create or save gift idea");
 
+        Spinner contact_spin = (Spinner) findViewById(R.id.contacts_spinner);
+        //contact_spin.getSelectedItemId();
+        Cursor cursor = (Cursor)(contact_spin.getSelectedItem());
+        if (cursor != null) {
+            //contact_spin = cc.getString(cc.getColumnIndex("Drug"));
+            long rawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
+            gift.setRawContactId(rawContactId);
+        }
 
         TextView name_tv = (TextView) findViewById(R.id.gift_name);
         TextView url_tv = (TextView) findViewById(R.id.gift_url);
@@ -110,32 +139,67 @@ public class EditGiftActivity extends ActionBarActivity {
         // name is required
         String name = name_tv.getText().toString();
         if (TextUtils.isEmpty(name)) {
+            Toast.makeText(this, "Name is required", Toast.LENGTH_LONG).show();
             return false;
         }
+        String priceTxt = price_tv.getText().toString();
+        String url = url_tv.getText().toString();
+        String notes = notes_tv.getText().toString();
 
-        Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
+        double price = 0;
 
-        // insert new entry into table
+        if (!TextUtils.isEmpty(priceTxt)) {
+            try {
+                price = Double.parseDouble(priceTxt);
+            } catch (NumberFormatException nfe) {
+                Toast.makeText(this, "Invalid price", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+
+
+        Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(gift.getRawContactId());
+
+        // create content values
         ContentValues values = new ContentValues();
+        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, gift.getRawContactId());
         values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, name);
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE, 49.99);
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL, "http//bestgifts.com/gift1");
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, mRawContactId);
-        getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
-        //getContentResolver().insert(giftsForRawContactUri, values);
+
+        if (price != 0)
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE, price);
+        if (!TextUtils.isEmpty(url))
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL, url);
+        if (!TextUtils.isEmpty(notes))
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NOTES, notes);
+
+        byte[] bitmap = getImageData(gift.getGiftId());
+        if (bitmap != null) {
+            Log.i(LOG_TAG, "Adding GIFT_IMAGE to ContentValues");
+            values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_IMAGE, bitmap);
+        } else {
+            Log.i(LOG_TAG, "No GIFT_IMAGE for ContentValues");
+        }
+
+        if (gift.getGiftId() == -1) {
+            // insert new entry into table
+            getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
+        } else {
+            String selection = GiftwiseContract.GiftEntry._ID + " = ?";
+            String[] selectionArgs = new String[] { gift.getGiftId() + "" };
+            getContentResolver().update(GiftwiseContract.GiftEntry.GIFT_URI, values, selection, selectionArgs);
+        }
 
         return true;
     }
 
-    public static class EditGiftFragment extends Fragment {
-        public static EditGiftFragment getInstance() {
-            return new EditGiftFragment();
+    private byte[] getImageData(long giftId) {
+        BitmapDrawable drawableBitmap = ((GiftwiseApplication)getApplicationContext()).getGiftImageCache().getBitmapFromMemCache(""+giftId);
+        if (drawableBitmap != null) {
+            Log.i(LOG_TAG, "Image data loaded from cache for giftId: " + giftId);
+            Bitmap bitmap = drawableBitmap.getBitmap();
+            return BitmapUtils.getBytes(bitmap);
         }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_edit_gift, container, false);
-            return rootView;
-        }
+        Log.i(LOG_TAG, "No image data found for giftId: " + giftId);
+        return null;
     }
 }

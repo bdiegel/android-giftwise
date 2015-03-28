@@ -1,46 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--<ScrollView-->
-    <!--android:id="@+id/scrollView"-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
-
-    <!--<LinearLayout-->
-        <!--android:gravity="center_vertical"-->
-        <!--android:layout_gravity="left"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="vertical"-->
-        <!--android:padding="16dp">-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/profile_links"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="LINKS"-->
-            <!--style="?android:attr/listSeparatorTextViewStyle"-->
-            <!--android:fontFamily="sans-serif-condensed"-->
-            <!--android:textAppearance="?android:textAppearanceLarge"-->
-            <!-->-->
-        <!--</TextView>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/profile_notes"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="NOTES"-->
-            <!--style="?android:attr/listSeparatorTextViewStyle"-->
-            <!--android:fontFamily="sans-serif-condensed"-->
-            <!--android:textAppearance="?android:textAppearanceLarge"-->
-            <!-->-->
-        <!--</TextView>-->
-
-
-    <!--</LinearLayout>-->
-<!--</ScrollView>-->
-
-
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
