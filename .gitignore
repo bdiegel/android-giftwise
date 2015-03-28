@@ -10,3 +10,6 @@ app/app.iml
 
 # Blender auto-saves these backup files periodically
 *.blend1
+
+# Vim swap files
+*.sw?
