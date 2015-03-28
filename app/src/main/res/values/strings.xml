@@ -47,4 +47,5 @@
         <item>dress</item>
         <item>other</item>
     </string-array>
+    <string name="title_activity_view_gift">ViewGiftActivity</string>
 </resources>

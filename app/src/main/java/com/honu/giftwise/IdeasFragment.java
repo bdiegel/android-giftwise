@@ -206,8 +206,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Cursor cursor = mIdeasAdapter.getCursor();
 
         // start activity to add/edit gift idea
-        Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        //Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
+        //Intent intent = new Intent(getActivity(), EditGiftActivity.class);
+        Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
         Gift gift = Gift.createFromCursor(cursor);
         intent.putExtra("gift", gift);
         intent.putExtra("contactName", mContactName);
