@@ -7,7 +7,6 @@
     ic_launcher-render.png    Blender render output saved to a PNG
     ic_launcher.xcf           Gimp file made from the above PNG
     ic_launcher.png           Final output from Gimp
-    ic_launcher.zip           Artifacts made with the Android Asset Studio
 
 
 ### How to make the launcher icon artwork
@@ -51,7 +50,7 @@ Icon Generator
      other files (it gets committed to source control as well)
 
 
-Now see the section below on __Deploying Into The Project Dir__
+Now see the section below _Deploying Into The Project Dir_
 
 
 ### How to make the gray icon artwork
