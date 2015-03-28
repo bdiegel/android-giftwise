@@ -7,3 +7,6 @@
 .idea/
 app/app.iml
 *.iml
+
+# Blender auto-saves these backup files periodically
+*.blend1
