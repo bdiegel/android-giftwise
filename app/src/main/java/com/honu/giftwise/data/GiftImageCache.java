@@ -63,7 +63,7 @@ public class GiftImageCache {
     }
 
     protected void createPlaceholderImage(Resources res) {
-        Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.gift_gray);
+        Bitmap bitmap = BitmapFactory.decodeResource(res, R.drawable.gift_silhouette_48dp);
         mPlaceholderImage = new BitmapDrawable(res, bitmap);
     }
 

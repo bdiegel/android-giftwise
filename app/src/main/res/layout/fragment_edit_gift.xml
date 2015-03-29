@@ -80,7 +80,7 @@
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     android:background="@drawable/image_border"
-                    android:src="@drawable/gift_gray"
+                    android:src="@drawable/gift_silhouette_48dp"
                     />
 
             </FrameLayout>

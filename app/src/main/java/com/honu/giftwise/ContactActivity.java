@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -20,11 +21,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
-import android.widget.Spinner;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 
+import com.android.colorpicker.ColorPickerDialog;
+import com.android.colorpicker.ColorPickerSwatch;
 import com.honu.giftwise.view.SlidingTabLayout;
 
 import java.util.Calendar;
@@ -182,9 +184,10 @@ public class ContactActivity extends ActionBarActivity {
             // Inflate the layout resource that'll be returned
             View rootView = inflater.inflate(R.layout.fragment_contact_profile, container, false);
 
-            initDateInput(rootView);
-            initClothingSpinner(rootView);
-            initSizeSpinner(rootView);
+            initColorPicker(rootView);
+//            initDateInput(rootView);
+//            initClothingSpinner(rootView);
+//            initSizeSpinner(rootView);
 
             // Get the arguments that was supplied when
             // the fragment was instantiated in the
@@ -195,44 +198,90 @@ public class ContactActivity extends ActionBarActivity {
             return rootView;
         }
 
-        private void initSizeSpinner(View rootView) {
-            Spinner spinner = (Spinner) rootView.findViewById(R.id.size_spinner);
+        private void initColorPicker(View rootView) {
+            ImageView editColorsIV = (ImageView) rootView.findViewById(R.id.ic_edit_colors_like);
+            editColorsIV.setOnClickListener(new View.OnClickListener() {
 
-            // Create an ArrayAdapter using the string array and a default spinner layout
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                  R.array.size_choices, android.R.layout.simple_spinner_item);
+                @Override
+                public void onClick(View v) {
+                    ColorPickerDialog dialog = ColorPickerDialog.newInstance(
+                          R.string.color_picker_default_title,
+                          getDefaultColors(),
+                          0,
+                          5,
+                          ColorPickerDialog.SIZE_SMALL);
+                          //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
 
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    // get selected color value
+                    dialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
 
-            spinner.setAdapter(adapter);
+                        @Override
+                        public void onColorSelected(int color) {
+                            int selectedColor = color;
+                            Log.i(LOG_TAG, "Selected color: " + selectedColor);
+                        }
+
+                    });
+
+                    dialog.show(getActivity().getFragmentManager(), "cal");
+                }
+            });
         }
 
-        private void initClothingSpinner(View rootView) {
-            Spinner spinner = (Spinner) rootView.findViewById(R.id.item_spinner);
+        private int[] getDefaultColors() {
+            int[] colors = null;
 
-            // Create an ArrayAdapter using the string array and a default spinner layout
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                  R.array.clothing_choices, android.R.layout.simple_spinner_item);
+            String[] color_array = getActivity().getResources().
+                  getStringArray(R.array.default_color_choice_values);
 
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            if (color_array != null && color_array.length > 0) {
+                colors = new int[color_array.length];
+                for (int i = 0; i < color_array.length; i++) {
+                    colors[i] = Color.parseColor(color_array[i]);
+                }
+            }
 
-            spinner.setAdapter(adapter);
+            return colors;
         }
 
-        private void initDateInput(View rootView) {
-            Spinner spinner = (Spinner) rootView.findViewById(R.id.special_date_spinner);
+//        private void initSizeSpinner(View rootView) {
+//            Spinner spinner = (Spinner) rootView.findViewById(R.id.size_spinner);
+//
+//            // Create an ArrayAdapter using the string array and a default spinner layout
+//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+//                  R.array.size_choices, android.R.layout.simple_spinner_item);
+//
+//            // Specify the layout to use when the list of choices appears
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//            spinner.setAdapter(adapter);
+//        }
 
-            // Create an ArrayAdapter using the string array and a default spinner layout
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-                  R.array.special_dates, android.R.layout.simple_spinner_item);
-
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            spinner.setAdapter(adapter);
-        }
+//        private void initClothingSpinner(View rootView) {
+//            Spinner spinner = (Spinner) rootView.findViewById(R.id.item_spinner);
+//
+//            // Create an ArrayAdapter using the string array and a default spinner layout
+//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+//                  R.array.clothing_choices, android.R.layout.simple_spinner_item);
+//
+//            // Specify the layout to use when the list of choices appears
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//            spinner.setAdapter(adapter);
+//        }
+//
+//        private void initDateInput(View rootView) {
+//            Spinner spinner = (Spinner) rootView.findViewById(R.id.special_date_spinner);
+//
+//            // Create an ArrayAdapter using the string array and a default spinner layout
+//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+//                  R.array.special_dates, android.R.layout.simple_spinner_item);
+//
+//            // Specify the layout to use when the list of choices appears
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//
+//            spinner.setAdapter(adapter);
+//        }
 
 
     }
