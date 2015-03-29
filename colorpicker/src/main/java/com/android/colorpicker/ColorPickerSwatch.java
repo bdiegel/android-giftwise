@@ -40,7 +40,7 @@ public class ColorPickerSwatch extends FrameLayout implements View.OnClickListen
         /**
          * Called when a specific color square has been selected.
          */
-        public void onColorSelected(int color);
+        public void onColorSelected(int color, boolean selected);
     }
 
     public ColorPickerSwatch(Context context, int color, boolean checked,
@@ -74,7 +74,7 @@ public class ColorPickerSwatch extends FrameLayout implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (mOnColorSelectedListener != null) {
-            mOnColorSelectedListener.onColorSelected(mColor);
+            mOnColorSelectedListener.onColorSelected(mColor, !(mCheckmarkImage.getVisibility() == View.VISIBLE));
         }
     }
 }

@@ -20,12 +20,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.android.colorpicker.ColorPickerSwatch.OnColorSelectedListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A dialog which takes in as input an array of colors and creates a palette allowing the user to
@@ -40,13 +44,13 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
     protected static final String KEY_TITLE_ID = "title_id";
     protected static final String KEY_COLORS = "colors";
-    protected static final String KEY_SELECTED_COLOR = "selected_color";
+    protected static final String KEY_SELECTED_COLORS = "selected_colors";
     protected static final String KEY_COLUMNS = "columns";
     protected static final String KEY_SIZE = "size";
 
     protected int mTitleResId = R.string.color_picker_default_title;
     protected int[] mColors = null;
-    protected int mSelectedColor;
+    protected int[] mSelectedColors;
     protected int mColumns;
     protected int mSize;
 
@@ -55,20 +59,35 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
     protected OnColorSelectedListener mListener;
 
+    protected DialogSelectionListener mDialogListener;
+
+    // activity should register for notifications of ok/cancel events to get selected colors
+    public interface DialogSelectionListener {
+        /**
+         * Called when dialog OK button is pressed
+         */
+        public void onSelectionCompleted(int[] colors);
+
+        /**
+         * Called when dialog CANCEL button is pressed
+         */
+        public void onSelectionCancelled();
+    }
+
     public ColorPickerDialog() {
         // Empty constructor required for dialog fragments.
     }
 
-    public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
+    public static ColorPickerDialog newInstance(int titleResId, int[] colors, int[] selectedColors,
             int columns, int size) {
         ColorPickerDialog ret = new ColorPickerDialog();
-        ret.initialize(titleResId, colors, selectedColor, columns, size);
+        ret.initialize(titleResId, colors, selectedColors, columns, size);
         return ret;
     }
 
-    public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size) {
+    public void initialize(int titleResId, int[] colors, int[] selectedColors, int columns, int size) {
         setArguments(titleResId, columns, size);
-        setColors(colors, selectedColor);
+        setColors(colors, selectedColors);
     }
 
     public void setArguments(int titleResId, int columns, int size) {
@@ -83,6 +102,10 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         mListener = listener;
     }
 
+    public void setDialogSelectedListener(DialogSelectionListener listener) {
+        mDialogListener = listener;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +118,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
         if (savedInstanceState != null) {
             mColors = savedInstanceState.getIntArray(KEY_COLORS);
-            mSelectedColor = (Integer) savedInstanceState.getSerializable(KEY_SELECTED_COLOR);
+            mSelectedColors = savedInstanceState.getIntArray(KEY_SELECTED_COLORS);
         }
     }
 
@@ -117,28 +140,74 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
             .setView(view)
             .create();
 
+        mAlertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new  DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                mDialogListener.onSelectionCompleted(mSelectedColors);
+                dismiss();
+            }
+        });
+        mAlertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new  DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                mDialogListener.onSelectionCancelled();
+                dismiss();
+            }
+        });
+
+
         return mAlertDialog;
     }
 
     @Override
-    public void onColorSelected(int color) {
+    public void onColorSelected(int color, boolean selected) {
         if (mListener != null) {
-            mListener.onColorSelected(color);
+            mListener.onColorSelected(color, selected);
         }
 
         if (getTargetFragment() instanceof OnColorSelectedListener) {
             final OnColorSelectedListener listener =
                     (OnColorSelectedListener) getTargetFragment();
-            listener.onColorSelected(color);
+            listener.onColorSelected(color, selected);
         }
 
-        if (color != mSelectedColor) {
-            mSelectedColor = color;
-            // Redraw palette to show checkmark on newly selected color before dismissing.
-            mPalette.drawPalette(mColors, mSelectedColor);
+        if (selected)
+            addSelectedColor(color);
+        else
+            removeSelectedColor(color);
+
+        // Redraw palette to show checkmark on newly selected color before dismissing.
+        mPalette.drawPalette(mColors, mSelectedColors);
+    }
+
+    private void addSelectedColor(int color) {
+        List<Integer> selected = new ArrayList<Integer>();
+        for (int selectedColor : mSelectedColors) {
+            selected.add(selectedColor);
         }
 
-        dismiss();
+        if (selected != null && selected.contains(color))
+            return;
+
+        selected.add(color);
+
+        mSelectedColors = new int[selected.size()];
+        for (int i=0; i < selected.size(); i++) {
+            mSelectedColors[i] = (int) selected.get(i);
+        }
+    }
+
+    private void removeSelectedColor(int color) {
+        List<Integer> selected = new ArrayList<Integer>();
+        for (int selectedColor : mSelectedColors) {
+            selected.add(selectedColor);
+        }
+
+        if (selected != null && selected.contains(color))
+            selected.remove(new Integer(color));
+
+        mSelectedColors = new int[selected.size()];
+        for (int i=0; i < selected.size(); i++) {
+            mSelectedColors[i] = (int) selected.get(i);
+        }
     }
 
     public void showPaletteView() {
@@ -156,10 +225,10 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         }
     }
 
-    public void setColors(int[] colors, int selectedColor) {
-        if (mColors != colors || mSelectedColor != selectedColor) {
+    public void setColors(int[] colors, int[] selectedColors) {
+        if (mColors != colors || mSelectedColors != selectedColors) {
             mColors = colors;
-            mSelectedColor = selectedColor;
+            mSelectedColors = selectedColors;
             refreshPalette();
         }
     }
@@ -171,16 +240,16 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         }
     }
 
-    public void setSelectedColor(int color) {
-        if (mSelectedColor != color) {
-            mSelectedColor = color;
+    public void setSelectedColors(int[] colors) {
+        if (mSelectedColors != colors) {
+            mSelectedColors = colors;
             refreshPalette();
         }
     }
 
     private void refreshPalette() {
         if (mPalette != null && mColors != null) {
-            mPalette.drawPalette(mColors, mSelectedColor);
+            mPalette.drawPalette(mColors, mSelectedColors);
         }
     }
 
@@ -188,14 +257,14 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         return mColors;
     }
 
-    public int getSelectedColor() {
-        return mSelectedColor;
+    public int[] getSelectedColors() {
+        return mSelectedColors;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putIntArray(KEY_COLORS, mColors);
-        outState.putSerializable(KEY_SELECTED_COLOR, mSelectedColor);
+        outState.putSerializable(KEY_SELECTED_COLORS, mSelectedColors);
     }
 }
