@@ -45,12 +45,11 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     // loader id
     private static final int GIFT_IDEAS_LOADER = 1;
 
-    public static IdeasFragment getInstance(int position, long rawContactId, String contactName) {
+    public static IdeasFragment getInstance(long rawContactId, String contactName) {
         IdeasFragment fragment = new IdeasFragment();
 
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
-        args.putInt("page_position", position + 1);
         args.putLong("rawContactId", rawContactId);
         args.putString("contactName", contactName);
 
