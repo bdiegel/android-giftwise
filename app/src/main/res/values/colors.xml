@@ -52,20 +52,20 @@
 
 
     <string-array name="default_color_choice_values" translatable="false">
-        <item>#33b5e5</item>
-        <item>#aa66cc</item>
-        <item>#99cc00</item>
-        <item>#ffbb33</item>
-        <item>#ff4444</item>
-        <item>#0099cc</item>
-        <item>#9933cc</item>
-        <item>#669900</item>
-        <item>#ff8800</item>
-        <item>#cc0000</item>
-        <item>#ffffff</item>
-        <item>#eeeeee</item>
-        <item>#cccccc</item>
-        <item>#888888</item>
+        <item>#F44336</item>  <!-- red -->
+        <item>#FF9800</item>  <!-- orange -->
+        <item>#FFEB3B</item>  <!-- yellow -->
+        <item>#4CAF50</item>  <!-- green -->
+        <!-- second row: shown in reverse order for some reason -->
+        <item>#F5F5DC</item>  <!-- beige -->
+        <item>#E91E63</item>  <!-- pink -->
+        <item>#9C27B0</item>  <!-- purple -->
+        <item>#2196F3</item>  <!-- blue -->
+        <!-- third row -->
+        <item>#795548</item>  <!-- brown -->
+        <item>#9E9E9E</item>  <!-- grey -->
+        <item>#FFFFFF</item>  <!-- white -->
+        <item>#000000</item>  <!-- black -->
     </string-array>
 
 
