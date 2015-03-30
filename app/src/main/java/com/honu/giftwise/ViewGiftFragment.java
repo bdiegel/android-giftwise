@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftImageCache;
+import com.honu.giftwise.view.FloatingActionButton;
 
 /**
  * Fragment for viewing Gift details
@@ -100,6 +101,16 @@ public class ViewGiftFragment extends Fragment {
         // show options menu
         setHasOptionsMenu(true);
 
+        // handler for the FAB edit button
+        FloatingActionButton editButton = (FloatingActionButton) rootView.findViewById(R.id.edit_gift_fab);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //((MainActivity)getActivity()).addContact();
+                editGift();
+            }
+        });
+
         return rootView;
     }
 
@@ -134,9 +145,9 @@ public class ViewGiftFragment extends Fragment {
 //            case R.id.action_browse:
 //                openUrl();
 //                return true;
-            case R.id.action_edit:
-                editGift();
-                return true;
+//            case R.id.action_edit:
+//                editGift();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

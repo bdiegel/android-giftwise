@@ -51,4 +51,5 @@
         <item>other</item>
     </string-array>
     <string name="title_activity_view_gift">ViewGiftActivity</string>
+    <string name="action_edit">Edit</string>
 </resources>
