@@ -159,42 +159,44 @@
 
         </LinearLayout>
 
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
+    </LinearLayout>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <com.honu.giftwise.view.FloatingActionButton
+            android:id="@+id/edit_gift_fab"
+            android:layout_width="@dimen/fab_size"
+            android:layout_height="@dimen/fab_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="@dimen/fab_elevation"
+            android:background="@drawable/fab_background"
+            android:stateListAnimator="@animator/fab_anim"
+            android:layout_gravity="center_horizontal">
+
             >
 
-            <!--android:layout_marginRight="16dp"-->
-            <com.honu.giftwise.view.FloatingActionButton
-                android:id="@+id/edit_gift_fab"
-                android:layout_width="@dimen/fab_size"
-                android:layout_height="@dimen/fab_size"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/fab_background"
-                android:elevation="@dimen/fab_elevation"
-                android:stateListAnimator="@animator/fab_anim"
-                >
+            <ImageView
+                android:id="@+id/add_contact_fab_image"
+                android:layout_width="@dimen/fab_icon_size"
+                android:layout_height="@dimen/fab_icon_size"
+                android:layout_gravity="center"
+                android:duplicateParentState="true"
+                android:src="@drawable/ic_edit_white_24dp"/>
 
-                <ImageView
-                    android:id="@+id/add_contact_fab_image"
-                    android:layout_width="@dimen/fab_icon_size"
-                    android:layout_height="@dimen/fab_icon_size"
-                    android:layout_gravity="center"
-                    android:duplicateParentState="true"
-                    android:src="@drawable/ic_edit_white_24dp"/>
-
-            </com.honu.giftwise.view.FloatingActionButton>
+        </com.honu.giftwise.view.FloatingActionButton>
 
 
-        </RelativeLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
 
