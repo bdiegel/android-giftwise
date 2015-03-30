@@ -1,16 +1,20 @@
 package com.honu.giftwise;
 
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.android.colorpicker.ColorPickerDialog;
-import com.android.colorpicker.ColorPickerSwatch;
 
 
 public class ProfileFragment extends Fragment {
@@ -51,37 +55,30 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
-    private void initColorPicker(View rootView) {
+    private void initColorPicker(final View rootView) {
         final int[] noneSelected = new int[0];
-        ImageView editColorsIV = (ImageView) rootView.findViewById(R.id.ic_edit_colors_like);
-        editColorsIV.setOnClickListener(new View.OnClickListener() {
+
+        ImageView editLikedColors = (ImageView) rootView.findViewById(R.id.ic_edit_colors_like);
+        editLikedColors.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 ColorPickerDialog dialog = ColorPickerDialog.newInstance(
-                //CustomColorPickerDialog dialog = CustomColorPickerDialog.newInstance(
-                      R.string.color_picker_default_title,
+                      R.string.color_picker_liked_title,
                       getDefaultColors(),
                       noneSelected,
                       4,
                       ColorPickerDialog.SIZE_SMALL);
-                      //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
-
-                // get selected color value
-                dialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
-
-                    @Override
-                    public void onColorSelected(int color, boolean isSelected) {
-                        int selectedColor = color;
-                        Log.i(LOG_TAG, "Color: " + selectedColor + " isSelected: " + isSelected);
-                    }
-
-                });
+                //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
 
                 dialog.setDialogSelectedListener(new ColorPickerDialog.DialogSelectionListener() {
+
                     @Override
                     public void onSelectionCompleted(int[] colors) {
                         Log.i(LOG_TAG, "Selected colors: " + colors);
+                        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.colors_liked_list);
+                        layout.removeAllViews();
+                        addColorsToView(layout, colors);
                     }
 
                     @Override
@@ -91,10 +88,69 @@ public class ProfileFragment extends Fragment {
                 });
 
 
-               dialog.show(getActivity().getFragmentManager(), "color_picker");
+                dialog.show(getActivity().getFragmentManager(), "color_picker");
                 //dialog.show(getActivity().getSupportFragmentManager().beginTransaction(), "");
             }
         });
+
+        ImageView editDislikedColors = (ImageView) rootView.findViewById(R.id.ic_edit_colors_dislike);
+        editDislikedColors.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                ColorPickerDialog dialog = ColorPickerDialog.newInstance(
+                      R.string.color_picker_disliked_title,
+                      getDefaultColors(),
+                      noneSelected,
+                      4,
+                      ColorPickerDialog.SIZE_SMALL);
+                //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+
+                dialog.setDialogSelectedListener(new ColorPickerDialog.DialogSelectionListener() {
+
+                    @Override
+                    public void onSelectionCompleted(int[] colors) {
+                        Log.i(LOG_TAG, "Selected colors disliked: " + colors);
+                        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.colors_dislike_list);
+                        layout.removeAllViews();
+                        addColorsToView(layout, colors);
+                    }
+
+                    @Override
+                    public void onSelectionCancelled() {
+                        Log.i(LOG_TAG, "Selection CANCELED");
+                    }
+                });
+
+
+                dialog.show(getActivity().getFragmentManager(), "color_picker_dislike");
+                //dialog.show(getActivity().getSupportFragmentManager().beginTransaction(), "");
+            }
+        });
+
+        // TODO: remove this test data later
+        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.colors_liked_list);
+        addColorsToView(layout, new int[] { Color.BLUE, Color.RED, Color.GREEN });
+    }
+
+    private void addColorsToView(LinearLayout layout, int[] colors) {
+
+
+        int dp24 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 24, getResources().getDisplayMetrics());
+        int dp4 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4, getResources().getDisplayMetrics());
+        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(dp24, dp24);
+        parms.rightMargin = dp4;
+
+        for (int color : colors) {
+            Drawable circle = getResources().getDrawable(R.drawable.shape_circle);
+            LayerDrawable coloredCircle = new LayerDrawable(new Drawable[]{circle});
+            coloredCircle.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+
+            ImageView imageView = new ImageView(getActivity());
+            imageView.setImageDrawable(coloredCircle);
+            imageView.setLayoutParams(parms);
+            layout.addView(imageView);
+        }
     }
 
     private int[] getDefaultColors() {

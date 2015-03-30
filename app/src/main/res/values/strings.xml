@@ -27,6 +27,9 @@
     <string name="action_share">Share</string>
     <string name="action_browse">Open URL</string>
 
+    <string name="color_picker_liked_title">Select colors liked: </string>
+    <string name="color_picker_disliked_title">Select colors disliked: </string>
+
     <string-array name="special_dates">
         <item>Birthday</item>
         <item>Anniversary</item>

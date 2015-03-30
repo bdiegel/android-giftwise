@@ -141,18 +141,21 @@
                 android:src="@drawable/ic_thumb_up_grey600_24dp"
                 />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:padding="4dp"
-                android:src="@drawable/shape_circle"
-                />
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:padding="4dp"
-                android:src="@drawable/shape_circle"
-                />
+            <!-- this is a container where liked colors are dynamically added -->
+            <LinearLayout
+                android:id="@+id/colors_liked_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!--<ImageView-->
+                <!--android:layout_width="24dp"-->
+                <!--android:layout_height="24dp"-->
+                <!--android:padding="4dp"-->
+                <!--android:src="@drawable/shape_circle"-->
+                <!--/>-->
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="0dp"
@@ -168,9 +171,9 @@
                 />
 
         </LinearLayout>
-        <!-- End: Colors  -->
+        <!-- End: Colors LIKED  -->
 
-        <!-- Sizes -->
+        <!-- Colors Disliked -->
         <LinearLayout
             android:id="@+id/contact_colors_dislike"
             android:layout_width="match_parent"
@@ -185,6 +188,36 @@
                 android:layout_gravity="center"
                 android:layout_marginRight="16dp"
                 android:src="@drawable/ic_thumb_down_grey600_24dp"
+                />
+
+
+            <!-- this is a container where liked colors are dynamically added -->
+            <LinearLayout
+                android:id="@+id/colors_dislike_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!--<ImageView-->
+                <!--android:layout_width="24dp"-->
+                <!--android:layout_height="24dp"-->
+                <!--android:padding="4dp"-->
+                <!--android:src="@drawable/shape_circle"-->
+                <!--/>-->
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/ic_edit_colors_dislike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_edit_grey600_18dp"
                 />
 
         </LinearLayout>
