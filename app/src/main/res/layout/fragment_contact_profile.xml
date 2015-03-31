@@ -45,6 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
+                    android:paddingRight="8dp"
                     android:src="@drawable/ic_cake_grey600_24dp"
                     />
 
@@ -81,6 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
+                    android:paddingRight="8dp"
                     android:src="@drawable/ic_local_bar_grey600_24dp"
                     />
 
@@ -113,7 +115,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:paddingTop="8dp"
         >
 
         <TextView
@@ -142,6 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
+                android:paddingRight="8dp"
                 android:src="@drawable/ic_thumb_up_grey600_24dp"
                 />
 
@@ -162,19 +165,6 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"/>
-
-            <ImageView
-                android:id="@+id/ic_edit_colors_like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:src="@drawable/ic_edit_grey600_18dp"
-                />
-
         </LinearLayout>
         <!-- End: Colors LIKED  -->
 
@@ -194,6 +184,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
+                android:paddingRight="8dp"
                 android:src="@drawable/ic_thumb_down_grey600_24dp"
                 />
 
@@ -204,6 +195,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
+                android:layout_gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <!--<ImageView-->
@@ -214,19 +206,6 @@
                 <!--/>-->
 
             </LinearLayout>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"/>
-
-            <ImageView
-                android:id="@+id/ic_edit_colors_dislike"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:src="@drawable/ic_edit_grey600_18dp"
-                />
 
         </LinearLayout>
 
@@ -260,7 +239,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
+            android:paddingTop="8dp"
             >
 
             <TextView

@@ -59,7 +59,7 @@ public class ProfileFragment extends Fragment {
     private void initColorPicker(final View rootView) {
         final int[] noneSelected = new int[0];
 
-        ImageView editLikedColors = (ImageView) rootView.findViewById(R.id.ic_edit_colors_like);
+        ViewGroup editLikedColors = (ViewGroup) rootView.findViewById(R.id.contact_colors_like);
         editLikedColors.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -94,7 +94,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        ImageView editDislikedColors = (ImageView) rootView.findViewById(R.id.ic_edit_colors_dislike);
+        ViewGroup editDislikedColors = (ViewGroup) rootView.findViewById(R.id.contact_colors_dislike);
         editDislikedColors.setOnClickListener(new View.OnClickListener() {
 
             @Override
