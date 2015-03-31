@@ -30,7 +30,6 @@
                 style="?android:attr/listSeparatorTextViewStyle"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceLarge"
-                android:layout_marginBottom="8dp"
                 >
             </TextView>
 
@@ -42,10 +41,10 @@
 
                 <ImageView
                     android:id="@+id/ic_contact_birthday"
-                    android:layout_width="40dp"
-                    android:layout_height="fill_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginRight="16dp"
+                    android:layout_margin="8dp"
                     android:src="@drawable/ic_cake_grey600_24dp"
                     />
 
@@ -54,6 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
                     android:fontFamily="sans-serif-condensed"
                     android:text="May 17, 1968"
                     android:textAppearance="?android:textAppearanceMedium"
@@ -63,9 +63,9 @@
                     android:id="@+id/contact_birthday_label"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-
+                    android:layout_gravity="center_vertical"
                     android:text="birthday"
-                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textAppearance="?android:textAppearanceSmall"
                     />
             </LinearLayout>
 
@@ -77,10 +77,10 @@
 
                 <ImageView
                     android:id="@+id/ic_contact_anniversary"
-                    android:layout_width="40dp"
-                    android:layout_height="fill_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginRight="16dp"
+                    android:layout_margin="8dp"
                     android:src="@drawable/ic_local_bar_grey600_24dp"
                     />
 
@@ -89,6 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:layout_gravity="center_vertical"
                     android:fontFamily="sans-serif-condensed"
                     android:text="October 15, 2000"
                     android:textAppearance="?android:textAppearanceMedium"
@@ -98,8 +99,9 @@
                     android:id="@+id/contact_anniversary_label"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:text="anniversary"
-                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textAppearance="?android:textAppearanceSmall"
                     />
             </LinearLayout>
 
@@ -122,7 +124,6 @@
             style="?android:attr/listSeparatorTextViewStyle"
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"
-            android:layout_marginBottom="8dp"
             >
         </TextView>
 
@@ -130,14 +131,17 @@
             android:id="@+id/contact_colors_like"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
+            >
 
             <ImageView
                 android:id="@+id/ic_colors_like"
-                android:layout_width="40dp"
-                android:layout_height="fill_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginRight="16dp"
+                android:layout_margin="8dp"
                 android:src="@drawable/ic_thumb_up_grey600_24dp"
                 />
 
@@ -146,6 +150,7 @@
                 android:id="@+id/colors_liked_list"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <!--<ImageView-->
@@ -179,14 +184,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
             >
 
             <ImageView
                 android:id="@+id/ic_colors_dislike"
-                android:layout_width="40dp"
-                android:layout_height="fill_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginRight="16dp"
+                android:layout_margin="8dp"
                 android:src="@drawable/ic_thumb_down_grey600_24dp"
                 />
 
@@ -196,6 +203,7 @@
                 android:id="@+id/colors_dislike_list"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 android:orientation="horizontal">
 
                 <!--<ImageView-->

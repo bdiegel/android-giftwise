@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,11 +136,11 @@ public class ProfileFragment extends Fragment {
 
     private void addColorsToView(LinearLayout layout, int[] colors) {
 
-
         int dp24 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 24, getResources().getDisplayMetrics());
         int dp4 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4, getResources().getDisplayMetrics());
-        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(dp24, dp24);
-        parms.rightMargin = dp4;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dp24, dp24);
+        layoutParams.rightMargin = dp4;
+        layoutParams.gravity = Gravity.BOTTOM;
 
         for (int color : colors) {
             Drawable circle = getResources().getDrawable(R.drawable.shape_circle);
@@ -148,7 +149,7 @@ public class ProfileFragment extends Fragment {
 
             ImageView imageView = new ImageView(getActivity());
             imageView.setImageDrawable(coloredCircle);
-            imageView.setLayoutParams(parms);
+            imageView.setLayoutParams(layoutParams);
             layout.addView(imageView);
         }
     }
