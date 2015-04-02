@@ -1,5 +1,6 @@
 package com.honu.giftwise;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -12,10 +13,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.colorpicker.ColorPickerDialog;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProfileFragment extends Fragment {
@@ -52,6 +59,18 @@ public class ProfileFragment extends Fragment {
         // get args supplied when the fragment was instantiated by the CustomPagerAdapter
         Bundle args = getArguments();
         mRawContactId = args.getLong("rawContactId");
+
+        List<Size> sizes = new ArrayList<Size>();
+        sizes.add(new Size("Shirt", "Medium", "Banana Republic"));
+        sizes.add(new Size("Jeans", "6L", "Wrap London"));
+        sizes.add(new Size("Shirt", "XLarge", "Tommy Bahama; short-sleeve"));
+
+        SizeAdapter adapter = new SizeAdapter(getActivity(), sizes);
+//        mContactAdapter = new ContactAdapter(getActivity(), null, 0);
+
+        // Get a reference to the ListView, and attach this adapter to it.
+        ListView mListView = (ListView) rootView.findViewById(R.id.sizes_listview);
+        mListView.setAdapter(adapter);
 
         return rootView;
     }
@@ -240,4 +259,67 @@ public class ProfileFragment extends Fragment {
 //            // TODO: handle selection
 //        }
 //    }
+
+    public class Size{
+        private String item;
+        private String size;
+        private String notes;
+        public Size(String item, String size, String notes) {
+            this.item = item;
+            this.size = size;
+            this.notes = notes;
+        }
+
+        public String getItem() {
+            return item;
+        }
+
+        public void setItem(String item) {
+            this.item = item;
+        }
+
+        public String getSize() {
+            return size;
+        }
+
+        public void setSize(String size) {
+            this.size = size;
+        }
+
+        public String getNotes() {
+            return notes;
+        }
+
+        public void setNotes(String notes) {
+            this.notes = notes;
+        }
+    }
+
+    public class SizeAdapter extends ArrayAdapter<Size> {
+        public SizeAdapter(Context context, List<Size> sizes) {
+            super(context, 0, sizes);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get the data item for this position
+            Size size = getItem(position);
+
+            // Check if an existing view is being reused, otherwise inflate the view
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_size, parent, false);
+            }
+
+            // Lookup view for data population
+            TextView tvSize = (TextView) convertView.findViewById(R.id.list_item_with_size);
+            TextView tvNotes = (TextView) convertView.findViewById(R.id.list_item_with_size_notes);
+
+            // Populate the data into the template view using the data object
+            tvSize.setText(size.item + " - " + size.size);
+            tvNotes.setText(size.notes);
+
+            // Return the completed view to render on screen
+            return convertView;
+        }
+    }
 }

@@ -254,27 +254,36 @@
                 >
             </TextView>
 
-            <LinearLayout
-                android:id="@+id/size_item"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <ListView
+                android:layout_width="fill_parent"
+                android:layout_height="200dp"
+                android:id="@+id/sizes_listview"
+                >
 
-                <Spinner
-                    android:id="@+id/item_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    >
-                </Spinner>
-                <Spinner
-                    android:id="@+id/size_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    >
-                </Spinner>
-            </LinearLayout>
+
+            </ListView>
+
+            <!--<LinearLayout-->
+                <!--android:id="@+id/size_item"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal">-->
+
+                <!--<Spinner-->
+                    <!--android:id="@+id/item_spinner"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!-->-->
+                <!--</Spinner>-->
+                <!--<Spinner-->
+                    <!--android:id="@+id/size_spinner"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1"-->
+                    <!-->-->
+                <!--</Spinner>-->
+            <!--</LinearLayout>-->
         </LinearLayout>
 
 
