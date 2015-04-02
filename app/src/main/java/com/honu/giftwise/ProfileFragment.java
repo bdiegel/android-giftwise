@@ -16,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.colorpicker.ColorPickerDialog;
@@ -71,6 +73,11 @@ public class ProfileFragment extends Fragment {
         // Get a reference to the ListView, and attach this adapter to it.
         ListView mListView = (ListView) rootView.findViewById(R.id.sizes_listview);
         mListView.setAdapter(adapter);
+
+        setListViewHeightBasedOnChildren(mListView);
+
+        ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.scrollView);
+        scrollView.smoothScrollTo(0, 0);
 
         return rootView;
     }
@@ -321,5 +328,25 @@ public class ProfileFragment extends Fragment {
             // Return the completed view to render on screen
             return convertView;
         }
+    }
+
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        //listView.requestLayout();
     }
 }

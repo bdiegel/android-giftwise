@@ -8,27 +8,27 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:gravity="center_vertical"
-        android:layout_gravity="left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Special Dates -->
+        <!-- Begin: Events -->
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/profile_dates"
+                style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="EVENTS"
-                style="?android:attr/listSeparatorTextViewStyle"
                 android:fontFamily="sans-serif-condensed"
+                android:text="EVENTS"
                 android:textAppearance="?android:textAppearanceLarge"
                 >
             </TextView>
@@ -53,8 +53,8 @@
                     android:id="@+id/contact_birthday_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="2"
                     android:fontFamily="sans-serif-condensed"
                     android:text="May 17, 1968"
                     android:textAppearance="?android:textAppearanceMedium"
@@ -90,8 +90,8 @@
                     android:id="@+id/contact_anniversary_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="2"
                     android:fontFamily="sans-serif-condensed"
                     android:text="October 15, 2000"
                     android:textAppearance="?android:textAppearanceMedium"
@@ -107,185 +107,125 @@
                     />
             </LinearLayout>
 
-        </LinearLayout> <!-- end special dates -->
-
-    <!-- Colors  -->
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        >
-
-        <TextView
-            android:id="@+id/profile_colors"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="COLORS"
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:fontFamily="sans-serif-condensed"
-            android:textAppearance="?android:textAppearanceLarge"
-            >
-        </TextView>
-
-        <LinearLayout
-            android:id="@+id/contact_colors_like"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
-            >
-
-            <ImageView
-                android:id="@+id/ic_colors_like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                android:paddingRight="8dp"
-                android:src="@drawable/ic_thumb_up_grey600_24dp"
-                />
-
-            <!-- this is a container where liked colors are dynamically added -->
-            <LinearLayout
-                android:id="@+id/colors_liked_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <!--<ImageView-->
-                <!--android:layout_width="24dp"-->
-                <!--android:layout_height="24dp"-->
-                <!--android:padding="4dp"-->
-                <!--android:src="@drawable/shape_circle"-->
-                <!--/>-->
-
-            </LinearLayout>
-
         </LinearLayout>
-        <!-- End: Colors LIKED  -->
+        <!-- End: Events -->
 
-        <!-- Colors Disliked -->
+        <!-- Colors  -->
         <LinearLayout
-            android:id="@+id/contact_colors_dislike"
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
             >
 
-            <ImageView
-                android:id="@+id/ic_colors_dislike"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/profile_colors"
+                style="?android:attr/listSeparatorTextViewStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                android:paddingRight="8dp"
-                android:src="@drawable/ic_thumb_down_grey600_24dp"
-                />
+                android:fontFamily="sans-serif-condensed"
+                android:text="COLORS"
+                android:textAppearance="?android:textAppearanceLarge"
+                >
+            </TextView>
 
-
-            <!-- this is a container where liked colors are dynamically added -->
             <LinearLayout
-                android:id="@+id/colors_dislike_list"
-                android:layout_width="wrap_content"
+                android:id="@+id/contact_colors_like"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
-                android:layout_gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                >
 
-                <!--<ImageView-->
-                <!--android:layout_width="24dp"-->
-                <!--android:layout_height="24dp"-->
-                <!--android:padding="4dp"-->
-                <!--android:src="@drawable/shape_circle"-->
-                <!--/>-->
+                <ImageView
+                    android:id="@+id/ic_colors_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:paddingRight="8dp"
+                    android:src="@drawable/ic_thumb_up_grey600_24dp"
+                    />
+
+                <!-- this is a container where ImageViews for liked colors are dynamically added -->
+                <LinearLayout
+                    android:id="@+id/colors_liked_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+                </LinearLayout>
 
             </LinearLayout>
+            <!-- End: Colors LIKED  -->
+
+            <!-- Begin: Colors DISLIKED -->
+            <LinearLayout
+                android:id="@+id/contact_colors_dislike"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/ic_colors_dislike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:paddingRight="8dp"
+                    android:src="@drawable/ic_thumb_down_grey600_24dp"
+                    />
+
+                <!-- this is a container where ImageViews for disliked colors are dynamically added -->
+                <LinearLayout
+                    android:id="@+id/colors_dislike_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+                </LinearLayout>
+
+            </LinearLayout>
+            <!-- End: Colors DISLIKED -->
 
         </LinearLayout>
-
-    </LinearLayout>
-
-
-        <!--<TextView-->
-            <!--android:id="@+id/profile_likes"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="COLORS"-->
-            <!--style="?android:attr/listSeparatorTextViewStyle"-->
-            <!--android:fontFamily="sans-serif-condensed"-->
-            <!--android:textAppearance="?android:textAppearanceLarge"-->
-            <!-->-->
-        <!--</TextView>-->
-
-        <!--<TextView-->
-            <!--android:id="@+id/profile_dislikes"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="DISLIKES"-->
-            <!--style="?android:attr/listSeparatorTextViewStyle"-->
-            <!--android:fontFamily="sans-serif-condensed"-->
-            <!--android:textAppearance="?android:textAppearanceLarge"-->
-            <!-->-->
-        <!--</TextView>-->
+        <!-- End: Colors -->
 
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingTop="8dp"
             >
 
             <TextView
                 android:id="@+id/profile_sizes"
+                style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SIZES"
-                style="?android:attr/listSeparatorTextViewStyle"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
                 android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-condensed"
+                android:text="SIZES"
+                android:textAppearance="?android:textAppearanceLarge"
                 >
             </TextView>
 
             <ListView
-                android:layout_width="fill_parent"
-                android:layout_height="200dp"
                 android:id="@+id/sizes_listview"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 >
-
-
             </ListView>
 
-            <!--<LinearLayout-->
-                <!--android:id="@+id/size_item"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal">-->
-
-                <!--<Spinner-->
-                    <!--android:id="@+id/item_spinner"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_weight="1"-->
-                    <!-->-->
-                <!--</Spinner>-->
-                <!--<Spinner-->
-                    <!--android:id="@+id/size_spinner"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:layout_weight="1"-->
-                    <!-->-->
-                <!--</Spinner>-->
-            <!--</LinearLayout>-->
         </LinearLayout>
 
-
     </LinearLayout>
+
 </ScrollView>
