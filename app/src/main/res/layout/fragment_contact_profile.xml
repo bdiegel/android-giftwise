@@ -217,12 +217,21 @@
                 >
             </TextView>
 
-            <ListView
-                android:id="@+id/sizes_listview"
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:id="@+id/sizes_list"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                >
-            </ListView>
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:orientation="vertical">
+            </LinearLayout>
+
+            <!--<ListView-->
+                <!--android:id="@+id/sizes_listview"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!-->-->
+            <!--</ListView>-->
 
         </LinearLayout>
 

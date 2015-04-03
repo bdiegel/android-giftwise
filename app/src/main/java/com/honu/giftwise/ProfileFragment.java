@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.colorpicker.ColorPickerDialog;
@@ -68,16 +67,8 @@ public class ProfileFragment extends Fragment {
         sizes.add(new Size("Shirt", "XLarge", "Tommy Bahama; short-sleeve"));
 
         SizeAdapter adapter = new SizeAdapter(getActivity(), sizes);
-//        mContactAdapter = new ContactAdapter(getActivity(), null, 0);
-
-        // Get a reference to the ListView, and attach this adapter to it.
-        ListView mListView = (ListView) rootView.findViewById(R.id.sizes_listview);
-        mListView.setAdapter(adapter);
-
-        setListViewHeightBasedOnChildren(mListView);
-
-        ScrollView scrollView = (ScrollView) rootView.findViewById(R.id.scrollView);
-        scrollView.smoothScrollTo(0, 0);
+        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.sizes_list);
+        addSizesToView(linearLayout, adapter);
 
         return rootView;
     }
@@ -158,6 +149,16 @@ public class ProfileFragment extends Fragment {
         // TODO: remove this test data later
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.colors_liked_list);
         addColorsToView(layout, new int[] { Color.BLUE, Color.RED, Color.GREEN });
+    }
+
+    private void addSizesToView(LinearLayout layout, SizeAdapter adapter) {
+
+        final int adapterCount = adapter.getCount();
+
+        for (int i = 0; i < adapterCount; i++) {
+            View item = adapter.getView(i, null, null);
+            layout.addView(item);
+        }
     }
 
     private void addColorsToView(LinearLayout layout, int[] colors) {
