@@ -17,6 +17,8 @@ public class GiftwiseContract {
     // URI paths:
     public static final String PATH_CONTACT = "contact";
     public static final String PATH_GIFT = "gift";
+    public static final String PATH_COLOR = "color";
+    public static final String PATH_SIZE = "size";
 
     //public static final Uri GIFT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GIFT).build();
 
@@ -65,5 +67,68 @@ public class GiftwiseContract {
 //        public static long getIdFromUriWithContactId(Uri uri) {
 //            return  Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
 //        }
+    }
+
+    // Color Table Entry:
+    public static final class ColorEntry implements BaseColumns {
+
+        // Uris
+        public static final Uri COLOR_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_COLOR).build();
+        public static final Uri COLOR_BYCONTACT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_COLOR).appendPath(PATH_CONTACT).build();
+
+        // Content types
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_COLOR;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_COLOR;
+
+        // Table name
+        public static final String TABLE_NAME = "color";
+
+        // Column names:
+        public static final String COLUMN_COLOR_NAME = "color";
+        public static final String COLUMN_COLOR_RAWCONTACT_ID = "rawcontact_id";
+
+        public static Uri buildColorUri(long id) {
+            return ContentUris.withAppendedId(COLOR_URI, id);
+        }
+
+        public static Uri buildColorsForRawContactUri(long rawContactId) {
+            return ContentUris.withAppendedId(COLOR_BYCONTACT_URI, rawContactId);
+        }
+
+        public static long getIdFromUri(Uri uri) {
+            return  Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
+        }
+    }
+
+    // Size Table Entry:
+    public static final class SizeEntry implements BaseColumns {
+        // Uris
+        public static final Uri SIZE_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SIZE).build();
+        public static final Uri SIZE_BYCONTACT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SIZE).appendPath(PATH_CONTACT).build();
+
+        // Content types
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SIZE;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SIZE;
+
+        // Table name
+        public static final String TABLE_NAME = "size";
+
+        // Column names:
+        public static final String COLUMN_SIZE_RAWCONTACT_ID = "rawcontact_id";
+        public static final String COLUMN_SIZE_ITEM_NAME = "item";
+        public static final String COLUMN_SIZE_NAME = "size";
+        public static final String COLUMN_SIZE_NOTES = "notes";
+
+        public static Uri buildSizeUri(long id) {
+            return ContentUris.withAppendedId(SIZE_URI, id);
+        }
+
+        public static Uri buildSizesForRawContactUri(long rawContactId) {
+            return ContentUris.withAppendedId(SIZE_BYCONTACT_URI, rawContactId);
+        }
+
+        public static long getIdFromUri(Uri uri) {
+            return  Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
+        }
     }
 }

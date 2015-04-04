@@ -4,7 +4,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.honu.giftwise.data.GiftwiseContract.ColorEntry;
 import com.honu.giftwise.data.GiftwiseContract.GiftEntry;
+import com.honu.giftwise.data.GiftwiseContract.SizeEntry;
 
 /**
  * Created by bdiegel on 3/7/15.
@@ -35,6 +37,24 @@ public class DbHelper extends SQLiteOpenHelper {
               ");";
 
         db.execSQL(SQL_CREATE_GIFT_TABLE);
+
+        final String SQL_CREATE_COLOR_TABLE = "CREATE TABLE " + ColorEntry.TABLE_NAME + " (" +
+              ColorEntry._ID + " INTEGER PRIMARY KEY, " +
+              ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " INTEGER NOT NULL, " +
+              ColorEntry.COLUMN_COLOR_NAME + " TEXT NOT NULL " +
+              ");";
+
+        db.execSQL(SQL_CREATE_COLOR_TABLE);
+
+        final String SQL_CREATE_SIZE_TABLE = "CREATE TABLE " + SizeEntry.TABLE_NAME + " (" +
+              SizeEntry._ID + " INTEGER PRIMARY KEY, " +
+              SizeEntry.COLUMN_SIZE_RAWCONTACT_ID + " INTEGER NOT NULL, " +
+              SizeEntry.COLUMN_SIZE_ITEM_NAME + " TEXT NOT NULL, " +
+              SizeEntry.COLUMN_SIZE_NAME + " TEXT NOT NULL, " +
+              SizeEntry.COLUMN_SIZE_NOTES + " TEXT " +
+              ");";
+
+        db.execSQL(SQL_CREATE_SIZE_TABLE);
     }
 
     @Override
