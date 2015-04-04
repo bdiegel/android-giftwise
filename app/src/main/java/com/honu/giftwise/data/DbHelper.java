@@ -41,7 +41,8 @@ public class DbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_COLOR_TABLE = "CREATE TABLE " + ColorEntry.TABLE_NAME + " (" +
               ColorEntry._ID + " INTEGER PRIMARY KEY, " +
               ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " INTEGER NOT NULL, " +
-              ColorEntry.COLUMN_COLOR_NAME + " TEXT NOT NULL " +
+              ColorEntry.COLUMN_COLOR_NAME + " TEXT NOT NULL, " +
+              ColorEntry.COLUMN_COLOR_LIKED + " INTEGER DEFAULT 1 " +
               ");";
 
         db.execSQL(SQL_CREATE_COLOR_TABLE);

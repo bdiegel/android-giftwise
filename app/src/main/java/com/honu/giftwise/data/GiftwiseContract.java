@@ -86,6 +86,7 @@ public class GiftwiseContract {
         // Column names:
         public static final String COLUMN_COLOR_NAME = "color";
         public static final String COLUMN_COLOR_RAWCONTACT_ID = "rawcontact_id";
+        public static final String COLUMN_COLOR_LIKED = "liked";
 
         public static Uri buildColorUri(long id) {
             return ContentUris.withAppendedId(COLOR_URI, id);
