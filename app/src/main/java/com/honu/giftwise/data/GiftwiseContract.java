@@ -84,7 +84,7 @@ public class GiftwiseContract {
         public static final String TABLE_NAME = "color";
 
         // Column names:
-        public static final String COLUMN_COLOR_NAME = "color";
+        public static final String COLUMN_COLOR_VALUE = "color";
         public static final String COLUMN_COLOR_RAWCONTACT_ID = "rawcontact_id";
         public static final String COLUMN_COLOR_LIKED = "liked";
 

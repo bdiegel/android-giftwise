@@ -3,6 +3,7 @@ package com.honu.giftwise.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.honu.giftwise.data.GiftwiseContract.ColorEntry;
 import com.honu.giftwise.data.GiftwiseContract.GiftEntry;
@@ -13,7 +14,9 @@ import com.honu.giftwise.data.GiftwiseContract.SizeEntry;
  */
 public class DbHelper extends SQLiteOpenHelper {
 
-    // If you change the database schema, you must increment the database version.
+    private static final String LOG_TAG = DbHelper.class.getSimpleName();
+
+    // Increment the database version if you change the schema
     private static final int DATABASE_VERSION = 1;
 
     public static final String DATABASE_NAME = "giftwise.db";
@@ -41,7 +44,7 @@ public class DbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_COLOR_TABLE = "CREATE TABLE " + ColorEntry.TABLE_NAME + " (" +
               ColorEntry._ID + " INTEGER PRIMARY KEY, " +
               ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " INTEGER NOT NULL, " +
-              ColorEntry.COLUMN_COLOR_NAME + " TEXT NOT NULL, " +
+              ColorEntry.COLUMN_COLOR_VALUE + " INTEGER NOT NULL, " +
               ColorEntry.COLUMN_COLOR_LIKED + " INTEGER DEFAULT 1 " +
               ");";
 
@@ -61,7 +64,10 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO: handle upgrades as appropriate (this is destructive)
+        Log.i(LOG_TAG, "Performing database upgrade from version: " + oldVersion + " to: " + newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + GiftEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ColorEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SizeEntry.TABLE_NAME);
         onCreate(db);
     }
 }
