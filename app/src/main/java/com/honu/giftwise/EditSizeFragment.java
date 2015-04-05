@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.data.Size;
@@ -134,9 +136,24 @@ public class EditSizeFragment extends Fragment {
 
         ContentValues values = new ContentValues();
 
+        String itemName = itemEdit.getText().toString();
+        String sizeName = sizeEdit.getText().toString();
+
+        if (TextUtils.isEmpty(itemName)) {
+            Toast.makeText(getActivity(), "Item name is required", Toast.LENGTH_LONG).show();
+            itemEdit.requestFocus();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(sizeName)) {
+            Toast.makeText(getActivity(), "Size is required", Toast.LENGTH_LONG).show();
+            sizeEdit.requestFocus();
+            return false;
+        }
+
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID, size.getRawContactId());
-        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME, itemEdit.getText().toString());
-        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME, sizeEdit.getText().toString());
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME, itemName);
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME, sizeName);
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES, notesEdit.getText().toString());
 
         if (size.getSizeId() == -1) {
