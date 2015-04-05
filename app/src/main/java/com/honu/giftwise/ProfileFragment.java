@@ -33,11 +33,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private static final String LOG_TAG = ProfileFragment.class.getSimpleName();
 
-    // Data loaders for colors and sizes:
+    // data loaders for colors and sizes:
     private static final int PROFILE_COLORS_LIKED_LOADER = 20;
     private static final int PROFILE_COLORS_DISLIKED_LOADER = 21;
     private static final int PROFILE_SIZES_LOADER = 22;
 
+    // adapters for color items
     private ColorAdapter mLikedColorsAdapter;
     private ColorAdapter mDislikedColorsAdapter;
 
@@ -60,7 +61,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout resource that'll be returned
+        // inflate the layout
         View rootView = inflater.inflate(R.layout.fragment_contact_profile, container, false);
 
         // create color picker
@@ -70,22 +71,15 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         Bundle args = getArguments();
         mRawContactId = args.getLong("rawContactId");
 
-        // Adapter for liked colors
-        String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ?";
-        //String[] selectionArgs = new String[] { "1" };
+        // create adapters for liked and disliked colors
         Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+        String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ?";
         Cursor likedColorsCursor = getActivity().getContentResolver().query(colorsUri, null, selection, new String[] { "1" }, null);
         mLikedColorsAdapter = new ColorAdapter(getActivity(), likedColorsCursor, 0);
-        //LinearLayout likedColorsLayout = (LinearLayout) rootView.findViewById(R.id.colors_liked_list);
-        //addColorsFromAdapter(likedColorsLayout, mLikedColorsAdapter);
-
-        // Adapter for disliked colors
-        //String selection1 = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ?";
-        //String[] selectionArgs1 = new String[] { "0" };
-        //Uri dislokedColorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
         Cursor dislikedColorsCursor = getActivity().getContentResolver().query(colorsUri, null, selection, new String[] { "0" }, null);
         mDislikedColorsAdapter = new ColorAdapter(getActivity(), dislikedColorsCursor, 0);
 
+        // TODO: remove fake data for sizes
         List<Size> sizes = new ArrayList<Size>();
         sizes.add(new Size("Shirt", "Medium", "Banana Republic"));
         sizes.add(new Size("Jeans", "6L", "Wrap London"));
@@ -128,7 +122,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                     @Override
                     public void onSelectionCompleted(int[] selectedColors) {
                         Log.i(LOG_TAG, "Selected colors: " + selectedColors);
-                        updateColors(getColors(mLikedColorsAdapter), selectedColors, 1);
+                        updateContentProvider(getColors(mLikedColorsAdapter), selectedColors, 1);
                     }
 
                     @Override
@@ -136,7 +130,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                         Log.i(LOG_TAG, "Selection CANCELED");
                     }
                 });
-
 
                 dialog.show(getActivity().getFragmentManager(), "color_picker");
                 //dialog.show(getActivity().getSupportFragmentManager().beginTransaction(), "");
@@ -162,7 +155,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                     @Override
                     public void onSelectionCompleted(int[] selectedColors) {
                         Log.i(LOG_TAG, "Selected colors disliked: " + selectedColors);
-                        updateColors(getColors(mDislikedColorsAdapter), selectedColors, 0);
+                        updateContentProvider(getColors(mDislikedColorsAdapter), selectedColors, 0);
                     }
 
                     @Override
@@ -212,7 +205,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
 
-    private void updateColors(int[] oldColors, int[] newColors, int liked){
+    private void updateContentProvider(int[] oldColors, int[] newColors, int liked){
 
         // do some set algebra to determine new and deleted colors
         Set<Integer> oldSet = new HashSet<Integer> (Ints.asList(oldColors));
@@ -225,7 +218,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         int[] deletedColors = Ints.toArray(deleted);
         int[] addedColors = Ints.toArray(added);
 
-        // delete colors from database for contact
+        // remove DELETE colors from database for contact
         if (deletedColors.length > 0 ) {
 
             // create where clause for delete
@@ -256,7 +249,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 allValues[i] = values;
             }
 
-            // insert NEW colors to database
+            // execute database insert
             if (allValues.length > 0) {
                 getActivity().getContentResolver().bulkInsert(GiftwiseContract.ColorEntry.COLOR_URI, allValues);
             }
@@ -274,7 +267,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void addColorsFromAdapter(LinearLayout layout, ColorAdapter adapter) {
-        Log.i(LOG_TAG, "updating layout id: " + layout.getId());
         layout.removeAllViews();
 
         final int adapterCount = adapter.getCount();
@@ -282,7 +274,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             View item = adapter.getView(i, null, null);
             layout.addView(item);
         }
-
     }
 
     private int[] getDefaultColors() {
@@ -303,7 +294,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.i(LOG_TAG, "onCreateLoader");
+        Log.d(LOG_TAG, "onCreateLoader");
 
         switch (id) {
             case PROFILE_COLORS_LIKED_LOADER: {
@@ -329,19 +320,16 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.i(LOG_TAG, "onLoadFinished: " + loader.getId());
-
+        Log.d(LOG_TAG, "onLoadFinished: " + loader.getId());
 
         switch (loader.getId()) {
             case PROFILE_COLORS_DISLIKED_LOADER:
                 mDislikedColorsAdapter.swapCursor(data);
-                Log.i(LOG_TAG, "addColors for disliked");
                 LinearLayout editDislikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_dislike_list);
                 addColorsFromAdapter(editDislikedColors, mDislikedColorsAdapter);
                 break;
             case PROFILE_COLORS_LIKED_LOADER:
                 mLikedColorsAdapter.swapCursor(data);
-                Log.i(LOG_TAG, "addColors for liked");
                 LinearLayout editLikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_liked_list);
                 addColorsFromAdapter(editLikedColors, mLikedColorsAdapter);
                 break;
@@ -432,6 +420,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         private String item;
         private String size;
         private String notes;
+
         public Size(String item, String size, String notes) {
             this.item = item;
             this.size = size;
