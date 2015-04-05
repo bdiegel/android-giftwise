@@ -1,7 +1,7 @@
 package com.honu.giftwise;
 
 import android.content.ContentValues;
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -14,18 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.android.colorpicker.ColorPickerDialog;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 import com.honu.giftwise.data.GiftwiseContract;
+import com.honu.giftwise.data.Size;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -38,9 +36,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int PROFILE_COLORS_DISLIKED_LOADER = 21;
     private static final int PROFILE_SIZES_LOADER = 22;
 
-    // adapters for color items
+    // adapters for color items amd sizes:
     private ColorAdapter mLikedColorsAdapter;
     private ColorAdapter mDislikedColorsAdapter;
+    private SizeAdapter mSizeAdapter;
 
     // id of RawContact
     private long mRawContactId;
@@ -79,15 +78,27 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         Cursor dislikedColorsCursor = getActivity().getContentResolver().query(colorsUri, null, selection, new String[] { "0" }, null);
         mDislikedColorsAdapter = new ColorAdapter(getActivity(), dislikedColorsCursor, 0);
 
-        // TODO: remove fake data for sizes
-        List<Size> sizes = new ArrayList<Size>();
-        sizes.add(new Size("Shirt", "Medium", "Banana Republic"));
-        sizes.add(new Size("Jeans", "6L", "Wrap London"));
-        sizes.add(new Size("Shirt", "XLarge", "Tommy Bahama; short-sleeve"));
+        // create adapter for sizes
+        Uri sizesUri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(mRawContactId);
+        Cursor sizesCursor = getActivity().getContentResolver().query(sizesUri, null, null, null, null);
+        mSizeAdapter = new SizeAdapter(getActivity(), sizesCursor, 0);
 
-        SizeAdapter adapter = new SizeAdapter(getActivity(), sizes);
-        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.sizes_list);
-        addSizesToView(linearLayout, adapter);
+//        // TODO: remove fake data for sizes
+//        List<Size> sizes = new ArrayList<Size>();
+//        sizes.add(new Size("Shirt", "Medium", "Banana Republic"));
+//        sizes.add(new Size("Jeans", "6L", "Wrap London"));
+//        sizes.add(new Size("Shirt", "XLarge", "Tommy Bahama; short-sleeve"));
+//
+//        SizeAdapter adapter = new SizeAdapter(getActivity(), sizes);
+//        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.sizes_list);
+//        addSizesToView(linearLayout, adapter);
+        Button addSizeButton = (Button) rootView.findViewById(R.id.size_button);
+        addSizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addSize();
+            }
+        });
 
         return rootView;
     }
@@ -98,6 +109,37 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().initLoader(PROFILE_COLORS_DISLIKED_LOADER, null, this);
         getLoaderManager().initLoader(PROFILE_SIZES_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    private void addSize() {
+        Log.i(LOG_TAG, "Add size for: " + mRawContactId);
+
+        // start activity to add/edit size details
+        Intent intent = new Intent(getActivity(), EditSizeActivity.class);
+        Size size = new Size(mRawContactId);
+        intent.putExtra("size", size);
+
+        startActivityForResult(intent, 1);
+    }
+
+    private void editSize() {
+        Log.i(LOG_TAG, "Open size item: ");
+
+//                // Get cursor from the adapter
+//                Cursor cursor = mSizeAdapter.getCursor();
+//
+//                String position = v.getTag(1).toString();
+//                int index = Integer.parseInt(position);
+//
+//                // Extract data from the selected item
+//                cursor.moveToPosition(index);
+//                int sizeId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.SizeEntry._ID));
+
+        // start activity to add/edit gift idea
+        Intent intent = new Intent(getActivity(), EditGiftActivity.class);
+        //intent.putExtra("gift", gift);
+
+        startActivityForResult(intent, 1);
     }
 
     private void initColorPicker(final View rootView) {
@@ -257,9 +299,9 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void addSizesToView(LinearLayout layout, SizeAdapter adapter) {
-
+        layout.removeAllViews();
+        
         final int adapterCount = adapter.getCount();
-
         for (int i = 0; i < adapterCount; i++) {
             View item = adapter.getView(i, null, null);
             layout.addView(item);
@@ -334,6 +376,9 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 addColorsFromAdapter(editLikedColors, mLikedColorsAdapter);
                 break;
             case PROFILE_SIZES_LOADER:
+                mSizeAdapter.swapCursor(data);
+                LinearLayout sizeLayout = (LinearLayout) getActivity().findViewById(R.id.sizes_list);
+                addSizesToView(sizeLayout, mSizeAdapter);
                 break;
             default:
                 return;
@@ -384,99 +429,4 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 //            spinner.setAdapter(adapter);
 //        }
 
-//    public void showDatePickerDialog(View v) {
-//        DialogFragment newFragment = new DatePickerFragment();
-//        newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
-//    }
-//
-//    public static class DatePickerFragment extends DialogFragment
-//          implements DatePickerDialog.OnDateSetListener {
-//
-//        @Override
-//        public Dialog onCreateDialog(Bundle savedInstanceState) {
-////            // Use the current time as the default values for the picker
-//            final Calendar c = Calendar.getInstance();
-////            int hour = c.get(Calendar.HOUR_OF_DAY);
-////            int minute = c.get(Calendar.MINUTE);
-//            c.get(Calendar.YEAR);
-//
-//            // Create a new instance of TimePickerDialog and return it
-////            return new DatePickerDialog(getActivity(), this, hour, minute,
-////                  DateFormat.is24HourFormat(getActivity()));
-//            return new DatePickerDialog(getActivity(), this, c.get(Calendar.YEAR),c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) );
-//        }
-//
-//        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-//            // Do something with the time chosen by the user
-//        }
-//
-//        @Override
-//        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//            // TODO: handle selection
-//        }
-//    }
-
-    public class Size{
-        private String item;
-        private String size;
-        private String notes;
-
-        public Size(String item, String size, String notes) {
-            this.item = item;
-            this.size = size;
-            this.notes = notes;
-        }
-
-        public String getItem() {
-            return item;
-        }
-
-        public void setItem(String item) {
-            this.item = item;
-        }
-
-        public String getSize() {
-            return size;
-        }
-
-        public void setSize(String size) {
-            this.size = size;
-        }
-
-        public String getNotes() {
-            return notes;
-        }
-
-        public void setNotes(String notes) {
-            this.notes = notes;
-        }
-    }
-
-    public class SizeAdapter extends ArrayAdapter<Size> {
-        public SizeAdapter(Context context, List<Size> sizes) {
-            super(context, 0, sizes);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // Get the data item for this position
-            Size size = getItem(position);
-
-            // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_size, parent, false);
-            }
-
-            // Lookup view for data population
-            TextView tvSize = (TextView) convertView.findViewById(R.id.list_item_with_size);
-            TextView tvNotes = (TextView) convertView.findViewById(R.id.list_item_with_size_notes);
-
-            // Populate the data into the template view using the data object
-            tvSize.setText(size.item + " - " + size.size);
-            tvNotes.setText(size.notes);
-
-            // Return the completed view to render on screen
-            return convertView;
-        }
-    }
 }

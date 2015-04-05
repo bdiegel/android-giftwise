@@ -81,6 +81,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.honu.giftwise.ContactActivity" />
         </activity>
+
+        <activity
+            android:name=".EditSizeActivity"
+            android:label="@string/title_activity_edit_size"
+            android:parentActivityName=".ContactActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.honu.giftwise.ContactActivity" />
+        </activity>
     </application>
 
 </manifest>

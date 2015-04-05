@@ -36,20 +36,22 @@
     </string-array>
 
     <string-array name="size_choices">
-        <item>xsmall</item>
-        <item>small</item>
-        <item>medium</item>
-        <item>large</item>
-        <item>xlarge</item>
-        <item>other</item>
+        <item>XSmall</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+        <item>XLarge</item>
     </string-array>
 
     <string-array name="clothing_choices">
-        <item>shirt</item>
-        <item>pant</item>
-        <item>dress</item>
-        <item>other</item>
+        <item>Shirt</item>
+        <item>Pant</item>
+        <item>Dress</item>
+        <item>Jeans</item>
+        <item>Shoes</item>
     </string-array>
+
     <string name="title_activity_view_gift">ViewGiftActivity</string>
     <string name="action_edit">Edit</string>
+    <string name="title_activity_edit_size">EditSizeActivity</string>
 </resources>
