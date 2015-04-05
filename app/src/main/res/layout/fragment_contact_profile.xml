@@ -210,7 +210,6 @@
                 style="?android:attr/listSeparatorTextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:fontFamily="sans-serif-condensed"
                 android:text="SIZES"
                 android:textAppearance="?android:textAppearanceLarge"
