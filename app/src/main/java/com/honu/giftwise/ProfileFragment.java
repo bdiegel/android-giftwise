@@ -300,7 +300,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void addSizesToView(LinearLayout layout, SizeAdapter adapter) {
         layout.removeAllViews();
-        
+
         final int adapterCount = adapter.getCount();
         for (int i = 0; i < adapterCount; i++) {
             View item = adapter.getView(i, null, null);
