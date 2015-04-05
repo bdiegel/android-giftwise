@@ -1,20 +1,26 @@
 package com.honu.giftwise;
 
+import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.data.Size;
 
 
 public class EditSizeFragment extends Fragment {
+
+    private static final String LOG_TAG = EditSizeFragment.class.getSimpleName();
 
     private Size size;
 
@@ -56,6 +62,9 @@ public class EditSizeFragment extends Fragment {
             notesEdit.setText(savedInstanceState.getString("size_notes"));
         }
 
+        // show options menu
+        setHasOptionsMenu(true);
+
         return rootView;
     }
 
@@ -75,21 +84,29 @@ public class EditSizeFragment extends Fragment {
         outState.putString("size_notes", notesEdit.getText().toString());
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            Log.i(LOG_TAG, "navigation icon clicked");
+
+            if (createOrSaveSize()) {
+                Intent intent = NavUtils.getParentActivityIntent(getActivity());
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                NavUtils.navigateUpTo(getActivity(), intent);
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void initItemView(View rootView) {
 
         mItemView = (AutoCompleteTextView) rootView.findViewById(R.id.item_spinner);
-        mItemView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-             //   mItemView.setText(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
               R.array.clothing_choices,
@@ -101,23 +118,36 @@ public class EditSizeFragment extends Fragment {
     private void initSizeView(View rootView) {
 
         mSizeView = (AutoCompleteTextView) rootView.findViewById(R.id.size_spinner);
-        mSizeView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //mSizeView.setText(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
               R.array.size_choices,
               android.R.layout.simple_dropdown_item_1line);
 
         mSizeView.setAdapter(adapter);
+    }
+
+    private boolean createOrSaveSize() {
+
+        EditText itemEdit = (EditText) getActivity().findViewById(R.id.item_spinner);
+        EditText sizeEdit = (EditText) getActivity().findViewById(R.id.size_spinner);
+        EditText notesEdit = (EditText) getActivity().findViewById(R.id.size_notes);
+
+        ContentValues values = new ContentValues();
+
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID, size.getRawContactId());
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME, itemEdit.getText().toString());
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME, sizeEdit.getText().toString());
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES, notesEdit.getText().toString());
+
+        if (size.getSizeId() == -1) {
+            // insert new entry into table
+            getActivity().getContentResolver().insert(GiftwiseContract.SizeEntry.SIZE_URI, values);
+        } else {
+            String selection = GiftwiseContract.GiftEntry._ID + " = ?";
+            String[] selectionArgs = new String[]{size.getSizeId() + ""};
+            getActivity().getContentResolver().update(GiftwiseContract.SizeEntry.SIZE_URI, values, selection, selectionArgs);
+        }
+
+        return true;
     }
 }
