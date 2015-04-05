@@ -6,6 +6,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * Created by bdiegel on 3/7/15.
@@ -69,15 +71,15 @@ public class GiftContentProvider extends ContentProvider {
                 break;
             }
             case COLOR_WITH_ID: {
-                retCursor = getColorById(uri,  projection, sortOrder);
+                retCursor = getColorById(uri, projection, sortOrder);
                 break;
             }
             case COLORS_BY_CONTACT: {
-                retCursor = getColorsForRawContactId(uri, projection, sortOrder);
+                retCursor = getColorsForRawContactId(uri, projection, selection, selectionArgs, sortOrder);
                 break;
             }
             case SIZE_WITH_ID: {
-                retCursor = getSizeById(uri,  projection, sortOrder);
+                retCursor = getSizeById(uri, projection, sortOrder);
                 break;
             }
             case SIZES_BY_CONTACT: {
@@ -110,6 +112,7 @@ public class GiftContentProvider extends ContentProvider {
                 break;
             }
             case COLOR: {
+                Log.i("DbHelper", "Insert value: " + values);
                 long _id = db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
                 long rawContactId =  values.getAsLong(GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID);
                 if ( _id > 0 ) {
@@ -138,7 +141,7 @@ public class GiftContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(Uri uri, String where, String[] whereArgs) {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
@@ -150,17 +153,19 @@ public class GiftContentProvider extends ContentProvider {
             case COLOR_WITH_ID:
                 rowsDeleted = deleteColorById(uri);
                 break;
-                //throw new UnsupportedOperationException("Delete not implemented for: " + uri);
+            case COLORS_BY_CONTACT:
+                rowsDeleted = mDbHelper.getReadableDatabase().delete(GiftwiseContract.ColorEntry.TABLE_NAME, where, whereArgs);
+                break;
             case SIZE_WITH_ID:
                 rowsDeleted = deleteSizeById(uri);
                 break;
-                //throw new UnsupportedOperationException("Delete not implemented for: " + uri);
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         // Because a null deletes all rows
-        if (selection == null || rowsDeleted != 0) {
-            getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
+        if (where == null || rowsDeleted != 0) {
+            //getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
+            getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;
     }
@@ -300,16 +305,24 @@ public class GiftContentProvider extends ContentProvider {
         );
     }
 
-    private Cursor getColorsForRawContactId(Uri uri, String[] projection, String sortOrder) {
+    private Cursor getColorsForRawContactId(Uri uri, String[] projection, String selection, String[] args, String sortOrder) {
         long rawContactId = GiftwiseContract.ColorEntry.getIdFromUri(uri);
 
-        String selection = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(rawContactId) };
+
+        String selectionClause = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " = ?  ";
+        if (!TextUtils.isEmpty(selection)) {
+            selectionClause = selectionClause + " AND " + selection;
+        }
+        String[] selectionArgs =  new String[args.length + 1];
+        selectionArgs[0] = Long.toString(rawContactId);
+        for (int i=0; i<args.length; i++) {
+            selectionArgs[i+1] = args[i];
+        }
 
         return mDbHelper.getReadableDatabase().query(
               GiftwiseContract.ColorEntry.TABLE_NAME,
               projection,
-              selection,
+              selectionClause,
               selectionArgs,
               null,
               null,
@@ -337,13 +350,13 @@ public class GiftContentProvider extends ContentProvider {
     private int deleteColorById(Uri uri) {
         long giftId = GiftwiseContract.ColorEntry.getIdFromUri(uri);
 
-        String selection = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry._ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(giftId) };
+        String where = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry._ID + " = ? ";
+        String[] whereArgs =  new String[]{  Long.toString(giftId) };
 
         return mDbHelper.getReadableDatabase().delete(
               GiftwiseContract.ColorEntry.TABLE_NAME,
-              selection,
-              selectionArgs
+              where,
+              whereArgs
         );
     }
 

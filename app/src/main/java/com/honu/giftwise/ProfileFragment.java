@@ -1,34 +1,45 @@
 package com.honu.giftwise;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.colorpicker.ColorPickerDialog;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
+import com.honu.giftwise.data.GiftwiseContract;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = ProfileFragment.class.getSimpleName();
+
+    // Data loaders for colors and sizes:
+    private static final int PROFILE_COLORS_LIKED_LOADER = 20;
+    private static final int PROFILE_COLORS_DISLIKED_LOADER = 21;
+    private static final int PROFILE_SIZES_LOADER = 22;
+
+    private ColorAdapter mLikedColorsAdapter;
+    private ColorAdapter mDislikedColorsAdapter;
 
     // id of RawContact
     private long mRawContactId;
@@ -52,14 +63,28 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout resource that'll be returned
         View rootView = inflater.inflate(R.layout.fragment_contact_profile, container, false);
 
+        // create color picker
         initColorPicker(rootView);
-//            initDateInput(rootView);
-//            initClothingSpinner(rootView);
-//            initSizeSpinner(rootView);
 
         // get args supplied when the fragment was instantiated by the CustomPagerAdapter
         Bundle args = getArguments();
         mRawContactId = args.getLong("rawContactId");
+
+        // Adapter for liked colors
+        String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ?";
+        //String[] selectionArgs = new String[] { "1" };
+        Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+        Cursor likedColorsCursor = getActivity().getContentResolver().query(colorsUri, null, selection, new String[] { "1" }, null);
+        mLikedColorsAdapter = new ColorAdapter(getActivity(), likedColorsCursor, 0);
+        //LinearLayout likedColorsLayout = (LinearLayout) rootView.findViewById(R.id.colors_liked_list);
+        //addColorsFromAdapter(likedColorsLayout, mLikedColorsAdapter);
+
+        // Adapter for disliked colors
+        //String selection1 = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ?";
+        //String[] selectionArgs1 = new String[] { "0" };
+        //Uri dislokedColorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+        Cursor dislikedColorsCursor = getActivity().getContentResolver().query(colorsUri, null, selection, new String[] { "0" }, null);
+        mDislikedColorsAdapter = new ColorAdapter(getActivity(), dislikedColorsCursor, 0);
 
         List<Size> sizes = new ArrayList<Size>();
         sizes.add(new Size("Shirt", "Medium", "Banana Republic"));
@@ -73,9 +98,18 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(PROFILE_COLORS_LIKED_LOADER, null, this);
+        getLoaderManager().initLoader(PROFILE_COLORS_DISLIKED_LOADER, null, this);
+        getLoaderManager().initLoader(PROFILE_SIZES_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
     private void initColorPicker(final View rootView) {
         final int[] noneSelected = new int[0];
 
+        // add click listener for liked colors:
         ViewGroup editLikedColors = (ViewGroup) rootView.findViewById(R.id.contact_colors_like);
         editLikedColors.setOnClickListener(new View.OnClickListener() {
 
@@ -84,7 +118,7 @@ public class ProfileFragment extends Fragment {
                 ColorPickerDialog dialog = ColorPickerDialog.newInstance(
                       R.string.color_picker_liked_title,
                       getDefaultColors(),
-                      noneSelected,
+                      getColors(mLikedColorsAdapter),
                       4,
                       ColorPickerDialog.SIZE_SMALL);
                 //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
@@ -92,11 +126,9 @@ public class ProfileFragment extends Fragment {
                 dialog.setDialogSelectedListener(new ColorPickerDialog.DialogSelectionListener() {
 
                     @Override
-                    public void onSelectionCompleted(int[] colors) {
-                        Log.i(LOG_TAG, "Selected colors: " + colors);
-                        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.colors_liked_list);
-                        layout.removeAllViews();
-                        addColorsToView(layout, colors);
+                    public void onSelectionCompleted(int[] selectedColors) {
+                        Log.i(LOG_TAG, "Selected colors: " + selectedColors);
+                        updateColors(getColors(mLikedColorsAdapter), selectedColors, 1);
                     }
 
                     @Override
@@ -111,6 +143,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        // add click listener for disliked colors
         ViewGroup editDislikedColors = (ViewGroup) rootView.findViewById(R.id.contact_colors_dislike);
         editDislikedColors.setOnClickListener(new View.OnClickListener() {
 
@@ -119,7 +152,7 @@ public class ProfileFragment extends Fragment {
                 ColorPickerDialog dialog = ColorPickerDialog.newInstance(
                       R.string.color_picker_disliked_title,
                       getDefaultColors(),
-                      noneSelected,
+                      getColors(mDislikedColorsAdapter),
                       4,
                       ColorPickerDialog.SIZE_SMALL);
                 //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
@@ -127,11 +160,9 @@ public class ProfileFragment extends Fragment {
                 dialog.setDialogSelectedListener(new ColorPickerDialog.DialogSelectionListener() {
 
                     @Override
-                    public void onSelectionCompleted(int[] colors) {
-                        Log.i(LOG_TAG, "Selected colors disliked: " + colors);
-                        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.colors_dislike_list);
-                        layout.removeAllViews();
-                        addColorsToView(layout, colors);
+                    public void onSelectionCompleted(int[] selectedColors) {
+                        Log.i(LOG_TAG, "Selected colors disliked: " + selectedColors);
+                        updateColors(getColors(mDislikedColorsAdapter), selectedColors, 0);
                     }
 
                     @Override
@@ -146,9 +177,90 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // TODO: remove this test data later
-        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.colors_liked_list);
-        addColorsToView(layout, new int[] { Color.BLUE, Color.RED, Color.GREEN });
+    }
+
+    private int[] getColors(ColorAdapter adapter) {
+        Cursor cursor = adapter.getCursor();
+        int countColors = adapter.getCount();
+        int[] colors = new int[countColors];
+
+        for (int i = 0; i < countColors; i++) {
+            cursor.moveToPosition(i);
+            int color = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.ColorEntry.COLUMN_COLOR_VALUE));
+            colors[i] = color;
+        }
+
+        return colors;
+    }
+
+    private int getColorIdFromAdapter(int color, int liked) {
+
+        // get cursor from selected adapter
+        ColorAdapter adapter = (liked == 1) ? mLikedColorsAdapter : mDislikedColorsAdapter;
+        Cursor cursor = adapter.getCursor();
+        int countColors = adapter.getCount();
+
+        // find color
+        for (int i = 0; i < countColors; i++) {
+            cursor.moveToPosition(i);
+            int c = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.ColorEntry.COLUMN_COLOR_VALUE));
+            if (c == color) {
+                return cursor.getInt(cursor.getColumnIndex(GiftwiseContract.ColorEntry._ID));
+            }
+        }
+        return -1;
+    }
+
+
+    private void updateColors(int[] oldColors, int[] newColors, int liked){
+
+        // do some set algebra to determine new and deleted colors
+        Set<Integer> oldSet = new HashSet<Integer> (Ints.asList(oldColors));
+        Set<Integer> newSet = new HashSet<Integer> (Ints.asList(newColors));
+        Set<Integer> intersection = Sets.intersection(oldSet, newSet);
+        Set<Integer> deleted = Sets.difference(oldSet, intersection);
+        Set<Integer> added = Sets.difference(newSet, intersection);
+
+        // colors to add and delete
+        int[] deletedColors = Ints.toArray(deleted);
+        int[] addedColors = Ints.toArray(added);
+
+        // delete colors from database for contact
+        if (deletedColors.length > 0 ) {
+
+            // create where clause for delete
+            String where = GiftwiseContract.ColorEntry._ID  + " IN (" + new String(new char[deletedColors.length]).replace("\0", "?,") + "?)";
+            String[] whereArgs = new String[deletedColors.length];
+
+            // build whereArgs from color ids
+            for (int i = 0; i < deletedColors.length; i++) {
+                whereArgs[i] = "" + getColorIdFromAdapter(deletedColors[i], liked);
+            }
+
+            // execute delete query
+            Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+            getActivity().getContentResolver().delete(colorsUri, where, whereArgs);
+        }
+
+        // add NEW colors for contact to database
+        if (deletedColors.length > 0 ) {
+
+            // create content values to insert NEW colors
+            ContentValues[] allValues = new ContentValues[addedColors.length];
+            for (int i = 0; i < addedColors.length; i++) {
+                ContentValues values = new ContentValues();
+                values.put(GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID, mRawContactId);
+                values.put(GiftwiseContract.ColorEntry.COLUMN_COLOR_VALUE, addedColors[i]);
+                values.put(GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED, liked);
+                Log.i(LOG_TAG, "Values: " + values);
+                allValues[i] = values;
+            }
+
+            // insert NEW colors to database
+            if (allValues.length > 0) {
+                getActivity().getContentResolver().bulkInsert(GiftwiseContract.ColorEntry.COLOR_URI, allValues);
+            }
+        }
     }
 
     private void addSizesToView(LinearLayout layout, SizeAdapter adapter) {
@@ -161,24 +273,16 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void addColorsToView(LinearLayout layout, int[] colors) {
+    private void addColorsFromAdapter(LinearLayout layout, ColorAdapter adapter) {
+        Log.i(LOG_TAG, "updating layout id: " + layout.getId());
+        layout.removeAllViews();
 
-        int dp24 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 24, getResources().getDisplayMetrics());
-        int dp4 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 4, getResources().getDisplayMetrics());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(dp24, dp24);
-        layoutParams.rightMargin = dp4;
-        layoutParams.gravity = Gravity.BOTTOM;
-
-        for (int color : colors) {
-            Drawable circle = getResources().getDrawable(R.drawable.shape_circle);
-            LayerDrawable coloredCircle = new LayerDrawable(new Drawable[]{circle});
-            coloredCircle.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-
-            ImageView imageView = new ImageView(getActivity());
-            imageView.setImageDrawable(coloredCircle);
-            imageView.setLayoutParams(layoutParams);
-            layout.addView(imageView);
+        final int adapterCount = adapter.getCount();
+        for (int i = 0; i < adapterCount; i++) {
+            View item = adapter.getView(i, null, null);
+            layout.addView(item);
         }
+
     }
 
     private int[] getDefaultColors() {
@@ -195,6 +299,62 @@ public class ProfileFragment extends Fragment {
         }
 
         return colors;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.i(LOG_TAG, "onCreateLoader");
+
+        switch (id) {
+            case PROFILE_COLORS_LIKED_LOADER: {
+                String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ? ";
+                String[] selectionArgs = new String[] { "1" };
+                Uri uri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+                return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
+            }
+            case PROFILE_COLORS_DISLIKED_LOADER: {
+                String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ? ";
+                String[] selectionArgs = new String[] { "0" };
+                Uri uri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+                return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
+            }
+            case PROFILE_SIZES_LOADER: {
+                Uri uri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(mRawContactId);
+                return new CursorLoader(getActivity(), uri, null, null, null, null);
+            }
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.i(LOG_TAG, "onLoadFinished: " + loader.getId());
+
+
+        switch (loader.getId()) {
+            case PROFILE_COLORS_DISLIKED_LOADER:
+                mDislikedColorsAdapter.swapCursor(data);
+                Log.i(LOG_TAG, "addColors for disliked");
+                LinearLayout editDislikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_dislike_list);
+                addColorsFromAdapter(editDislikedColors, mDislikedColorsAdapter);
+                break;
+            case PROFILE_COLORS_LIKED_LOADER:
+                mLikedColorsAdapter.swapCursor(data);
+                Log.i(LOG_TAG, "addColors for liked");
+                LinearLayout editLikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_liked_list);
+                addColorsFromAdapter(editLikedColors, mLikedColorsAdapter);
+                break;
+            case PROFILE_SIZES_LOADER:
+                break;
+            default:
+                return;
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
 //        private void initSizeSpinner(View rootView) {
@@ -329,25 +489,5 @@ public class ProfileFragment extends Fragment {
             // Return the completed view to render on screen
             return convertView;
         }
-    }
-
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null) {
-            // pre-condition
-            return;
-        }
-
-        int totalHeight = 0;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, listView);
-            listItem.measure(0, 0);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        //listView.requestLayout();
     }
 }
