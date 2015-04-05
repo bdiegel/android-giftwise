@@ -85,6 +85,7 @@
         <activity
             android:name=".EditSizeActivity"
             android:label="@string/title_activity_edit_size"
+            android:windowSoftInputMode="stateVisible"
             android:parentActivityName=".ContactActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
