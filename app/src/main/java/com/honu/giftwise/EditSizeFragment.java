@@ -45,20 +45,26 @@ public class EditSizeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_size, container, false);
 
+        // find views to configure
+        EditText itemEdit = (EditText) rootView.findViewById(R.id.item_spinner);
+        EditText sizeEdit = (EditText) rootView.findViewById(R.id.size_spinner);
+        EditText notesEdit = (EditText) rootView.findViewById(R.id.size_notes);
+
         // Get the Id of the raw contact
         Bundle args = getArguments();
         size = args.getParcelable("size");
 
-        //initClothingSpinner(rootView);
+        // Populate fields from parcelable
+        if (!TextUtils.isEmpty(size.getItem())) itemEdit.setText(size.getItem());
+        if (!TextUtils.isEmpty(size.getSize())) sizeEdit.setText(size.getSize());
+        if (!TextUtils.isEmpty(size.getNotes())) notesEdit.setText(size.getNotes());
+
+        // initialize the auto-complete textviews
         initItemView(rootView);
         initSizeView(rootView);
 
         // repopulate form fields from state:
         if (savedInstanceState != null) {
-            EditText itemEdit = (EditText) rootView.findViewById(R.id.item_spinner);
-            EditText sizeEdit = (EditText) rootView.findViewById(R.id.size_spinner);
-            EditText notesEdit = (EditText) rootView.findViewById(R.id.size_notes);
-
             itemEdit.setText(savedInstanceState.getString("size_item"));
             sizeEdit.setText(savedInstanceState.getString("size_size"));
             notesEdit.setText(savedInstanceState.getString("size_notes"));
@@ -156,8 +162,8 @@ public class EditSizeFragment extends Fragment {
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME, sizeName);
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES, notesEdit.getText().toString());
 
+        // insert or update the database
         if (size.getSizeId() == -1) {
-            // insert new entry into table
             getActivity().getContentResolver().insert(GiftwiseContract.SizeEntry.SIZE_URI, values);
         } else {
             String selection = GiftwiseContract.GiftEntry._ID + " = ?";

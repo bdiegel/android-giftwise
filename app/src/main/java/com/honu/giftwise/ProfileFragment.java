@@ -122,22 +122,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         startActivityForResult(intent, 1);
     }
 
-    private void editSize() {
-        Log.i(LOG_TAG, "Open size item: ");
-
-//                // Get cursor from the adapter
-//                Cursor cursor = mSizeAdapter.getCursor();
-//
-//                String position = v.getTag(1).toString();
-//                int index = Integer.parseInt(position);
-//
-//                // Extract data from the selected item
-//                cursor.moveToPosition(index);
-//                int sizeId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.SizeEntry._ID));
+    private void editSize(Size editSize) {
+        Log.i(LOG_TAG, "Open size item: " + editSize.getSizeId());
 
         // start activity to add/edit gift idea
-        Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        //intent.putExtra("gift", gift);
+        Intent intent = new Intent(getActivity(), EditSizeActivity.class);
+        intent.putExtra("size", editSize);
 
         startActivityForResult(intent, 1);
     }
@@ -305,6 +295,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         for (int i = 0; i < adapterCount; i++) {
             View item = adapter.getView(i, null, null);
             layout.addView(item);
+            item.setOnClickListener(new SizeClickListener(i));
         }
     }
 
@@ -390,43 +381,30 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     }
 
-//        private void initSizeSpinner(View rootView) {
-//            Spinner spinner = (Spinner) rootView.findViewById(R.id.size_spinner);
-//
-//            // Create an ArrayAdapter using the string array and a default spinner layout
-//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-//                  R.array.size_choices, android.R.layout.simple_spinner_item);
-//
-//            // Specify the layout to use when the list of choices appears
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//            spinner.setAdapter(adapter);
-//        }
+    public class SizeClickListener implements View.OnClickListener {
 
-//        private void initClothingSpinner(View rootView) {
-//            Spinner spinner = (Spinner) rootView.findViewById(R.id.item_spinner);
-//
-//            // Create an ArrayAdapter using the string array and a default spinner layout
-//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-//                  R.array.clothing_choices, android.R.layout.simple_spinner_item);
-//
-//            // Specify the layout to use when the list of choices appears
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//            spinner.setAdapter(adapter);
-//        }
-//
-//        private void initDateInput(View rootView) {
-//            Spinner spinner = (Spinner) rootView.findViewById(R.id.special_date_spinner);
-//
-//            // Create an ArrayAdapter using the string array and a default spinner layout
-//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
-//                  R.array.special_dates, android.R.layout.simple_spinner_item);
-//
-//            // Specify the layout to use when the list of choices appears
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//
-//            spinner.setAdapter(adapter);
-//        }
+        public int position;
+
+        public SizeClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View v) {
+            // get cursor from the adapter
+            Cursor cursor = mSizeAdapter.getCursor();
+
+            // extract data from the selected item
+            cursor.moveToPosition(position);
+            Size size = Size.createFromCursor(cursor);
+
+            // open edit activity
+            editSize(size);
+        }
+
+        public int getPosition() {
+            return position;
+        }
+    }
 
 }
