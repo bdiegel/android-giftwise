@@ -154,7 +154,7 @@ public class GiftContentProvider extends ContentProvider {
                 rowsDeleted = deleteColorById(uri);
                 break;
             case COLORS_BY_CONTACT:
-                rowsDeleted = mDbHelper.getReadableDatabase().delete(GiftwiseContract.ColorEntry.TABLE_NAME, where, whereArgs);
+                rowsDeleted = db.delete(GiftwiseContract.ColorEntry.TABLE_NAME, where, whereArgs);
                 break;
             case SIZE_WITH_ID:
                 rowsDeleted = deleteSizeById(uri);
@@ -164,8 +164,12 @@ public class GiftContentProvider extends ContentProvider {
         }
         // Because a null deletes all rows
         if (where == null || rowsDeleted != 0) {
-            //getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
-            getContext().getContentResolver().notifyChange(uri, null);
+            if (match == GIFT_WITH_ID)
+                getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
+            if (match == COLOR_WITH_ID || match == COLORS_BY_CONTACT)
+                getContext().getContentResolver().notifyChange(uri, null);
+            if (match == SIZE_WITH_ID)
+                getContext().getContentResolver().notifyChange(GiftwiseContract.SizeEntry.SIZE_URI, null);
         }
         return rowsDeleted;
     }

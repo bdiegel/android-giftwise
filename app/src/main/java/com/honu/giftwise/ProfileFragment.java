@@ -85,15 +85,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         Cursor sizesCursor = getActivity().getContentResolver().query(sizesUri, null, null, null, null);
         mSizeAdapter = new SizeAdapter(getActivity(), sizesCursor, 0);
 
-//        // TODO: remove fake data for sizes
-//        List<Size> sizes = new ArrayList<Size>();
-//        sizes.add(new Size("Shirt", "Medium", "Banana Republic"));
-//        sizes.add(new Size("Jeans", "6L", "Wrap London"));
-//        sizes.add(new Size("Shirt", "XLarge", "Tommy Bahama; short-sleeve"));
-//
-//        SizeAdapter adapter = new SizeAdapter(getActivity(), sizes);
-//        LinearLayout linearLayout = (LinearLayout) rootView.findViewById(R.id.sizes_list);
-//        addSizesToView(linearLayout, adapter);
+        // add listener to add size button
         Button addSizeButton = (Button) rootView.findViewById(R.id.size_button);
         addSizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -436,7 +428,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(size.getItem() + " - " + size.getSize());
-            builder.setItems(R.array.size_context_menu,createListener(size));
+            builder.setItems(R.array.size_context_menu, createListener(size));
             builder.show();
 
             return true;
