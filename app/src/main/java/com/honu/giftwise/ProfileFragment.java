@@ -1,6 +1,8 @@
 package com.honu.giftwise;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -122,7 +124,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         startActivityForResult(intent, 1);
     }
 
-    private void editSize(Size editSize) {
+    public void editSize(Size editSize) {
         Log.i(LOG_TAG, "Open size item: " + editSize.getSizeId());
 
         // start activity to add/edit gift idea
@@ -296,6 +298,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             View item = adapter.getView(i, null, null);
             layout.addView(item);
             item.setOnClickListener(new SizeClickListener(i));
+            item.setOnLongClickListener(new SizeOnLongClickListener(i));
         }
     }
 
@@ -405,6 +408,53 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         public int getPosition() {
             return position;
         }
+    }
+
+    public class SizeOnLongClickListener implements View.OnLongClickListener {
+
+        public int position;
+
+        public SizeOnLongClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+
+            // get cursor from the adapter
+            Cursor cursor = mSizeAdapter.getCursor();
+
+            // extract data from the selected item
+            cursor.moveToPosition(position);
+            Size size = Size.createFromCursor(cursor);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(size.getItem() + " - " + size.getSize());
+            builder.setItems(R.array.size_context_menu,createListener(size));
+            builder.show();
+
+            return true;
+        }
+
+        public DialogInterface.OnClickListener createListener(final Size size) {
+
+            return new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    switch(which) {
+                        case 0:
+                            editSize(size);
+                            break;
+                        case 1:
+                            // TODO: implement delete
+                            break;
+                        default:
+                            return;
+                    }
+                }
+            };
+        }
+
     }
 
 }
