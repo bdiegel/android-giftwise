@@ -124,7 +124,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         startActivityForResult(intent, 1);
     }
 
-    public void editSize(Size editSize) {
+    private void editSize(Size editSize) {
         Log.i(LOG_TAG, "Open size item: " + editSize.getSizeId());
 
         // start activity to add/edit gift idea
@@ -132,6 +132,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         intent.putExtra("size", editSize);
 
         startActivityForResult(intent, 1);
+    }
+
+    private void deleteSize(long sizeId) {
+        Log.i(LOG_TAG, "Delete size id: " + sizeId);
+        Uri uri = GiftwiseContract.SizeEntry.buildSizeUri(sizeId);
+        getActivity().getContentResolver().delete(uri, null, null);
     }
 
     private void initColorPicker(final View rootView) {
@@ -446,7 +452,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                             editSize(size);
                             break;
                         case 1:
-                            // TODO: implement delete
+                            deleteSize(size.getSizeId());
                             break;
                         default:
                             return;
