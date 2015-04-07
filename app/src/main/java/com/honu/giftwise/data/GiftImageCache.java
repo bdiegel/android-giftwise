@@ -69,6 +69,10 @@ public class GiftImageCache {
 
     public void updateBitmapToMemoryCache(String key, BitmapDrawable drawable) {
 
+        // ignore invalid key
+        if (key.equals("-1"))
+            return;
+
         if (drawable != null) {
             if (!drawable.equals(mPlaceholderImage)) {
                 Log.i(LOG_TAG, "Caching bitmap for giftId: " + key);

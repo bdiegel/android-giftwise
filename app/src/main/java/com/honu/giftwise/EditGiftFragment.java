@@ -85,7 +85,6 @@ public class EditGiftFragment extends Fragment {
         }
         EditText urlTxt = (EditText)rootView.findViewById(R.id.gift_url);
         urlTxt.setText(gift.getUrl());
-        //Linkify.addLinks(urlTxt, Linkify.WEB_URLS);
         EditText notesTxt = (EditText)rootView.findViewById(R.id.gift_notes);
         notesTxt.setText(gift.getNotes());
 
@@ -110,6 +109,8 @@ public class EditGiftFragment extends Fragment {
             imageView.setImageDrawable(bitmap);
         } else {
             Log.i(LOG_TAG, "No bitmap found in cache for giftId: " + gift.getGiftId());
+            bitmap = mImageCache.getPlaceholderImage();
+            imageView.setImageDrawable(bitmap);
         }
 
         // populate values for the recipient spin control:
@@ -180,8 +181,11 @@ public class EditGiftFragment extends Fragment {
                 ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
                 //imageView.setImageBitmap(bitmap);
                 imageView.setImageBitmap(resizedBitmap);
-                Log.i(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
-                mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
+
+                if (gift.getGiftId() != -1) {
+                    Log.i(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
+                    mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
+                }
             } catch (IOException e) {
                 Log.d(LOG_TAG, "Exception: ", e);
                 e.printStackTrace();
