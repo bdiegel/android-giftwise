@@ -32,14 +32,10 @@ public class MainActivity extends ActionBarActivity {
         Log.i(LOG_TAG, "toolbar: " + toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(true);
-            //toolbar.setTitle("Title");
-            //toolbar.setSubtitle("subtitle");
             toolbar.setNavigationIcon(null);
             toolbar.setNavigationIcon(R.mipmap.ic_launcher);
         }
-
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
