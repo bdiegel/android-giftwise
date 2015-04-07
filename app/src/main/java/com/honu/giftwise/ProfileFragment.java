@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.android.colorpicker.ColorPickerDialog;
 import com.google.common.collect.Sets;
@@ -26,6 +27,10 @@ import com.google.common.primitives.Ints;
 import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.data.Size;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -360,16 +365,14 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 return new CursorLoader(getActivity(), uri, null, null, null, null);
             }
             case PROFILE_BIRTHDAY_LOADER: {
-                return ContactsUtils.getContactBirthdayCurosrLoader(getActivity(), mContactId);
+                return ContactsUtils.getContactEventDateCurosrLoader(getActivity(), mContactId, ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY);
             }
             case PROFILE_ANNIVERSARY_LOADER: {
-                break;
+                return ContactsUtils.getContactEventDateCurosrLoader(getActivity(), mContactId, ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY);
             }
             default:
                 return null;
         }
-
-        return null;
     }
 
     @Override
@@ -393,10 +396,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 addSizesToView(sizeLayout, mSizeAdapter);
                 break;
             case PROFILE_BIRTHDAY_LOADER:
-                setBirthday(data);
+                setEventDate(data);
                 break;
             case PROFILE_ANNIVERSARY_LOADER:
-                setAnniversary(data);
+                setEventDate(data);
                 break;
             default:
                 return;
@@ -408,22 +411,37 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     }
 
-    private void setBirthday(Cursor c) {
-        //Cursor c = ContactsUtils.getContactSpecialDates(getActivity(), contactId);
-        while ( c != null && c.moveToNext()) {
-            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
-            int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
-            Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
-        }
-    }
+    private void setEventDate(Cursor c) {
 
-    private void setAnniversary(Cursor c) {
-        //Cursor c = ContactsUtils.getContactSpecialDates(getActivity(), contactId);
-        while ( c != null && c.moveToNext()) {
-            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
+        if ( c != null && c.moveToNext()) {
+            TextView view = null;
+
             int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
+
+            if (type == ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY) {
+                view = (TextView) getActivity().findViewById(R.id.contact_birthday_date);
+            } else if (type == ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY) {
+                view = (TextView) getActivity().findViewById(R.id.contact_anniversary_date);
+            } else {
+                // not displaying custom ones yet
+                return;
+            }
+
+            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
             Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
+
+            // format date
+            try {
+                DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date d = parseFormat.parse(date);
+                DateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy");
+                view.setText(displayFormat.format(d));
+            } catch (ParseException e) {
+                Log.e(LOG_TAG, "date parse failed", e);
+                view.setText(date);
+            }
         }
+        c.close();
     }
 
     public class SizeClickListener implements View.OnClickListener {

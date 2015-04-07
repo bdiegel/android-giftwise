@@ -316,8 +316,8 @@ public class ContactsUtils {
         }
     }
 
-    // or: ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY, TYPE_OTHER, TYPE_CUSTOM
-    public static CursorLoader getContactBirthdayCurosrLoader(Context context, long contactId)
+    // ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY,TYPE_ANNIVERSARY, TYPE_OTHER, TYPE_CUSTOM
+    public static CursorLoader getContactEventDateCurosrLoader(Context context, long contactId, int eventType )
     {
         ContentResolver cr = context.getContentResolver();
 
@@ -336,11 +336,12 @@ public class ContactsUtils {
                   + " AND " + ContactsContract.Data.MIMETYPE + "=?"
                   + " AND " + ContactsContract.CommonDataKinds.Event.TYPE + "=?";
 
-            // Add contactId filter.
+            // selection arguments
             String[] selectionArgs = new String[] {
                   String.valueOf(contactId),
                   ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
-                  String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
+                  //String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
+                  "" + eventType
             };
 
             String sortOrder = null;
