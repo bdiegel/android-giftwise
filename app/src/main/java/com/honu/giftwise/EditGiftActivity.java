@@ -123,10 +123,8 @@ public class EditGiftActivity extends ActionBarActivity {
         Log.i(LOG_TAG, "create or save gift idea");
 
         Spinner contact_spin = (Spinner) findViewById(R.id.contacts_spinner);
-        //contact_spin.getSelectedItemId();
         Cursor cursor = (Cursor)(contact_spin.getSelectedItem());
         if (cursor != null) {
-            //contact_spin = cc.getString(cc.getColumnIndex("Drug"));
             long rawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
             gift.setRawContactId(rawContactId);
         }
@@ -156,7 +154,6 @@ public class EditGiftActivity extends ActionBarActivity {
                 return false;
             }
         }
-
 
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(gift.getRawContactId());
 
