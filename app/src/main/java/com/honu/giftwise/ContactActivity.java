@@ -32,6 +32,8 @@ public class ContactActivity extends ActionBarActivity {
     // display name of RawContact
     private String mContactName = "Contact";
 
+    private long mContactId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,7 @@ public class ContactActivity extends ActionBarActivity {
             mContactName = intent.getStringExtra("name");
             //mRawContactId = intent.getLongExtra("rawId", -1);
             mRawContactId = Long.parseLong(intent.getStringExtra("rawId"));
+            mContactId = Long.parseLong(intent.getStringExtra("contactId"));
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -136,7 +139,7 @@ public class ContactActivity extends ActionBarActivity {
                 case 0:
                     return IdeasFragment.getInstance(mRawContactId, mContactName);
                 case 1:
-                    return ProfileFragment.getInstance(mRawContactId);
+                    return ProfileFragment.getInstance(mRawContactId, mContactId);
             }
 
             return  null;

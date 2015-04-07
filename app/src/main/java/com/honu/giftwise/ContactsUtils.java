@@ -317,7 +317,7 @@ public class ContactsUtils {
     }
 
     // or: ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY, TYPE_OTHER, TYPE_CUSTOM
-    public static Cursor getContactBirthday(Context context, int contactId)
+    public static CursorLoader getContactBirthdayCurosrLoader(Context context, long contactId)
     {
         ContentResolver cr = context.getContentResolver();
 
@@ -345,7 +345,9 @@ public class ContactsUtils {
 
             String sortOrder = null;
 
-            return cr.query(uri, projection, where, selectionArgs, sortOrder);
+            return new CursorLoader(context, uri, projection, where, selectionArgs, sortOrder);
+
+            //return cr.query(uri, projection, where, selectionArgs, sortOrder);
         }
         catch (Exception ex)
         {

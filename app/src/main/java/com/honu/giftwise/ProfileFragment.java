@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -38,6 +39,10 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int PROFILE_COLORS_DISLIKED_LOADER = 21;
     private static final int PROFILE_SIZES_LOADER = 22;
 
+    // data loaders for special dates
+    private static final int PROFILE_BIRTHDAY_LOADER = 30;
+    private static final int PROFILE_ANNIVERSARY_LOADER = 31;
+
     // adapters for color items amd sizes:
     private ColorAdapter mLikedColorsAdapter;
     private ColorAdapter mDislikedColorsAdapter;
@@ -46,13 +51,17 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     // id of RawContact
     private long mRawContactId;
 
+    private long mContactId;
 
-    public static ProfileFragment getInstance(long rawContactId) {
+
+    public static ProfileFragment getInstance(long rawContactId, long contactId) {
         ProfileFragment fragment = new ProfileFragment();
 
         // attach data to the fragment used to populate our fragment layouts
         Bundle args = new Bundle();
         args.putLong("rawContactId", rawContactId);
+        args.putLong("contactId", contactId);
+        args.putLong("contactId", contactId);
 
         // Set arguments to be fetched in the fragment onCreateView
         fragment.setArguments(args);
@@ -71,6 +80,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         // get args supplied when the fragment was instantiated by the CustomPagerAdapter
         Bundle args = getArguments();
         mRawContactId = args.getLong("rawContactId");
+        mContactId = args.getLong("contactId");
 
         // create adapters for liked and disliked colors
         Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
@@ -102,6 +112,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().initLoader(PROFILE_COLORS_LIKED_LOADER, null, this);
         getLoaderManager().initLoader(PROFILE_COLORS_DISLIKED_LOADER, null, this);
         getLoaderManager().initLoader(PROFILE_SIZES_LOADER, null, this);
+        getLoaderManager().initLoader(PROFILE_BIRTHDAY_LOADER, null, this);
+        getLoaderManager().initLoader(PROFILE_ANNIVERSARY_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -347,9 +359,17 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 Uri uri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(mRawContactId);
                 return new CursorLoader(getActivity(), uri, null, null, null, null);
             }
+            case PROFILE_BIRTHDAY_LOADER: {
+                return ContactsUtils.getContactBirthdayCurosrLoader(getActivity(), mContactId);
+            }
+            case PROFILE_ANNIVERSARY_LOADER: {
+                break;
+            }
             default:
                 return null;
         }
+
+        return null;
     }
 
     @Override
@@ -372,6 +392,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 LinearLayout sizeLayout = (LinearLayout) getActivity().findViewById(R.id.sizes_list);
                 addSizesToView(sizeLayout, mSizeAdapter);
                 break;
+            case PROFILE_BIRTHDAY_LOADER:
+                setBirthday(data);
+                break;
+            case PROFILE_ANNIVERSARY_LOADER:
+                setAnniversary(data);
+                break;
             default:
                 return;
         }
@@ -380,6 +406,24 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private void setBirthday(Cursor c) {
+        //Cursor c = ContactsUtils.getContactSpecialDates(getActivity(), contactId);
+        while ( c != null && c.moveToNext()) {
+            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
+            int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
+            Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
+        }
+    }
+
+    private void setAnniversary(Cursor c) {
+        //Cursor c = ContactsUtils.getContactSpecialDates(getActivity(), contactId);
+        while ( c != null && c.moveToNext()) {
+            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
+            int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
+            Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
+        }
     }
 
     public class SizeClickListener implements View.OnClickListener {
