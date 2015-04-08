@@ -98,7 +98,7 @@ public class GiftContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        Uri returnUri;
+        Uri returnUri = uri;
 
         switch (match) {
             case GIFT: {
@@ -111,6 +111,11 @@ public class GiftContentProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case COLORS_BY_CONTACT: {
+                Log.i("DbHelper", "Insert value: " + values);
+                long _id = db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
+                break;
+            }
             case COLOR: {
                 Log.i("DbHelper", "Insert value: " + values);
                 long _id = db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
@@ -120,6 +125,10 @@ public class GiftContentProvider extends ContentProvider {
                 }
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case SIZES_BY_CONTACT: {
+                long _id = db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
                 break;
             }
             case SIZE: {
@@ -135,7 +144,7 @@ public class GiftContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(returnUri, null);
 
         return returnUri;
     }
@@ -162,15 +171,20 @@ public class GiftContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
         // Because a null deletes all rows
         if (where == null || rowsDeleted != 0) {
             if (match == GIFT_WITH_ID)
                 getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
-            if (match == COLOR_WITH_ID || match == COLORS_BY_CONTACT)
+            else if (match == COLOR_WITH_ID)
                 getContext().getContentResolver().notifyChange(uri, null);
-            if (match == SIZE_WITH_ID)
+            else if (match == SIZE_WITH_ID)
                 getContext().getContentResolver().notifyChange(GiftwiseContract.SizeEntry.SIZE_URI, null);
         }
+
+        if (match == COLORS_BY_CONTACT && rowsDeleted != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+
         return rowsDeleted;
     }
 
@@ -191,6 +205,10 @@ public class GiftContentProvider extends ContentProvider {
                 break;
             }
             case SIZE: {
+                rowsUpdated = db.update(GiftwiseContract.SizeEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            }
+            case SIZES_BY_CONTACT: {
                 rowsUpdated = db.update(GiftwiseContract.SizeEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             }

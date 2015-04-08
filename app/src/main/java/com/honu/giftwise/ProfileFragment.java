@@ -267,6 +267,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         int[] deletedColors = Ints.toArray(deleted);
         int[] addedColors = Ints.toArray(added);
 
+        Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+
         // remove DELETE colors from database for contact
         if (deletedColors.length > 0 ) {
 
@@ -280,12 +282,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             }
 
             // execute delete query
-            Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
             getActivity().getContentResolver().delete(colorsUri, where, whereArgs);
         }
 
         // add NEW colors for contact to database
-        if (deletedColors.length > 0 ) {
+        if (addedColors.length > 0 ) {
 
             // create content values to insert NEW colors
             ContentValues[] allValues = new ContentValues[addedColors.length];
@@ -300,7 +301,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
             // execute database insert
             if (allValues.length > 0) {
-                getActivity().getContentResolver().bulkInsert(GiftwiseContract.ColorEntry.COLOR_URI, allValues);
+                getActivity().getContentResolver().bulkInsert(colorsUri, allValues);
             }
         }
     }
@@ -441,7 +442,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 view.setText(date);
             }
         }
-        c.close();
     }
 
     public class SizeClickListener implements View.OnClickListener {

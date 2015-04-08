@@ -2,6 +2,7 @@ package com.honu.giftwise;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -162,13 +163,15 @@ public class EditSizeFragment extends Fragment {
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME, sizeName);
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES, notesEdit.getText().toString());
 
+        Uri uri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(size.getRawContactId());
+
         // insert or update the database
         if (size.getSizeId() == -1) {
-            getActivity().getContentResolver().insert(GiftwiseContract.SizeEntry.SIZE_URI, values);
+            getActivity().getContentResolver().insert(uri, values);
         } else {
             String selection = GiftwiseContract.GiftEntry._ID + " = ?";
             String[] selectionArgs = new String[]{size.getSizeId() + ""};
-            getActivity().getContentResolver().update(GiftwiseContract.SizeEntry.SIZE_URI, values, selection, selectionArgs);
+            getActivity().getContentResolver().update(uri, values, selection, selectionArgs);
         }
 
         return true;
