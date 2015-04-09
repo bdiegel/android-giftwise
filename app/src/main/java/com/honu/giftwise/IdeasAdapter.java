@@ -31,16 +31,16 @@ public class IdeasAdapter extends CursorAdapter {
     private GiftImageCache mImageCache;
 
     // handler to attach to the image view with the overflow icon
-    private static View.OnClickListener mOverflowMenuClickListener;
+    //private static View.OnClickListener mOverflowMenuClickListener;
 
     public IdeasAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mImageCache = ((GiftwiseApplication)context.getApplicationContext()).getGiftImageCache();
     }
 
-    public void setOverflowMenuListener(View.OnClickListener listener) {
-        mOverflowMenuClickListener = listener;
-    }
+//    public void setOverflowMenuListener(View.OnClickListener listener) {
+//        mOverflowMenuClickListener = listener;
+//    }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {

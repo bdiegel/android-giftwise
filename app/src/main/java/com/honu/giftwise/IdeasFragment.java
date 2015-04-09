@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -72,14 +71,14 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
         Cursor cur = getActivity().getContentResolver().query(giftsForRawContactUri, null, null, null, null);
         mIdeasAdapter = new IdeasAdapter(getActivity(), cur, 0);
-        mIdeasAdapter.setOverflowMenuListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(LOG_TAG, "MENU PRESSED: " + view.getParent().toString());
-                Log.i(LOG_TAG, "activity: " + view.getContext().toString());
-                showPopup(view);
-            }
-        });
+//        mIdeasAdapter.setOverflowMenuListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.i(LOG_TAG, "MENU PRESSED: " + view.getParent().toString());
+//                Log.i(LOG_TAG, "activity: " + view.getContext().toString());
+//                showPopup(view);
+//            }
+//        });
 
         // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ListView) rootView.findViewById(R.id.gifts_listview);
@@ -182,7 +181,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
         switch (item.getItemId()) {
             case R.id.gift_edit:
-                openGift(giftId);
+                //openGift(giftId);
+                editGift(giftId);
                 Log.i(LOG_TAG, "Edit pressed");
                 return true;
             case R.id.gift_delete:
@@ -207,6 +207,22 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         // start activity to add/edit gift idea
         //Intent intent = new Intent(getActivity(), EditGiftActivity.class);
         Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
+        Gift gift = Gift.createFromCursor(cursor);
+        intent.putExtra("gift", gift);
+        intent.putExtra("contactName", mContactName);
+
+        startActivityForResult(intent, 1);
+    }
+
+    private void editGift(long giftId) {
+        Log.i(LOG_TAG, "Edit GiftId: " + giftId);
+
+        // Get cursor from the adapter
+        Cursor cursor = mIdeasAdapter.getCursor();
+
+        // start activity to add/edit gift idea
+        Intent intent = new Intent(getActivity(), EditGiftActivity.class);
+        //Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
         Gift gift = Gift.createFromCursor(cursor);
         intent.putExtra("gift", gift);
         intent.putExtra("contactName", mContactName);
@@ -286,36 +302,36 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
-    public void showPopup(View v) {
-        Log.i(LOG_TAG, "Show popup");
-        PopupMenu popup = new PopupMenu(v.getContext(), v);
-
-        final long giftId = (long) v.getTag();
-
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.gift_edit:
-                        openGift(giftId);
-                        Log.i(LOG_TAG, "Edit pressed");
-                        return true;
-                    case R.id.gift_delete:
-                        Log.i(LOG_TAG, "Delete pressed");
-                        deleteGift(giftId);
-                        return true;
-                    case R.id.gift_open_url:
-                        Log.i(LOG_TAG, "Open url pressed");
-                        openUrl(giftId);
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_gift_item, popup.getMenu());
-        popup.show();
-    }
+//    public void showPopup(View v) {
+//        Log.i(LOG_TAG, "Show popup");
+//        PopupMenu popup = new PopupMenu(v.getContext(), v);
+//
+//        final long giftId = (long) v.getTag();
+//
+//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem menuItem) {
+//                switch (menuItem.getItemId()) {
+//                    case R.id.gift_edit:
+//                        editGift(giftId);
+//                        Log.i(LOG_TAG, "Edit pressed");
+//                        return true;
+//                    case R.id.gift_delete:
+//                        Log.i(LOG_TAG, "Delete pressed");
+//                        deleteGift(giftId);
+//                        return true;
+//                    case R.id.gift_open_url:
+//                        Log.i(LOG_TAG, "Open url pressed");
+//                        openUrl(giftId);
+//                        return true;
+//                    default:
+//                        return false;
+//                }
+//            }
+//        });
+//        MenuInflater inflater = popup.getMenuInflater();
+//        inflater.inflate(R.menu.menu_gift_item, popup.getMenu());
+//        popup.show();
+//    }
 
 }
