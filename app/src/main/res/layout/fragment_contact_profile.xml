@@ -50,24 +50,35 @@
                     />
 
                 <TextView
+                    android:id="@+id/contact_birthday_label"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="4dp"
+                    android:text="Birthday: "
+                    android:textAppearance="?android:textAppearanceMedium"
+                    />
+
+                <TextView
                     android:id="@+id/contact_birthday_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="2"
                     android:fontFamily="sans-serif-condensed"
-                    android:text="May 17, 1968"
+                    android:textColor="@color/grey_700"
+                    android:text="asdfasdf"
                     android:textAppearance="?android:textAppearanceMedium"
                     />
 
-                <TextView
-                    android:id="@+id/contact_birthday_label"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="birthday"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/contact_birthday_label"-->
+                    <!--android:layout_width="100dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center_vertical"-->
+                    <!--android:text="birthday"-->
+                    <!--android:textAppearance="?android:textAppearanceSmall"-->
+                    <!--/>-->
             </LinearLayout>
 
             <LinearLayout
@@ -87,24 +98,35 @@
                     />
 
                 <TextView
+                    android:id="@+id/contact_anniversary_label"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="4dp"
+                    android:text="Anniversary: "
+                    android:textAppearance="?android:textAppearanceMedium"
+                    />
+
+                <TextView
                     android:id="@+id/contact_anniversary_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="2"
                     android:fontFamily="sans-serif-condensed"
-                    android:text="October 15, 2000"
+                    android:text=""
+                    android:textColor="@color/grey_700"
                     android:textAppearance="?android:textAppearanceMedium"
                     />
 
-                <TextView
-                    android:id="@+id/contact_anniversary_label"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="anniversary"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    />
+                <!--<TextView-->
+                    <!--android:id="@+id/contact_anniversary_label"-->
+                    <!--android:layout_width="100dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center_vertical"-->
+                    <!--android:text="anniversary"-->
+                    <!--android:textAppearance="?android:textAppearanceSmall"-->
+                    <!--/>-->
             </LinearLayout>
 
         </LinearLayout>

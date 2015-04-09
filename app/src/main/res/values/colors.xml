@@ -49,6 +49,7 @@
     <!--<color name="fab_color_1_muted">#ff8080</color>-->
     <color name="fab_color_2">#9c27b0</color>
     <color name="fab_color_2_muted">#a56ab0</color>
+    <color name="grey_700">#646464</color>
 
 
     <string-array name="default_color_choice_values" translatable="false">
