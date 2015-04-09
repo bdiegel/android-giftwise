@@ -117,7 +117,7 @@ public class ContactActivity extends ActionBarActivity {
     /**
      * Displays tabs:
      *
-     *   1. IDEAS - list of gift ideas
+     *   1. GIFT IDEAS - list of gift ideas
      *   2. PROFILE - personal info and preferences of contact
      */
     class CustomPagerAdapter extends FragmentPagerAdapter {

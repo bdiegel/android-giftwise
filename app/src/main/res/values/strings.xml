@@ -17,7 +17,7 @@
     <string name="title_activity_contact">Contact</string>
 
     <string-array name="contact_tabs">
-        <item>IDEAS</item>
+        <item>GIFT IDEAS</item>
         <item>PROFILE</item>
     </string-array>
     <string name="title_activity_create_contact">Create contact</string>
