@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/gifts_listview"
-        android:divider="@null"/>
+        />
+        <!--android:divider="@null"/>-->
 
     <com.honu.giftwise.view.FloatingActionButton
         android:id="@+id/add_gift_fab"
