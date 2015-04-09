@@ -3,6 +3,11 @@ package com.honu.giftwise.data;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
+
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * Created by bdiegel on 3/13/15.
@@ -15,6 +20,7 @@ public class Gift implements Parcelable {
     private double price = 0;
     private String url;
     private String notes;
+    private String currencyCode;
 
     public Gift() {}
 
@@ -74,6 +80,52 @@ public class Gift implements Parcelable {
         this.notes = notes;
     }
 
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public String getFormattedPrice() {
+
+        String priceString = "";
+
+        if (price != 0) {
+            Currency currency = Currency.getInstance(Locale.getDefault());
+            if (!TextUtils.isEmpty(currencyCode)) {
+                currency = Currency.getInstance(currencyCode);
+            }
+
+            NumberFormat format = NumberFormat.getCurrencyInstance();
+            format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+            format.setCurrency(currency);
+            priceString = format.format(price);
+        }
+
+        return priceString;
+    }
+
+    public String getFormattedPriceNoCurrency() {
+
+        String priceString = "";
+
+        if (price != 0) {
+            Currency currency = Currency.getInstance(Locale.getDefault());
+            if (!TextUtils.isEmpty(currencyCode)) {
+                currency = Currency.getInstance(currencyCode);
+            }
+
+            NumberFormat format = NumberFormat.getInstance();
+            format.setMinimumFractionDigits(currency.getDefaultFractionDigits());
+            format.setCurrency(currency);
+            priceString = format.format(price);
+        }
+
+        return priceString;
+    }
+
 
     protected Gift(Parcel in) {
         name = in.readString();
@@ -82,6 +134,7 @@ public class Gift implements Parcelable {
         price = in.readDouble();
         url = in.readString();
         notes = in.readString();
+        currencyCode = in.readString();
     }
 
     @Override
@@ -97,6 +150,7 @@ public class Gift implements Parcelable {
         dest.writeDouble(price);
         dest.writeString(url);
         dest.writeString(notes);
+        dest.writeString(currencyCode);
     }
 
     @SuppressWarnings("unused")
@@ -119,6 +173,7 @@ public class Gift implements Parcelable {
         String giftNotes = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NOTES));
         String giftUrl = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL));
         double price = cursor.getDouble(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE));
+        String currencyCode = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_CURRENCY_CODE));
 
         Gift gift = new Gift(giftName);
         gift.setGiftId(giftId);
@@ -126,6 +181,7 @@ public class Gift implements Parcelable {
         gift.setUrl(giftUrl);
         gift.setPrice(price);
         gift.setRawContactId(rawContactId);
+        gift.setCurrencyCode(currencyCode);
 
         return gift;
     }

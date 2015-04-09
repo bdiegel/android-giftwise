@@ -81,7 +81,7 @@ public class EditGiftFragment extends Fragment {
         nameTxt.setText(gift.getName());
         if (gift.getPrice() > 0) {
             EditText priceTxt = (EditText) rootView.findViewById(R.id.gift_price);
-            priceTxt.setText("" + gift.getPrice());
+            priceTxt.setText("" + gift.getFormattedPriceNoCurrency());
         }
         EditText urlTxt = (EditText)rootView.findViewById(R.id.gift_url);
         urlTxt.setText(gift.getUrl());

@@ -75,10 +75,8 @@ public class ViewGiftFragment extends Fragment {
         recipientTV.setText(mContactName);
 
         // gift price
-        if (gift.getPrice() > 0) {
-            TextView priceTxt = (TextView) rootView.findViewById(R.id.gift_price);
-            priceTxt.setText("" + gift.getPrice());
-        }
+        TextView priceTxt = (TextView) rootView.findViewById(R.id.gift_price);
+        priceTxt.setText(gift.getFormattedPrice());
 
         TextView urlTxt = (TextView)rootView.findViewById(R.id.gift_url);
         urlTxt.setText(gift.getUrl());
