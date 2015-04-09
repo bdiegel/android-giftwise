@@ -29,80 +29,43 @@
         android:paddingLeft="8dp"
         android:orientation="vertical">
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-
-        <!--android:layout_width="0dp"-->
-            <TextView
-                android:id="@+id/list_item_gift_name_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Gift Name"
-                android:fontFamily="sans-serif-condensed"
-                android:textAppearance="?android:textAppearanceLarge"
-            />
-
-            <!--<TextView-->
-                <!--android:id="@+id/list_item_gift_price_textview"-->
-                <!--android:layout_width="72dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:gravity="right"-->
-                <!--android:layout_gravity="top"-->
-                <!--android:text="Price"-->
-                <!--android:paddingLeft="8dp"-->
-                <!--android:paddingRight="8dp"-->
-                <!--android:fontFamily="sans-serif-condensed"-->
-                <!--android:textAppearance="?android:textAppearanceMedium"-->
-                <!--/>-->
-        <!--</LinearLayout>-->
-
         <TextView
-            android:id="@+id/list_item_gift_url_textview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="URL"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:gravity="bottom"
+            android:id="@+id/list_item_gift_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Gift Name"
             android:fontFamily="sans-serif-condensed"
-            android:textAppearance="?android:textAppearanceSmall"
-            />
+            android:textAppearance="?android:textAppearanceLarge"
+        />
+
+        <!--<TextView-->
+            <!--android:id="@+id/list_item_gift_url_textview"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="URL"-->
+            <!--android:singleLine="true"-->
+            <!--android:ellipsize="end"-->
+            <!--android:gravity="bottom"-->
+            <!--android:fontFamily="sans-serif-condensed"-->
+            <!--android:textAppearance="?android:textAppearanceSmall"-->
+            <!--/>-->
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/list_item_gift_price_textview"
-        android:layout_width="72dp"
+        android:singleLine="true"
+        android:ellipsize="none"
+        android:layout_width="116dp"
         android:layout_height="wrap_content"
         android:gravity="right"
         android:layout_gravity="center_vertical"
-        android:text="Price"
+        android:text=""
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:textAppearanceMedium"
         />
-    <!--<TextView-->
-        <!--android:id="@+id/list_item_gift_price_textview"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="2"-->
-        <!--android:gravity="top"-->
-        <!--android:text="Price"-->
-        <!--android:fontFamily="sans-serif-condensed"-->
-        <!--android:textAppearance="?android:textAppearanceMedium"-->
-        <!--/>-->
-
-    <!--<ImageView-->
-        <!--android:id="@+id/list_item_gift_overflow_icon"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/ic_more_vert_grey600_24dp"-->
-        <!--android:contentDescription="@string/gift_overflow_menu"-->
-        <!--android:paddingLeft="8dp"-->
-        <!--android:paddingRight="8dp"-->
-        <!--/>-->
 
 </LinearLayout>

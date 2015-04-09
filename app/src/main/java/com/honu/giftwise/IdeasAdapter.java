@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.widget.CursorAdapter;
-import android.text.util.Linkify;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +16,10 @@ import android.widget.TextView;
 import com.honu.giftwise.data.BitmapUtils;
 import com.honu.giftwise.data.GiftImageCache;
 import com.honu.giftwise.data.GiftwiseContract;
+
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * Adapts Cursor with gift ideas for the ListView
@@ -57,11 +61,25 @@ public class IdeasAdapter extends CursorAdapter {
 
         long giftId = cursor.getLong(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
 
-        //viewHolder.nameView.setText(cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME));
         viewHolder.nameView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME)));
-        viewHolder.urlView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL)));
-        viewHolder.priceView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE)));
+        //viewHolder.urlView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL)));
+        viewHolder.priceView.setText("");
 
+        // format a price if there is one
+        double price = cursor.getDouble(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_PRICE));
+        if (price != 0.0) {
+            Currency currency = Currency.getInstance(Locale.getDefault());
+            String currencyCode = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_CURRENCY_CODE));
+            if (!TextUtils.isEmpty(currencyCode)) {
+                currency = Currency.getInstance(currencyCode);
+            }
+
+            NumberFormat format = NumberFormat.getCurrencyInstance();
+            format.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+            format.setCurrency(currency);
+
+            viewHolder.priceView.setText(format.format(price));
+        }
         // tag the menu view with the GiftId for retrieval in the menu selection handler later
         //viewHolder.menuView.setTag(giftId);
 
@@ -72,17 +90,17 @@ public class IdeasAdapter extends CursorAdapter {
     public static class ViewHolder {
         public final ImageView iconView;
         public final TextView nameView;
-        public final TextView urlView;
+        //public final TextView urlView;
         public final TextView priceView;
         //public final ImageView menuView;
 
         public ViewHolder(final View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_gift_image);
             nameView = (TextView)view.findViewById(R.id.list_item_gift_name_textview);
-            urlView = (TextView)view.findViewById(R.id.list_item_gift_url_textview);
+            //urlView = (TextView)view.findViewById(R.id.list_item_gift_url_textview);
             priceView = (TextView)view.findViewById(R.id.list_item_gift_price_textview);
             //menuView = (ImageView) view.findViewById(R.id.list_item_gift_overflow_icon);
-            Linkify.addLinks(urlView, Linkify.WEB_URLS);
+            //Linkify.addLinks(urlView, Linkify.WEB_URLS);
 
             //menuView.setOnClickListener(mOverflowMenuClickListener);
         }
