@@ -87,6 +87,10 @@ public class GiftImageCache {
         return mImageCache.get(key);
     }
 
+    public BitmapDrawable removeBitmapFromMemCache(String key) {
+        return mImageCache.remove(key);
+    }
+
     public BitmapDrawable getPlaceholderImage() {
         return mPlaceholderImage;
     }
