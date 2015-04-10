@@ -22,7 +22,7 @@ public class ContactImageCache {
 
     private RoundedBitmapDrawable mPlaceholderImage;
 
-    //public void ContactImageCache(Context context) {
+
     public ContactImageCache(Context context) {
 
         if (mImageCache == null) {
