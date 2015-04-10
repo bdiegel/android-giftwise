@@ -84,7 +84,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
                 Log.i(LOG_TAG, "Item selected at position: " + position);
                 Log.i(LOG_TAG, "View clicked: " + view.getId());
-                Object item = mIdeasAdapter.getItem(position);
+                //Object item = mIdeasAdapter.getItem(position);
 
                 // Get cursor from the adapter
                 Cursor cursor = mIdeasAdapter.getCursor();

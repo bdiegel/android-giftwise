@@ -155,7 +155,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void initColorPicker(final View rootView) {
-        final int[] noneSelected = new int[0];
 
         // add click listener for liked colors:
         ViewGroup editLikedColors = (ViewGroup) rootView.findViewById(R.id.contact_colors_like);
@@ -175,13 +174,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
                     @Override
                     public void onSelectionCompleted(int[] selectedColors) {
-                        Log.i(LOG_TAG, "Selected colors: " + selectedColors);
                         updateContentProvider(getColors(mLikedColorsAdapter), selectedColors, 1);
                     }
 
                     @Override
                     public void onSelectionCancelled() {
-                        Log.i(LOG_TAG, "Selection CANCELED");
+                        Log.d(LOG_TAG, "Selection CANCELED");
                     }
                 });
 
@@ -208,7 +206,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
                     @Override
                     public void onSelectionCompleted(int[] selectedColors) {
-                        Log.i(LOG_TAG, "Selected colors disliked: " + selectedColors);
                         updateContentProvider(getColors(mDislikedColorsAdapter), selectedColors, 0);
                     }
 
@@ -420,7 +417,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private void setEventDate(Cursor c) {
 
         if ( c != null && c.moveToNext()) {
-            TextView view = null;
+            TextView view;
 
             int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
 

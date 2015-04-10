@@ -170,7 +170,7 @@ public class EditGiftFragment extends Fragment {
 
         if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            //String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);

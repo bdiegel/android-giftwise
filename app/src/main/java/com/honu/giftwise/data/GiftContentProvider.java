@@ -67,15 +67,15 @@ public class GiftContentProvider extends ContentProvider {
 
         switch (match) {
             case GIFTS_BY_CONTACT: {
-                long _id = db.insert(GiftwiseContract.GiftEntry.TABLE_NAME, null, values);
+                db.insert(GiftwiseContract.GiftEntry.TABLE_NAME, null, values);
                 break;
             }
             case COLORS_BY_CONTACT: {
-                long _id = db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
+                db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
                 break;
             }
             case SIZES_BY_CONTACT: {
-                long _id = db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
+                db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
                 break;
             }
             default:

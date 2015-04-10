@@ -45,9 +45,9 @@ public class ContactActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-        if (savedInstanceState != null) {
-
-        }
+//        if (savedInstanceState != null) {
+//
+//        }
 
         Intent intent = getIntent();
         if (intent != null) {

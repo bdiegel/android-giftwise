@@ -3,7 +3,6 @@ package com.honu.giftwise;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -128,17 +127,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         // Extract data from the selected item
         cursor.moveToPosition(position);
         int contactId = cursor.getInt(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
-
-        Log.i(LOG_TAG, "Lookup dates for contactId: " + contactId);
-
-        // TODO: remove - this is simple test of the date query
-        Cursor c = ContactsUtils.getContactSpecialDates(getActivity(), contactId);
-        while ( c != null && c.moveToNext()) {
-            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
-            int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
-            Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
-        }
-        c.close();
 
         return true;
     }

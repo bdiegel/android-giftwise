@@ -1,6 +1,5 @@
 package com.honu.giftwise;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
@@ -56,12 +55,9 @@ public class ColorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
-        ContentResolver contentResolver = context.getContentResolver();
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         int color = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.ColorEntry.COLUMN_COLOR_VALUE));
-        int liked = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED));
         ImageView imageView = viewHolder.iconView;
         imageView.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }

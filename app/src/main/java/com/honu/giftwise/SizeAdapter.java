@@ -1,6 +1,5 @@
 package com.honu.giftwise;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -35,13 +34,8 @@ public class SizeAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
-        ContentResolver contentResolver = context.getContentResolver();
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-
-        int position = cursor.getPosition();
-        //view.setTag(1, position);
-
+        
         String item = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME));
         String size = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME));
         String notes = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES));

@@ -203,7 +203,6 @@ public class ContactsUtils {
         // defined query arguments:
         final Uri uri = ContactsContract.Contacts.CONTENT_URI;
         final String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
-        final String[] selectionArgs = null;
         final String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
 
         return new CursorLoader(
@@ -211,7 +210,7 @@ public class ContactsUtils {
               uri,
               projection,
               selection,
-              selectionArgs,
+              null,
               sortOrder
         );
     }
@@ -293,9 +292,7 @@ public class ContactsUtils {
                   ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
             };
 
-            String sortOrder = null;
-
-            return cr.query(uri, projection, where, selectionArgs, sortOrder);
+            return cr.query(uri, projection, where, selectionArgs, null);
         }
         catch (Exception ex)
         {
@@ -315,8 +312,6 @@ public class ContactsUtils {
      */
     public static CursorLoader getContactEventDateCurosrLoader(Context context, long contactId, int eventType )
     {
-        ContentResolver cr = context.getContentResolver();
-
         try
         {
             Uri uri = ContactsContract.Data.CONTENT_URI;
@@ -339,9 +334,7 @@ public class ContactsUtils {
                   "" + eventType
             };
 
-            String sortOrder = null;
-
-            return new CursorLoader(context, uri, projection, where, selectionArgs, sortOrder);
+            return new CursorLoader(context, uri, projection, where, selectionArgs, null);
         }
         catch (Exception ex)
         {
