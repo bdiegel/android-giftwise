@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.view.FloatingActionButton;
 
 /**

@@ -1,4 +1,4 @@
-package com.honu.giftwise;
+package com.honu.giftwise.data;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -17,6 +17,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 
+import com.honu.giftwise.R;
+
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -24,9 +26,7 @@ import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by bdiegel on 2/24/15.
- */
+
 public class ContactsUtils {
 
     public static final String DISPLAY_NAME = "display_name";
@@ -267,13 +267,6 @@ public class ContactsUtils {
         return BitmapFactory.decodeStream(input);
     }
 
-//    String[] selection = { ContactsContract.Contacts.DISPLAY_NAME,
-//          ContactsContract.CommonDataKinds.Event.START_DATE,
-//          ContactsContract.CommonDataKinds.Event.CONTACT_ID,
-//          ContactsContract.CommonDataKinds.Event.TYPE };
-//    String where = ContactsContract.Data.MIMETYPE + "= ? "
-// + "AND " +  ContactsContract.CommonDataKinds.Event.TYPE + " IN (" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY + ", " + ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY + ") " + "AND substr(" + ContactsContract.CommonDataKinds.Event.START_DATE + ", -5, 5)= ?";
-//    String[] args = { ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE, dateFormat };
     public static Cursor getContactSpecialDates(Context context, int contactId)
     {
         ContentResolver cr = context.getContentResolver();
@@ -294,13 +287,10 @@ public class ContactsUtils {
                   + " AND " +  ContactsContract.CommonDataKinds.Event.TYPE +
                     " IN (" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY + ", "
                             + ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY + ") ";
-                  //+ " AND " + ContactsContract.CommonDataKinds.Event.TYPE + "=?";
 
-            // Add contactId filter.
             String[] selectionArgs = new String[] {
                   String.valueOf(contactId),
                   ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
-                  //String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
             };
 
             String sortOrder = null;
@@ -316,7 +306,13 @@ public class ContactsUtils {
         }
     }
 
-    // ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY,TYPE_ANNIVERSARY, TYPE_OTHER, TYPE_CUSTOM
+    /**
+     * Query a Contact for an event by type:
+     *
+     * ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY,
+     * ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY,
+     * ContactsContract.CommonDataKinds.Event.TYPE_OTHER, TYPE_CUSTOM
+     */
     public static CursorLoader getContactEventDateCurosrLoader(Context context, long contactId, int eventType )
     {
         ContentResolver cr = context.getContentResolver();
@@ -340,15 +336,12 @@ public class ContactsUtils {
             String[] selectionArgs = new String[] {
                   String.valueOf(contactId),
                   ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
-                  //String.valueOf(ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY)
                   "" + eventType
             };
 
             String sortOrder = null;
 
             return new CursorLoader(context, uri, projection, where, selectionArgs, sortOrder);
-
-            //return cr.query(uri, projection, where, selectionArgs, sortOrder);
         }
         catch (Exception ex)
         {
@@ -360,20 +353,13 @@ public class ContactsUtils {
     }
 
 //    String [] PROJECTION = new String [] {  ContactsContract.Contacts.LOOKUP_KEY };
-//
 //    Cursor cursor = this.managedQuery(ContactsContract.Contacts.CONTENT_URI, PROJECTION, null, null, null);
-//
-//
 //    for(cursor.moveToFirst(); cursor.moveToNext(); cursor.isAfterLast()) {
 //        Log.d(LOG_TAG, "lookupKey for contact:  " + cursor.getString(1) + ", is: " + cursor.getString(0));
 //    }
 
 
-    public static String formatPrice(Context context, String currencyCode,
-                                     double price) {
-//        if (price == 0) {
-//            return context.getString(R.string.free);
-//        }
+    public static String formatPrice(Context context, String currencyCode, double price) {
         Currency currency = Currency.getInstance(currencyCode);
         NumberFormat format = NumberFormat.getCurrencyInstance();
         format.setCurrency(currency);

@@ -27,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.honu.giftwise.data.BitmapUtils;
+import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftImageCache;
 

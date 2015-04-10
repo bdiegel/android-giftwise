@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.honu.giftwise.data.ContactsUtils;
+
 
 public class MainActivity extends ActionBarActivity {
 

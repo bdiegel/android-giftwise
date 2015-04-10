@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftImageCache;
 import com.honu.giftwise.view.FloatingActionButton;

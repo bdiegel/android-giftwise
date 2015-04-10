@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.honu.giftwise.data.ContactImageCache;
+import com.honu.giftwise.data.ContactsUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

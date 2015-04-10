@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.android.colorpicker.ColorPickerDialog;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
+import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.data.Size;
 
