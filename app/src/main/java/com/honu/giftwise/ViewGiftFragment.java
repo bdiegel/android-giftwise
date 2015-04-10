@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftImageCache;
 import com.honu.giftwise.view.FloatingActionButton;
@@ -125,7 +124,7 @@ public class ViewGiftFragment extends Fragment {
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
 
         if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(createtShareIntent());
+            mShareActionProvider.setShareIntent(createShareIntent());
             //mShareActionProvider.setShareHistoryFileName(null);
         } else {
             Log.d(LOG_TAG, "Problem finding ShareActionProvider");
@@ -163,7 +162,7 @@ public class ViewGiftFragment extends Fragment {
     }
 
 
-    private Intent createtShareIntent() {
+    private Intent createShareIntent() {
         Log.d(LOG_TAG, "Share gift item: " );
 
         Intent intent = new Intent(Intent.ACTION_SEND);
@@ -175,27 +174,41 @@ public class ViewGiftFragment extends Fragment {
     }
 
     private String getTextDescription() {
-        View rootView = getView();
-        TextView nameEdit = (TextView)rootView.findViewById(R.id.gift_name);
-        TextView priceEdit = (TextView) rootView.findViewById(R.id.gift_price);
-        TextView urlEdit = (TextView)rootView.findViewById(R.id.gift_url);
-        TextView notesEdit = (TextView)rootView.findViewById(R.id.gift_notes);
+//        View rootView = getView();
+//        TextView nameEdit = (TextView)rootView.findViewById(R.id.gift_name);
+//        TextView priceEdit = (TextView) rootView.findViewById(R.id.gift_price);
+//        TextView urlEdit = (TextView)rootView.findViewById(R.id.gift_url);
+//        TextView notesEdit = (TextView)rootView.findViewById(R.id.gift_notes);
+//
+//
+//        String priceTxt = priceEdit.getText().toString();
+//        if (!TextUtils.isEmpty(priceTxt)) {
+//            try {
+//                double price = Double.parseDouble(priceTxt);
+//                if (price > 0)
+//                    priceTxt = ContactsUtils.formatPrice(getActivity(), "USD", price);
+//            } catch (NumberFormatException nfe) {
+//                Log.e(LOG_TAG, "Exception formatting price", nfe);
+//                priceTxt = "";
+//            }
+//        }
+//
+//        StringBuffer buffer = new StringBuffer();
+//        buffer.append(String.format("Gift: %s\n", nameEdit.getText().toString()));
+//        buffer.append(String.format("Price: %s\n", ContactsUtils.formatPrice(getActivity(), "USD", price)));
+//        buffer.append(String.format("Notes: %s\n", notesEdit.getText().toString()));
+//        buffer.append(String.format(urlEdit.getText().toString()));
 
-        double price = 0;
-        String priceTxt = priceEdit.getText().toString();
-        if (!TextUtils.isEmpty(priceTxt)) {
-            try {
-                price = Double.parseDouble(priceTxt);
-            } catch (NumberFormatException nfe) {
-                price = 0;
-            }
-        }
+        String priceTxt = "";
+        if (gift.getPrice() > 0)
+            priceTxt = gift.getFormattedPrice();
 
         StringBuffer buffer = new StringBuffer();
-        buffer.append(String.format("Gift: %s\n", nameEdit.getText().toString()));
-        buffer.append(String.format("Price: %s\n", ContactsUtils.formatPrice(getActivity(), "USD", price)));
-        buffer.append(String.format("Notes: %s\n", notesEdit.getText().toString()));
-        buffer.append(String.format(urlEdit.getText().toString()));
+        buffer.append(String.format("%s %s\n", gift.getName(), priceTxt));
+
+        if (!TextUtils.isEmpty(gift.getNotes()))
+            buffer.append(String.format("Notes: %s\n", gift.getNotes()));
+        buffer.append(gift.getUrl());
 
         return buffer.toString();
     }
