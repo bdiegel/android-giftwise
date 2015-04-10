@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_share"
-        android:title="@string/action_share"
-        app:showAsAction="never"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
-
-    <item
         android:id="@+id/action_browse"
         android:title="@string/action_browse"
         android:icon="@drawable/ic_open_in_browser_white_36dp"

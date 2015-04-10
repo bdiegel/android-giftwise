@@ -30,8 +30,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        Log.i(LOG_TAG, "toolbar: " + toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -57,14 +55,12 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // handle action bar item clicks here
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings: {
-                //startActivity(new Intent(this, SettingsActivity.class));
+            case R.id.about: {
+                // TODO
                 break;
             }
             case R.id.action_addcontact: {
@@ -94,7 +90,7 @@ public class MainActivity extends ActionBarActivity {
         // Handle result from contact import request
         if (requestCode == REQUEST_CODE_CONTACT_IMPORT) {
 
-            // TODO: should use a loader for all queries
+            // TODO: should use a loader
             if(resultCode == RESULT_OK) {
                 Uri lookupUri = data.getData();
                 String displayName = getDisplayNameForContactLookupUri(lookupUri);
@@ -145,18 +141,5 @@ public class MainActivity extends ActionBarActivity {
 
         return name;
     }
-
-//    private void findOrCreateRawContact(Uri lookupUri) {
-//
-//        final String DISPLAY_NAME_COL = Build.VERSION.SDK_INT
-//              >= Build.VERSION_CODES.HONEYCOMB ?
-//              Contacts.DISPLAY_NAME_PRIMARY :
-//              Contacts.DISPLAY_NAME;
-//
-//        final String[] projection = { DISPLAY_NAME_COL };
-//
-//             // getContentResolver().query(lookupUri,
-//
-//    }
 
 }

@@ -91,17 +91,10 @@ public class EditGiftActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // handle action bar item clicks here
         int id = item.getItemId();
 
         Log.i(LOG_TAG, "onOptionsItemSelected id: " + id );
-
-        // noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         // navigation icon selected (done)
         if (id == android.R.id.home) {

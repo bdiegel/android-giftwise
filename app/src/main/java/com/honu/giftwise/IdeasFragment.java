@@ -160,8 +160,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        Log.i(LOG_TAG, "Selected itemId: " + item.getItemId());
-        Log.i(LOG_TAG, "Selected info.position: " + info.position);
+        Log.d(LOG_TAG, "Selected itemId: " + item.getItemId());
+        Log.d(LOG_TAG, "Selected info.position: " + info.position);
 
         // Get cursor from the adapter
         Cursor cursor = mIdeasAdapter.getCursor();
@@ -172,18 +172,17 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
 
         switch (item.getItemId()) {
+            case R.id.gift_view:
+                openGift(giftId);
+                Log.d(LOG_TAG, "View pressed");
+                return true;
             case R.id.gift_edit:
-                //openGift(giftId);
                 editGift(giftId);
-                Log.i(LOG_TAG, "Edit pressed");
+                Log.d(LOG_TAG, "Edit pressed");
                 return true;
             case R.id.gift_delete:
-                Log.i(LOG_TAG, "Delete pressed");
+                Log.d(LOG_TAG, "Delete pressed");
                 deleteGift(giftId);
-                return true;
-            case R.id.gift_open_url:
-                Log.i(LOG_TAG, "Open url pressed");
-                openUrl(giftId);
                 return true;
             default:
                 return super.onContextItemSelected(item);

@@ -60,4 +60,5 @@
     <string name="action_edit">Edit</string>
     <string name="title_activity_edit_size">EditSizeActivity</string>
     <string name="action_edit_contact">Edit Contact</string>
+    <string name="about">About</string>
 </resources>

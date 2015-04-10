@@ -38,20 +38,16 @@ public class ViewGiftActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-
         Intent intent = getIntent();
         gift = intent.getExtras().getParcelable("gift");
         mContactName = intent.getStringExtra("contactName");
-
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                   .add(R.id.container, ViewGiftFragment.getInstance(gift, mContactName), VIEW_GIFT_FRAGMENT_TAG)
                   .commit();
         }
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,15 +58,8 @@ public class ViewGiftActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // handle action bar item clicks
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         // navigation icon selected (done)
         if (id == android.R.id.home) {
