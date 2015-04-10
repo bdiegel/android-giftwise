@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
-                android:text="EVENTS"
+                android:text="@string/profile_events_label"
                 android:textAppearance="?android:textAppearanceLarge"
                 >
             </TextView>
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="4dp"
-                    android:text="Birthday: "
+                    android:text="@string/contact_birthday_text"
                     android:textAppearance="?android:textAppearanceMedium"
                     />
 
@@ -103,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="4dp"
-                    android:text="Anniversary: "
+                    android:text="@string/contact_anniversary"
                     android:textAppearance="?android:textAppearanceMedium"
                     />
 
@@ -147,7 +147,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
-                android:text="COLORS"
+                android:text="@string/profile_colors_label"
                 android:textAppearance="?android:textAppearanceLarge"
                 >
             </TextView>
@@ -233,7 +233,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
-                android:text="SIZES"
+                android:text="@string/profile_sizes_label"
                 android:textAppearance="?android:textAppearanceLarge"
                 >
             </TextView>
@@ -252,7 +252,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Add Size"
+                android:text="@string/profile_addsize_button_label"
                 style="?android:attr/borderlessButtonStyle"
                 />
 

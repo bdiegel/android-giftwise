@@ -24,7 +24,6 @@
         android:id="@+id/list_item_contact_name_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Text"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="?android:textAppearanceLarge"
         />

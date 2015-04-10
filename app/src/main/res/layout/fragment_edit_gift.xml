@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
-            android:text="Recipient"
+            android:text="@string/gift_recipient_label"
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"
             style="?android:attr/listSeparatorTextViewStyle"/>
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:text="Gift"
+            android:text="@string/gift_details_label"
             style="?android:attr/listSeparatorTextViewStyle"/>
 
 
@@ -64,7 +64,7 @@
                     android:id="@+id/gift_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Price"
+                    android:hint="@string/gift_price_label"
                     android:inputType="numberDecimal"
                     android:imeOptions="actionNext"/>
             </LinearLayout>
@@ -91,7 +91,7 @@
             android:id="@+id/gift_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="URL"
+            android:hint="@string/gift_url_label"
             android:inputType="text|textUri"
             android:imeOptions="actionNext"/>
 
@@ -100,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="16dp"
-            android:text="Notes"
+            android:text="@string/gift_notes_label"
             style="?android:attr/listSeparatorTextViewStyle"/>
 
         <EditText

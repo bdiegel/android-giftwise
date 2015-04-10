@@ -103,7 +103,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Contact import cancelled", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Contact import cancelled", Toast.LENGTH_SHORT).show();
             }
         }
     }
