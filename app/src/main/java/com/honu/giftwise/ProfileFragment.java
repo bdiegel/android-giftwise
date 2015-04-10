@@ -146,8 +146,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void deleteSize(long sizeId) {
         Log.i(LOG_TAG, "Delete size id: " + sizeId);
-        Uri uri = GiftwiseContract.SizeEntry.buildSizeUri(sizeId);
-        getActivity().getContentResolver().delete(uri, null, null);
+        //Uri uri = GiftwiseContract.SizeEntry.buildSizeUri(sizeId);
+        Uri uri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(mRawContactId);
+        String where = GiftwiseContract.SizeEntry._ID  + " = ?";
+        String[] whereArgs = new String[] {"" + sizeId};
+
+        getActivity().getContentResolver().delete(uri, where, whereArgs);
     }
 
     private void initColorPicker(final View rootView) {

@@ -19,32 +19,32 @@ public class GiftContentProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // Gift URIs
-    private static final int GIFT = 100;                           // gift
+    //private static final int GIFT = 100;                           // gift
     private static final int GIFT_WITH_ID = 101;                   // gift by id
     private static final int GIFTS_BY_CONTACT = 102;               // gifts by raw contact id
 
     // Color URIs
-    private static final int COLOR = 200;                           // color
+    //private static final int COLOR = 200;                           // color
     private static final int COLOR_WITH_ID = 201;                   // color by id
     private static final int COLORS_BY_CONTACT = 202;               // colors by raw contact id
 
     // Size URIs
-    private static final int SIZE = 300;                           // size
+    //private static final int SIZE = 300;                           // size
     private static final int SIZE_WITH_ID = 301;                   // size by id
     private static final int SIZES_BY_CONTACT = 302;               // sizes by raw contact id
 
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT, GIFT);
+        //matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT, GIFT);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT + "/#", GIFT_WITH_ID);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT + "/" + GiftwiseContract.PATH_CONTACT + "/#", GIFTS_BY_CONTACT);
 
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR, COLOR);
+        //matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR, COLOR);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR + "/#", COLOR_WITH_ID);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR + "/" + GiftwiseContract.PATH_CONTACT + "/#", COLORS_BY_CONTACT);
 
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE, SIZE);
+        //matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE, SIZE);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE + "/#", SIZE_WITH_ID);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE + "/" + GiftwiseContract.PATH_CONTACT + "/#", SIZES_BY_CONTACT);
         return matcher;
@@ -118,31 +118,22 @@ public class GiftContentProvider extends ContentProvider {
             case GIFT_WITH_ID:
                 rowsDeleted = deleteGiftById(uri);
                 break;
-            case COLOR_WITH_ID:
-                rowsDeleted = deleteColorById(uri);
-                break;
             case COLORS_BY_CONTACT:
                 rowsDeleted = db.delete(GiftwiseContract.ColorEntry.TABLE_NAME, where, whereArgs);
                 break;
-            case SIZE_WITH_ID:
-                rowsDeleted = deleteSizeById(uri);
+            case SIZES_BY_CONTACT:
+                rowsDeleted = db.delete(GiftwiseContract.SizeEntry.TABLE_NAME, where, whereArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        // Because a null deletes all rows
-        if (where == null || rowsDeleted != 0) {
+        if (rowsDeleted != 0) {
             if (match == GIFT_WITH_ID)
                 getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
-            else if (match == COLOR_WITH_ID)
+            else
                 getContext().getContentResolver().notifyChange(uri, null);
-            else if (match == SIZE_WITH_ID)
-                getContext().getContentResolver().notifyChange(GiftwiseContract.SizeEntry.SIZE_URI, null);
         }
-
-        if (match == COLORS_BY_CONTACT && rowsDeleted != 0)
-            getContext().getContentResolver().notifyChange(uri, null);
 
         return rowsDeleted;
     }
@@ -183,13 +174,13 @@ public class GiftContentProvider extends ContentProvider {
             case GIFTS_BY_CONTACT:
                 return GiftwiseContract.GiftEntry.CONTENT_TYPE;
             case COLOR_WITH_ID:
-                return GiftwiseContract.GiftEntry.CONTENT_ITEM_TYPE;
+                return GiftwiseContract.ColorEntry.CONTENT_ITEM_TYPE;
             case COLORS_BY_CONTACT:
-                return GiftwiseContract.GiftEntry.CONTENT_TYPE;
+                return GiftwiseContract.ColorEntry.CONTENT_TYPE;
             case SIZE_WITH_ID:
-                return GiftwiseContract.GiftEntry.CONTENT_ITEM_TYPE;
+                return GiftwiseContract.SizeEntry.CONTENT_ITEM_TYPE;
             case SIZES_BY_CONTACT:
-                return GiftwiseContract.GiftEntry.CONTENT_TYPE;
+                return GiftwiseContract.SizeEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
