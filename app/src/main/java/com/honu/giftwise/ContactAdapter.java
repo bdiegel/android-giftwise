@@ -78,10 +78,6 @@ public class ContactAdapter extends CursorAdapter {
      * Load thumbnail photo from cache if found. Otherwise, use place-holder image.
      * Start an async task to load image from the contacts content provider. If an
      * image is found, replace the place-holder and cache the image.
-     *
-     * @param contentResolver
-     * @param resId
-     * @param imageView
      */
     public void loadBitmap(ContentResolver contentResolver, int resId, ImageView imageView) {
         final String imageKey = String.valueOf(resId);
@@ -159,9 +155,6 @@ public class ContactAdapter extends CursorAdapter {
         /**
          * Alternative method of loading the thumbnail bitmap. Convenience method is
          * ContactsContract.Contacts.openContactPhotoInputStream.
-         *
-         * @param contactId
-         * @return
          */
         public InputStream openPhoto(long contactId) {
             Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);

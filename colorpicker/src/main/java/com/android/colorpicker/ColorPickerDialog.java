@@ -191,7 +191,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
         mSelectedColors = new int[selected.size()];
         for (int i=0; i < selected.size(); i++) {
-            mSelectedColors[i] = (int) selected.get(i);
+            mSelectedColors[i] = selected.get(i);
         }
     }
 
@@ -206,7 +206,7 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
         mSelectedColors = new int[selected.size()];
         for (int i=0; i < selected.size(); i++) {
-            mSelectedColors[i] = (int) selected.get(i);
+            mSelectedColors[i] = selected.get(i);
         }
     }
 

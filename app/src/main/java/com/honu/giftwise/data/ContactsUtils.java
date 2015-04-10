@@ -56,11 +56,6 @@ public class ContactsUtils {
 
     /**
      * Load RawContacts for specified account from content provider.
-     *
-     * @param context
-     * @param accountName
-     * @param accountType
-     * @return
      */
     public static Loader<Cursor> loadRawContacts(Context context, String accountName, String accountType) {
 
@@ -100,10 +95,6 @@ public class ContactsUtils {
 
     /**
      * Create a new RawContact for our app-specific account type.
-     *
-     * @param context
-     * @param accountName
-     * @param displayName
      */
     public static void createRawContact(Context context, String accountName, String displayName) {
 
@@ -134,10 +125,12 @@ public class ContactsUtils {
 
     }
 
+    public static void deleteRawContact() {
+        ContactsContract.RawContacts.CONTENT_URI.buildUpon().appendQueryParameter(ContactsContract.CALLER_IS_SYNCADAPTER, "true").build();
+    }
+
     /**
      * List all the RawContacts from the content provider. Convenience function to quickly check contents.
-     *
-     * @param context
      */
     public static void readRawAccountTypes(Context context) {
 
@@ -193,10 +186,6 @@ public class ContactsUtils {
 
     /**
      * Load all visible Contacts from the content provider
-     *
-     * @param context
-     * @param projection
-     * @return
      */
     public static Loader<Cursor> loadContacts(Context context, String[] projection) {
 
@@ -217,10 +206,6 @@ public class ContactsUtils {
 
     /**
      * List all RawContacts for specified account. Convenient for checking contents.
-     *
-     * @param context
-     * @param accountName
-     * @param accountType
      */
     public static void printRawAccounts(Context context, String accountName, String accountType) {
 
@@ -264,43 +249,6 @@ public class ContactsUtils {
         }
 
         return BitmapFactory.decodeStream(input);
-    }
-
-    public static Cursor getContactSpecialDates(Context context, int contactId)
-    {
-        ContentResolver cr = context.getContentResolver();
-
-        try
-        {
-            Uri uri = ContactsContract.Data.CONTENT_URI;
-
-            String[] projection = new String[] {
-                  ContactsContract.Data.CONTACT_ID,
-                  ContactsContract.CommonDataKinds.Event.START_DATE,
-                  ContactsContract.Data.MIMETYPE,
-                  ContactsContract.CommonDataKinds.Event.TYPE
-            };
-
-            String where = ContactsContract.Data.CONTACT_ID + "=?"
-                  + " AND " + ContactsContract.Data.MIMETYPE + "=?"
-                  + " AND " +  ContactsContract.CommonDataKinds.Event.TYPE +
-                    " IN (" + ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY + ", "
-                            + ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY + ") ";
-
-            String[] selectionArgs = new String[] {
-                  String.valueOf(contactId),
-                  ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE,
-            };
-
-            return cr.query(uri, projection, where, selectionArgs, null);
-        }
-        catch (Exception ex)
-        {
-            String message = ex.getMessage();
-            Log.e(LOG_TAG, "Error reading dates: " + message);
-
-            return null;
-        }
     }
 
     /**

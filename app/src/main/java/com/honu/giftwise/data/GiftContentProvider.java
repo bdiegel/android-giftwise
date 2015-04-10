@@ -182,9 +182,7 @@ public class GiftContentProvider extends ContentProvider {
         }
         String[] selectionArgs =  new String[args.length + 1];
         selectionArgs[0] = Long.toString(rawContactId);
-        for (int i=0; i<args.length; i++) {
-            selectionArgs[i+1] = args[i];
-        }
+        System.arraycopy(args, 0, selectionArgs, 1, args.length);
 
         return mDbHelper.getReadableDatabase().query(
               GiftwiseContract.ColorEntry.TABLE_NAME,

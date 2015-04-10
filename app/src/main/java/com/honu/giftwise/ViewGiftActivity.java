@@ -18,8 +18,6 @@ public class ViewGiftActivity extends ActionBarActivity {
 
     private static final String VIEW_GIFT_FRAGMENT_TAG = "VIEW_GIFT_FRAGMENT_TAG";
 
-    private String mContactName;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +36,7 @@ public class ViewGiftActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
         Gift gift = intent.getExtras().getParcelable("gift");
-        mContactName = intent.getStringExtra("contactName");
+        String mContactName = intent.getStringExtra("contactName");
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

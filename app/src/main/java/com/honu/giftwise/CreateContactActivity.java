@@ -74,7 +74,6 @@ public class CreateContactActivity extends ActionBarActivity {
 
     /**
      * Create a new RawContact for this account name and type
-     * @param displayName
      */
     private void createRawContact(final String displayName) {
         Log.i(LOG_TAG, "display name: " + displayName);
