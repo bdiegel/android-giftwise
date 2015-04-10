@@ -22,6 +22,8 @@ public class Gift implements Parcelable {
     private String notes;
     private String currencyCode;
 
+    private byte[] bitmap;
+
     public Gift() {}
 
     public Gift(long rawContactId) {
@@ -124,6 +126,14 @@ public class Gift implements Parcelable {
         }
 
         return priceString;
+    }
+
+    public byte[] getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(byte[] bitmap) {
+        this.bitmap = bitmap;
     }
 
 
