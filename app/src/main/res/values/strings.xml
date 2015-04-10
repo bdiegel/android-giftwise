@@ -59,4 +59,5 @@
     <string name="title_activity_view_gift">ViewGiftActivity</string>
     <string name="action_edit">Edit</string>
     <string name="title_activity_edit_size">EditSizeActivity</string>
+    <string name="action_edit_contact">Edit Contact</string>
 </resources>

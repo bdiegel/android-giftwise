@@ -1,9 +1,13 @@
 package com.honu.giftwise;
 
 
+import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,6 +25,8 @@ import com.honu.giftwise.view.SlidingTabLayout;
 public class ContactActivity extends ActionBarActivity {
 
     private static final String LOG_TAG = ContactActivity.class.getSimpleName();
+
+    private static final int EDIT_CONTACT_RESULT = 100;
 
     private CustomPagerAdapter mCustomPagerAdapter;
     private ViewPager mViewPager;
@@ -104,6 +110,10 @@ public class ContactActivity extends ActionBarActivity {
             return true;
         }
 
+        if (id == R.id.action_edit_contact) {
+            editContact();
+        }
+
         // navigation icon selected (done)
         if (id == android.R.id.home) {
             Log.i(LOG_TAG, "navigation icon clicked");
@@ -112,6 +122,26 @@ public class ContactActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == EDIT_CONTACT_RESULT && resultCode == Activity.RESULT_OK && null != data) {
+            // not sure what we do with it ... nothing for now
+            Log.d(LOG_TAG, "activity result data: " + data);
+        }
+    }
+
+    private void editContact() {
+        // use content uri to edit contacts:
+        Uri mUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, mContactId);
+
+        // Creates a new Intent to edit a contact
+        Intent editIntent = new Intent(Intent.ACTION_EDIT);
+        editIntent.setDataAndType(mUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+        editIntent.putExtra("finishActivityOnSaveCompleted", true);
+        editIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivityForResult(editIntent, EDIT_CONTACT_RESULT);
     }
 
     /**
