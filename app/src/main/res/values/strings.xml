@@ -42,6 +42,15 @@
         <item>Dress</item>
         <item>Jeans</item>
         <item>Shoes</item>
+        <item>Shorts</item>
+        <item>Skirt</item>
+        <item>Sweater</item>
+        <item>Suit</item>
+        <item>Blouse</item>
+        <item>Top</item>
+        <item>Jacket</item>
+        <item>Swim</item>
+        <item>Coat</item>
     </string-array>
 
     <string-array name="size_context_menu">
