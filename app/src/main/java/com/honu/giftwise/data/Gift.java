@@ -176,7 +176,7 @@ public class Gift implements Parcelable {
         }
     };
 
-    public static final Gift createFromCursor(Cursor cursor) {
+    public static Gift createFromCursor(Cursor cursor) {
         int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
         int rawContactId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID));
         String giftName = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME));

@@ -18,8 +18,6 @@ public class ViewGiftActivity extends ActionBarActivity {
 
     private static final String VIEW_GIFT_FRAGMENT_TAG = "VIEW_GIFT_FRAGMENT_TAG";
 
-    private Gift gift;
-
     private String mContactName;
 
 
@@ -39,7 +37,7 @@ public class ViewGiftActivity extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         Intent intent = getIntent();
-        gift = intent.getExtras().getParcelable("gift");
+        Gift gift = intent.getExtras().getParcelable("gift");
         mContactName = intent.getStringExtra("contactName");
 
         if (savedInstanceState == null) {

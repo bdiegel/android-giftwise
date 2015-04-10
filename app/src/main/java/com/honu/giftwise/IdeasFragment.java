@@ -33,8 +33,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private IdeasAdapter mIdeasAdapter;
 
-    private ListView mListView;
-
     private int mPosition = ListView.INVALID_POSITION;
 
     private long mRawContactId;
@@ -73,7 +71,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         mIdeasAdapter = new IdeasAdapter(getActivity(), cur, 0);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        mListView = (ListView) rootView.findViewById(R.id.gifts_listview);
+        ListView mListView = (ListView) rootView.findViewById(R.id.gifts_listview);
         mListView.setAdapter(mIdeasAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

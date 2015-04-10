@@ -28,10 +28,6 @@ public class ContactActivity extends ActionBarActivity {
 
     private static final int EDIT_CONTACT_RESULT = 100;
 
-    private CustomPagerAdapter mCustomPagerAdapter;
-    private ViewPager mViewPager;
-    private SlidingTabLayout mTabs;
-
     // id of RawContact
     private long mRawContactId;
 
@@ -71,8 +67,8 @@ public class ContactActivity extends ActionBarActivity {
         getSupportActionBar().setTitle(mContactName);
 
 
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
+        SlidingTabLayout mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true);
 
         mTabs.setSelectedIndicatorColors(R.color.selector);
@@ -85,7 +81,7 @@ public class ContactActivity extends ActionBarActivity {
             }
         });
 
-        mCustomPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
+        CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
         mViewPager.setAdapter(mCustomPagerAdapter);
         mTabs.setViewPager(mViewPager);
     }

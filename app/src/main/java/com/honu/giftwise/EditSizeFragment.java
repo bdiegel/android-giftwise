@@ -27,9 +27,6 @@ public class EditSizeFragment extends Fragment {
 
     private Size size;
 
-    private AutoCompleteTextView mItemView;
-    private AutoCompleteTextView mSizeView;
-
     public static EditSizeFragment getInstance(Size size) {
         EditSizeFragment fragment = new EditSizeFragment();
 
@@ -115,7 +112,7 @@ public class EditSizeFragment extends Fragment {
 
     private void initItemView(View rootView) {
 
-        mItemView = (AutoCompleteTextView) rootView.findViewById(R.id.item_spinner);
+        AutoCompleteTextView mItemView = (AutoCompleteTextView) rootView.findViewById(R.id.item_spinner);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
               R.array.clothing_choices,
@@ -126,7 +123,7 @@ public class EditSizeFragment extends Fragment {
 
     private void initSizeView(View rootView) {
 
-        mSizeView = (AutoCompleteTextView) rootView.findViewById(R.id.size_spinner);
+        AutoCompleteTextView mSizeView = (AutoCompleteTextView) rootView.findViewById(R.id.size_spinner);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
               R.array.size_choices,

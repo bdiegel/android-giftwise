@@ -101,7 +101,7 @@ public class Size implements Parcelable {
         }
     };
 
-    public static final Size createFromCursor(Cursor cursor) {
+    public static Size createFromCursor(Cursor cursor) {
         int sizeId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.SizeEntry._ID));
         int rawContactId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID));
         String item = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME));

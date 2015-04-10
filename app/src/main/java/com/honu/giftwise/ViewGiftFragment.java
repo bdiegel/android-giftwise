@@ -31,12 +31,6 @@ public class ViewGiftFragment extends Fragment {
 
     private Gift gift;
 
-    private String mContactName;
-
-    private GiftImageCache mImageCache;
-
-    private ShareActionProvider mShareActionProvider;
-
     /**
      * Create Fragment and setup the Bundle arguments
      */
@@ -59,12 +53,12 @@ public class ViewGiftFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_view_gift, container, false);
 
-        mImageCache = ((GiftwiseApplication)getActivity().getApplicationContext()).getGiftImageCache();
+        GiftImageCache mImageCache = ((GiftwiseApplication) getActivity().getApplicationContext()).getGiftImageCache();
 
         // Get the Id of the raw contact
         Bundle args = getArguments();
         gift = args.getParcelable("gift");
-        mContactName = args.getString("contactName");
+        String mContactName = args.getString("contactName");
 
         // gift name
         TextView nameTxt = (TextView)rootView.findViewById(R.id.gift_name);
@@ -121,7 +115,7 @@ public class ViewGiftFragment extends Fragment {
         MenuItem shareItem = menu.findItem(R.id.action_share);
 
         // Now get the ShareActionProvider from the item
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+        ShareActionProvider mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
 
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(createShareIntent());
