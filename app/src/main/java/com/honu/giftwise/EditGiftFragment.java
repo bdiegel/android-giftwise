@@ -176,15 +176,13 @@ public class EditGiftFragment extends Fragment {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
 
-                //Bitmap resizedBitmap = BitmapUtils.resizeBitmap(bitmap, 640);
                 Bitmap resizedBitmap = BitmapUtils.resizeBitmap(bitmap, 480);
 
                 ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
-                //imageView.setImageBitmap(bitmap);
                 imageView.setImageBitmap(resizedBitmap);
 
                 if (gift.getGiftId() != -1) {
-                    Log.i(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
+                    Log.d(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
                     mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
                 }
             } catch (IOException e) {
