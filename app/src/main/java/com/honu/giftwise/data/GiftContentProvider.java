@@ -9,9 +9,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-/**
- * Created by bdiegel on 3/7/15.
- */
+
 public class GiftContentProvider extends ContentProvider {
 
     // database helper
@@ -62,24 +60,12 @@ public class GiftContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            case GIFT_WITH_ID: {
-                retCursor = getGiftById(uri,  projection, sortOrder);
-                break;
-            }
             case GIFTS_BY_CONTACT: {
                 retCursor = getGiftsForRawContactId(uri, projection, sortOrder);
                 break;
             }
-            case COLOR_WITH_ID: {
-                retCursor = getColorById(uri, projection, sortOrder);
-                break;
-            }
             case COLORS_BY_CONTACT: {
                 retCursor = getColorsForRawContactId(uri, projection, selection, selectionArgs, sortOrder);
-                break;
-            }
-            case SIZE_WITH_ID: {
-                retCursor = getSizeById(uri, projection, sortOrder);
                 break;
             }
             case SIZES_BY_CONTACT: {
@@ -98,17 +84,10 @@ public class GiftContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
-        Uri returnUri = uri;
 
         switch (match) {
-            case GIFT: {
+            case GIFTS_BY_CONTACT: {
                 long _id = db.insert(GiftwiseContract.GiftEntry.TABLE_NAME, null, values);
-                long rawContactId =  values.getAsLong(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID);
-                if ( _id > 0 ) {
-                    returnUri = GiftwiseContract.GiftEntry.buildGiftUri(_id);
-                }
-                else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
             case COLORS_BY_CONTACT: {
@@ -116,37 +95,16 @@ public class GiftContentProvider extends ContentProvider {
                 long _id = db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
                 break;
             }
-            case COLOR: {
-                Log.i("DbHelper", "Insert value: " + values);
-                long _id = db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
-                long rawContactId =  values.getAsLong(GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID);
-                if ( _id > 0 ) {
-                    returnUri = GiftwiseContract.ColorEntry.buildColorUri(_id);
-                }
-                else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
-                break;
-            }
             case SIZES_BY_CONTACT: {
                 long _id = db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
-                break;
-            }
-            case SIZE: {
-                long _id = db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
-                long rawContactId =  values.getAsLong(GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID);
-                if ( _id > 0 ) {
-                    returnUri = GiftwiseContract.SizeEntry.buildSizeUri(_id);
-                }
-                else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        getContext().getContentResolver().notifyChange(returnUri, null);
+        getContext().getContentResolver().notifyChange(uri, null);
 
-        return returnUri;
+        return uri;
     }
 
     @Override
@@ -154,6 +112,7 @@ public class GiftContentProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
+        // TODO: cleanup URIs
         int rowsDeleted;
         switch (match) {
             case GIFT_WITH_ID:
@@ -195,17 +154,8 @@ public class GiftContentProvider extends ContentProvider {
         int rowsUpdated;
 
         switch (match) {
-            // ??? case GIFT_WITH_ID: {
-            case GIFT: {
+            case GIFTS_BY_CONTACT: {
                 rowsUpdated = db.update(GiftwiseContract.GiftEntry.TABLE_NAME, values, selection, selectionArgs);
-                break;
-            }
-            case COLOR: {
-                rowsUpdated = db.update(GiftwiseContract.ColorEntry.TABLE_NAME, values, selection, selectionArgs);
-                break;
-            }
-            case SIZE: {
-                rowsUpdated = db.update(GiftwiseContract.SizeEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             }
             case SIZES_BY_CONTACT: {
