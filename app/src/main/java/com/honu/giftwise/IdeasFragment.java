@@ -222,9 +222,11 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private void deleteGift(long giftId) {
         Log.i(LOG_TAG, "Delete Gift id: " + giftId);
-        Uri uri = GiftwiseContract.GiftEntry.buildGiftUri(giftId);
+        Uri uri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
+        String where = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry._ID + " = ? ";
+        String[] whereArgs =  new String[]{  Long.toString(giftId) };
         mIdeasAdapter.removeImageFromCache("" + giftId);
-        getActivity().getContentResolver().delete(uri, null, null);
+        getActivity().getContentResolver().delete(uri, where, whereArgs);
     }
 
     private void openUrl(long giftId) {

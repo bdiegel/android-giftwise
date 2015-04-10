@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 
 public class GiftContentProvider extends ContentProvider {
@@ -18,34 +17,15 @@ public class GiftContentProvider extends ContentProvider {
     // Uri matcher
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    // Gift URIs
-    //private static final int GIFT = 100;                           // gift
-    private static final int GIFT_WITH_ID = 101;                   // gift by id
+    // URIs: queries and notifications are per contact:
     private static final int GIFTS_BY_CONTACT = 102;               // gifts by raw contact id
-
-    // Color URIs
-    //private static final int COLOR = 200;                           // color
-    private static final int COLOR_WITH_ID = 201;                   // color by id
-    private static final int COLORS_BY_CONTACT = 202;               // colors by raw contact id
-
-    // Size URIs
-    //private static final int SIZE = 300;                           // size
-    private static final int SIZE_WITH_ID = 301;                   // size by id
+    private static final int COLORS_BY_CONTACT = 202;              // colors by raw contact id
     private static final int SIZES_BY_CONTACT = 302;               // sizes by raw contact id
-
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        //matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT, GIFT);
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT + "/#", GIFT_WITH_ID);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT + "/" + GiftwiseContract.PATH_CONTACT + "/#", GIFTS_BY_CONTACT);
-
-        //matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR, COLOR);
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR + "/#", COLOR_WITH_ID);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR + "/" + GiftwiseContract.PATH_CONTACT + "/#", COLORS_BY_CONTACT);
-
-        //matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE, SIZE);
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE + "/#", SIZE_WITH_ID);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE + "/" + GiftwiseContract.PATH_CONTACT + "/#", SIZES_BY_CONTACT);
         return matcher;
     }
@@ -91,7 +71,6 @@ public class GiftContentProvider extends ContentProvider {
                 break;
             }
             case COLORS_BY_CONTACT: {
-                Log.i("DbHelper", "Insert value: " + values);
                 long _id = db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
                 break;
             }
@@ -112,11 +91,10 @@ public class GiftContentProvider extends ContentProvider {
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
 
-        // TODO: cleanup URIs
         int rowsDeleted;
         switch (match) {
-            case GIFT_WITH_ID:
-                rowsDeleted = deleteGiftById(uri);
+            case GIFTS_BY_CONTACT:
+                rowsDeleted = db.delete(GiftwiseContract.GiftEntry.TABLE_NAME, where, whereArgs);
                 break;
             case COLORS_BY_CONTACT:
                 rowsDeleted = db.delete(GiftwiseContract.ColorEntry.TABLE_NAME, where, whereArgs);
@@ -129,10 +107,7 @@ public class GiftContentProvider extends ContentProvider {
         }
 
         if (rowsDeleted != 0) {
-            if (match == GIFT_WITH_ID)
-                getContext().getContentResolver().notifyChange(GiftwiseContract.GiftEntry.GIFT_URI, null);
-            else
-                getContext().getContentResolver().notifyChange(uri, null);
+            getContext().getContentResolver().notifyChange(uri, null);
         }
 
         return rowsDeleted;
@@ -169,39 +144,15 @@ public class GiftContentProvider extends ContentProvider {
 
         // Returns the MIME type for this URI
         switch (match) {
-            case GIFT_WITH_ID:
-                return GiftwiseContract.GiftEntry.CONTENT_ITEM_TYPE;
             case GIFTS_BY_CONTACT:
                 return GiftwiseContract.GiftEntry.CONTENT_TYPE;
-            case COLOR_WITH_ID:
-                return GiftwiseContract.ColorEntry.CONTENT_ITEM_TYPE;
             case COLORS_BY_CONTACT:
                 return GiftwiseContract.ColorEntry.CONTENT_TYPE;
-            case SIZE_WITH_ID:
-                return GiftwiseContract.SizeEntry.CONTENT_ITEM_TYPE;
             case SIZES_BY_CONTACT:
                 return GiftwiseContract.SizeEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-    }
-
-
-    private Cursor getGiftById(Uri uri, String[] projection, String sortOrder) {
-        long giftId = GiftwiseContract.GiftEntry.getIdFromUri(uri);
-
-        String selection = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry._ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(giftId) };
-
-        return mDbHelper.getReadableDatabase().query(
-              GiftwiseContract.GiftEntry.TABLE_NAME,
-              projection,
-              selection,
-              selectionArgs,
-              null,
-              null,
-              sortOrder
-        );
     }
 
     private Cursor getGiftsForRawContactId(Uri uri, String[] projection, String sortOrder) {
@@ -212,53 +163,6 @@ public class GiftContentProvider extends ContentProvider {
 
         return mDbHelper.getReadableDatabase().query(
               GiftwiseContract.GiftEntry.TABLE_NAME,
-              projection,
-              selection,
-              selectionArgs,
-              null,
-              null,
-              sortOrder
-        );
-    }
-
-    private int deleteGiftById(Uri uri) {
-        long giftId = GiftwiseContract.GiftEntry.getIdFromUri(uri);
-
-        String selection = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry._ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(giftId) };
-
-        return mDbHelper.getReadableDatabase().delete(
-              GiftwiseContract.GiftEntry.TABLE_NAME,
-              selection,
-              selectionArgs
-        );
-    }
-
-    private Cursor getColorById(Uri uri, String[] projection, String sortOrder) {
-        long giftId = GiftwiseContract.ColorEntry.getIdFromUri(uri);
-
-        String selection = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry._ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(giftId) };
-
-        return mDbHelper.getReadableDatabase().query(
-              GiftwiseContract.ColorEntry.TABLE_NAME,
-              projection,
-              selection,
-              selectionArgs,
-              null,
-              null,
-              sortOrder
-        );
-    }
-
-    private Cursor getSizeById(Uri uri, String[] projection, String sortOrder) {
-        long giftId = GiftwiseContract.SizeEntry.getIdFromUri(uri);
-
-        String selection = GiftwiseContract.SizeEntry.TABLE_NAME + "." + GiftwiseContract.SizeEntry._ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(giftId) };
-
-        return mDbHelper.getReadableDatabase().query(
-              GiftwiseContract.SizeEntry.TABLE_NAME,
               projection,
               selection,
               selectionArgs,
@@ -307,32 +211,6 @@ public class GiftContentProvider extends ContentProvider {
               null,
               null,
               sortOrder
-        );
-    }
-
-    private int deleteColorById(Uri uri) {
-        long giftId = GiftwiseContract.ColorEntry.getIdFromUri(uri);
-
-        String where = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry._ID + " = ? ";
-        String[] whereArgs =  new String[]{  Long.toString(giftId) };
-
-        return mDbHelper.getReadableDatabase().delete(
-              GiftwiseContract.ColorEntry.TABLE_NAME,
-              where,
-              whereArgs
-        );
-    }
-
-    private int deleteSizeById(Uri uri) {
-        long giftId = GiftwiseContract.SizeEntry.getIdFromUri(uri);
-
-        String selection = GiftwiseContract.SizeEntry.TABLE_NAME + "." + GiftwiseContract.SizeEntry._ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(giftId) };
-
-        return mDbHelper.getReadableDatabase().delete(
-              GiftwiseContract.SizeEntry.TABLE_NAME,
-              selection,
-              selectionArgs
         );
     }
 }
