@@ -25,6 +25,7 @@ import com.honu.giftwise.data.ContactsUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 
 
 public class ContactAdapter extends CursorAdapter {
@@ -103,10 +104,10 @@ public class ContactAdapter extends CursorAdapter {
      * Background task to load image from the contacts provider.
      */
     class BitmapWorkerTask extends AsyncTask<Integer, Void, Drawable> {
-        ImageView mImageView;
+        private final WeakReference<ImageView> mImageView;
 
         public BitmapWorkerTask(ImageView imageView) {
-            mImageView = imageView;
+            mImageView = new WeakReference<ImageView>(imageView);
         }
 
         // Decode image in background.
@@ -116,7 +117,7 @@ public class ContactAdapter extends CursorAdapter {
             final Bitmap bitmap = getContactPhoto(contactId);
 
             if (bitmap != null) {
-                RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(mImageView.getResources(), bitmap);
+                RoundedBitmapDrawable roundBitmap = RoundedBitmapDrawableFactory.create(mImageView.get().getResources(), bitmap);
                 roundBitmap.setCornerRadius(Math.min(roundBitmap.getMinimumWidth(), roundBitmap.getMinimumHeight()) / 2.0f);
                 mImageCache.addBitmapToMemoryCache(String.valueOf(contactId), roundBitmap);
                 return roundBitmap;
@@ -130,7 +131,7 @@ public class ContactAdapter extends CursorAdapter {
         protected void onPostExecute(Drawable drawable) {
             super.onPostExecute(drawable);
             if (drawable != null) {
-                mImageView.setImageDrawable(drawable);
+                mImageView.get().setImageDrawable(drawable);
             }
         }
 
@@ -139,7 +140,7 @@ public class ContactAdapter extends CursorAdapter {
             // ContactsContract.Contacts.PHOTO_ID
             // Uri uri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, thumbnailId);
 
-            ContentResolver cr = mImageView.getContext().getContentResolver();
+            ContentResolver cr = mImageView.get().getContext().getContentResolver();
             Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
 
             InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri);
@@ -165,7 +166,7 @@ public class ContactAdapter extends CursorAdapter {
         public InputStream openPhoto(long contactId) {
             Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
             Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-            Cursor cursor = mImageView.getContext().getContentResolver().query(photoUri,
+            Cursor cursor = mImageView.get().getContext().getContentResolver().query(photoUri,
                   new String[] {ContactsContract.Contacts.Photo.PHOTO}, null, null, null);
             if (cursor == null) {
                 return null;

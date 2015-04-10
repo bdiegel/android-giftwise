@@ -18,6 +18,7 @@ import com.honu.giftwise.data.BitmapUtils;
 import com.honu.giftwise.data.GiftImageCache;
 import com.honu.giftwise.data.GiftwiseContract;
 
+import java.lang.ref.WeakReference;
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
@@ -127,11 +128,11 @@ public class IdeasAdapter extends CursorAdapter {
     }
 
     class BitmapWorkerTask extends AsyncTask<Long, Void, Bitmap> {
-        ImageView mImageView;
-        byte[] mBlob;
+        private final WeakReference<ImageView> mImageView;
+        private final byte[] mBlob;
 
         public BitmapWorkerTask(ImageView imageView, byte[] blob) {
-            mImageView = imageView;
+            mImageView = new WeakReference<ImageView>(imageView);
             mBlob = blob;
         }
 
@@ -142,7 +143,7 @@ public class IdeasAdapter extends CursorAdapter {
             final String imageKey = String.valueOf(resId);
 
             Bitmap bitmap = BitmapUtils.getImage(mBlob);
-            mImageCache.updateBitmapToMemoryCache(imageKey, new BitmapDrawable(mImageView.getResources(), bitmap));
+            mImageCache.updateBitmapToMemoryCache(imageKey, new BitmapDrawable(mImageView.get().getResources(), bitmap));
 
             return bitmap;
         }
@@ -152,7 +153,7 @@ public class IdeasAdapter extends CursorAdapter {
             super.onPostExecute(bitmap);
 
             if (bitmap != null) {
-                mImageView.setImageBitmap(bitmap);
+                mImageView.get().setImageBitmap(bitmap);
             }
         }
     }
