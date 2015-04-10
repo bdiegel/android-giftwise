@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,17 +33,11 @@ public class IdeasAdapter extends CursorAdapter {
 
     private GiftImageCache mImageCache;
 
-    // handler to attach to the image view with the overflow icon
-    //private static View.OnClickListener mOverflowMenuClickListener;
 
     public IdeasAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mImageCache = ((GiftwiseApplication) context.getApplicationContext()).getGiftImageCache();
     }
-
-//    public void setOverflowMenuListener(View.OnClickListener listener) {
-//        mOverflowMenuClickListener = listener;
-//    }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -101,11 +96,13 @@ public class IdeasAdapter extends CursorAdapter {
             nameView = (TextView) view.findViewById(R.id.list_item_gift_name_textview);
             //urlView = (TextView)view.findViewById(R.id.list_item_gift_url_textview);
             priceView = (TextView) view.findViewById(R.id.list_item_gift_price_textview);
-            //menuView = (ImageView) view.findViewById(R.id.list_item_gift_overflow_icon);
             //Linkify.addLinks(urlView, Linkify.WEB_URLS);
-
-            //menuView.setOnClickListener(mOverflowMenuClickListener);
         }
+    }
+
+    public void removeImageFromCache(String imageKey) {
+        Log.d(LOG_TAG, "Remove cached image for imageKey: " + imageKey);
+        mImageCache.removeBitmapFromMemCache(imageKey);
     }
 
     public void loadBitmap(ContentResolver contentResolver, long resId, ImageView imageView, Cursor cursor) {

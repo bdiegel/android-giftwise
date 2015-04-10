@@ -71,14 +71,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
         Cursor cur = getActivity().getContentResolver().query(giftsForRawContactUri, null, null, null, null);
         mIdeasAdapter = new IdeasAdapter(getActivity(), cur, 0);
-//        mIdeasAdapter.setOverflowMenuListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.i(LOG_TAG, "MENU PRESSED: " + view.getParent().toString());
-//                Log.i(LOG_TAG, "activity: " + view.getContext().toString());
-//                showPopup(view);
-//            }
-//        });
 
         // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ListView) rootView.findViewById(R.id.gifts_listview);
@@ -205,7 +197,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Cursor cursor = mIdeasAdapter.getCursor();
 
         // start activity to add/edit gift idea
-        //Intent intent = new Intent(getActivity(), EditGiftActivity.class);
         Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
         Gift gift = Gift.createFromCursor(cursor);
         intent.putExtra("gift", gift);
@@ -222,7 +213,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        //Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
         Gift gift = Gift.createFromCursor(cursor);
         intent.putExtra("gift", gift);
         intent.putExtra("contactName", mContactName);
@@ -233,6 +223,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     private void deleteGift(long giftId) {
         Log.i(LOG_TAG, "Delete Gift id: " + giftId);
         Uri uri = GiftwiseContract.GiftEntry.buildGiftUri(giftId);
+        mIdeasAdapter.removeImageFromCache("" + giftId);
         getActivity().getContentResolver().delete(uri, null, null);
     }
 
