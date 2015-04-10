@@ -146,10 +146,10 @@ public class ContactAdapter extends CursorAdapter {
             //InputStream input = openPhoto(contactId);
 
             if (input == null) {
-                Log.i(LOG_TAG, "NULL photo input stream: contactId=" + contactId + " uri=" + uri);
+                Log.d(LOG_TAG, "NULL photo input stream: contactId=" + contactId + " uri=" + uri);
                 return null;
             } else {
-                Log.i(LOG_TAG, "Loading photo: contactId=" + contactId + " uri=" + uri);
+                Log.d(LOG_TAG, "Loading photo: contactId=" + contactId + " uri=" + uri);
             }
 
             return BitmapFactory.decodeStream(input);
