@@ -11,25 +11,23 @@
     <color name="black_translucent">#80000000</color>
     -->
 
-    <color name="md_teal_300">#4DB6AC</color>
-    <color name="md_teal_500">#009688</color>
-    <color name="md_teal_800">#00695C</color>
-    <color name="md_teal_900">#004D40</color>
+    <!--<color name="md_teal_300">#4DB6AC</color>-->
+    <!--<color name="md_teal_500">#009688</color>-->
+    <!--<color name="md_teal_800">#00695C</color>-->
+    <!--<color name="md_teal_900">#004D40</color>-->
 
     <color name="md_yellow_500">#FFEB3B</color>
     <color name="md_yellow_400">#FFEE58</color>
-    <color name="md_yellow_300">#FFF176</color>
+    <!--<color name="md_yellow_300">#FFF176</color>-->
 
     <color name="primary">#009688</color>
     <color name="primary_dark">#00796B</color>
-    <color name="primary_light">#B2DFDB</color>
+    <!--<color name="primary_light">#B2DFDB</color>-->
     <color name="accent">#FF4081</color>
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
-    <color name="icons">#FFFFFF</color>
-    <color name="divider">#B6B6B6</color>
-
-
+    <!--<color name="primary_text">#212121</color>-->
+    <!--<color name="secondary_text">#727272</color>-->
+    <!--<color name="icons">#FFFFFF</color>-->
+    <!--<color name="divider">#B6B6B6</color>-->
 
 
     <color name="colorPrimary">@color/primary</color>
@@ -37,18 +35,14 @@
     <color name="colorAccent">@color/accent</color>
 
 
-    <color name="colorSecondary">@color/md_yellow_400</color>
-    <color name="colorSecondaryDark">@color/md_yellow_500</color>
+    <!--<color name="colorSecondary">@color/md_yellow_400</color>-->
+    <!--<color name="colorSecondaryDark">@color/md_yellow_500</color>-->
 
     <color name="tabsScrollColor">@color/accent</color>
 
     <!-- Floating Action Button -->
     <color name="fab_color_1">@color/accent</color>
     <color name="fab_color_1_muted">#FF70A1</color>
-    <!--<color name="fab_color_1">#ff5252</color>-->
-    <!--<color name="fab_color_1_muted">#ff8080</color>-->
-    <color name="fab_color_2">#9c27b0</color>
-    <color name="fab_color_2_muted">#a56ab0</color>
     <color name="grey_700">#646464</color>
 
 

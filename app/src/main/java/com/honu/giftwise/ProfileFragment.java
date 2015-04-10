@@ -408,7 +408,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 setEventDate(data);
                 break;
             default:
-                return;
+                break;
         }
     }
 
@@ -514,7 +514,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                             deleteSize(size.getSizeId());
                             break;
                         default:
-                            return;
+                            break;
                     }
                 }
             };
