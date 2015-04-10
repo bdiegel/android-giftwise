@@ -48,9 +48,9 @@ public class ContactsUtils {
         static final String sortOrder = ContactsContract.Contacts.DISPLAY_NAME_PRIMARY + " COLLATE LOCALIZED ASC";
 
         // column ids for extracting data from cursor returned (matches project order)
-        static final int COL_RAW_CONTACT_ID = 0;
-        static final int COL_CONTACT_ID = 1;
-        static final int COL_CONTACT_NAME = 2;
+        public static final int COL_RAW_CONTACT_ID = 0;
+        public static final int COL_CONTACT_ID = 1;
+        public static final int COL_CONTACT_NAME = 2;
     }
 
 
