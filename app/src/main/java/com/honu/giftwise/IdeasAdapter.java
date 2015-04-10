@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -35,7 +36,7 @@ public class IdeasAdapter extends CursorAdapter {
 
     public IdeasAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        mImageCache = ((GiftwiseApplication)context.getApplicationContext()).getGiftImageCache();
+        mImageCache = ((GiftwiseApplication) context.getApplicationContext()).getGiftImageCache();
     }
 
 //    public void setOverflowMenuListener(View.OnClickListener listener) {
@@ -45,7 +46,7 @@ public class IdeasAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         // inflate view
-        View view =  LayoutInflater.from(context).inflate(R.layout.list_item_gift, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item_gift, parent, false);
 
         // use ViewHolder to save inflated views:
         ViewHolder viewHolder = new ViewHolder(view);
@@ -96,9 +97,9 @@ public class IdeasAdapter extends CursorAdapter {
 
         public ViewHolder(final View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_gift_image);
-            nameView = (TextView)view.findViewById(R.id.list_item_gift_name_textview);
+            nameView = (TextView) view.findViewById(R.id.list_item_gift_name_textview);
             //urlView = (TextView)view.findViewById(R.id.list_item_gift_url_textview);
-            priceView = (TextView)view.findViewById(R.id.list_item_gift_price_textview);
+            priceView = (TextView) view.findViewById(R.id.list_item_gift_price_textview);
             //menuView = (ImageView) view.findViewById(R.id.list_item_gift_overflow_icon);
             //Linkify.addLinks(urlView, Linkify.WEB_URLS);
 
@@ -114,16 +115,10 @@ public class IdeasAdapter extends CursorAdapter {
         if (bitmap != null) {
             imageView.setImageDrawable(bitmap);
         } else {
-//            // start background task to load image from contacts provider
-//            BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-//            task.execute(resId);
-            // TODO: display image
-            // TODO: move to background task
             byte[] blob = cursor.getBlob(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_IMAGE));
-            if (blob != null && blob.length > 0 ) {
-                Bitmap bm = BitmapUtils.getImage(blob);
-                imageView.setImageBitmap(bm);
-                mImageCache.updateBitmapToMemoryCache(imageKey, new BitmapDrawable(imageView.getResources(), bm));
+            if (blob != null && blob.length > 0) {
+                BitmapWorkerTask task = new BitmapWorkerTask(imageView, blob);
+                task.execute(resId);
             } else {
                 // set temporary placeholder image
                 imageView.setImageDrawable(mImageCache.getPlaceholderImage());
@@ -131,4 +126,34 @@ public class IdeasAdapter extends CursorAdapter {
         }
     }
 
+    class BitmapWorkerTask extends AsyncTask<Long, Void, Bitmap> {
+        ImageView mImageView;
+        byte[] mBlob;
+
+        public BitmapWorkerTask(ImageView imageView, byte[] blob) {
+            mImageView = imageView;
+            mBlob = blob;
+        }
+
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(Long... params) {
+            long resId = params[0];
+            final String imageKey = String.valueOf(resId);
+
+            Bitmap bitmap = BitmapUtils.getImage(mBlob);
+            mImageCache.updateBitmapToMemoryCache(imageKey, new BitmapDrawable(mImageView.getResources(), bitmap));
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if (bitmap != null) {
+                mImageView.setImageBitmap(bitmap);
+            }
+        }
+    }
 }
