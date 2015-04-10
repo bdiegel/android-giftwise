@@ -181,9 +181,14 @@ public class EditGiftFragment extends Fragment {
                 ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
                 imageView.setImageBitmap(resizedBitmap);
 
+                // save to gift
+                gift.setBitmap(BitmapUtils.getBytes(resizedBitmap));
+
                 if (gift.getGiftId() != -1) {
                     Log.d(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
                     mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
+                } else {
+                    Log.d(LOG_TAG, "Image not cached; no giftId: " + gift.getGiftId());
                 }
             } catch (IOException e) {
                 Log.d(LOG_TAG, "Exception: ", e);
