@@ -29,7 +29,7 @@ import com.honu.giftwise.view.FloatingActionButton;
 import java.util.ArrayList;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Fragment for displaying list of contacts for Main activity
  */
 public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
       AdapterView.OnItemClickListener { //}, AdapterView.OnItemLongClickListener {
@@ -48,11 +48,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        //readRawAccountTypes();
-        //readRawAccounts();
-        //ContactsUtils.readRawAccountTypes(getActivity());
-        Log.i(LOG_TAG, "=> ContactsFragment: onCreateView");
 
         // initialize adapter (no data)
         mContactAdapter = new ContactAdapter(getActivity(), null, 0);
@@ -166,7 +161,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     private void viewContact(CursorAdapter adapter, int position) {
 
         // Get the Cursor
-        //Cursor cursor = ((ContactAdapter)parent.getAdapter()).getCursor();
         Cursor cursor = adapter.getCursor();
 
         // Extract data from the item in the Cursor:
