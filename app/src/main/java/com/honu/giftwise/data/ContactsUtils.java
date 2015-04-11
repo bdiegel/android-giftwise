@@ -125,7 +125,7 @@ public class ContactsUtils {
 
     }
 
-    public static void deleteRawContact(Context context, String id, String accountName, String accountType) {
+    public static void deleteRawContact(Context context, long id, String accountName, String accountType) {
 
         Log.d(LOG_TAG, "Deleting RawContact for id: " + id);
 
@@ -135,7 +135,7 @@ public class ContactsUtils {
                   .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
                   .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
                   .build(),
-            ContactsContract.RawContacts._ID + " >= ?", new String[] {id}
+            ContactsContract.RawContacts._ID + " >= ?", new String[] {Long.toString(id)}
         );
 
         Log.d(LOG_TAG, "Delete count: " + deletedRawContacts);

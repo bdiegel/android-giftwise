@@ -1,5 +1,6 @@
 package com.honu.giftwise;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,7 +23,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.honu.giftwise.data.ContactsUtils;
+import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.view.FloatingActionButton;
+
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -115,7 +119,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         // Extract data from the selected item
         cursor.moveToPosition(info.position);
         long contactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
-        String rawId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
+        long rawId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
 
 
         switch (item.getItemId()) {
@@ -181,23 +185,49 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         getActivity().startActivity(intent);
     }
 
-
-
-    private void deleteContact(String rawContactId) {
+    private void deleteContact(long rawContactId) {
         Log.d(LOG_TAG, "rawContactId: " + rawContactId);
+
+        // uris for deleting data
+        Uri uriGifts = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(rawContactId);
+        Uri uriColors = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(rawContactId);
+        Uri uriSizes = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(rawContactId);
+
+        // selection criteria for delete
+        String[] selectionArgs =  new String[]{  Long.toString(rawContactId) };
+        String selectGifts = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID + " = ? ";
+        String selectColors = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " = ? ";
+        String selectSizes = GiftwiseContract.SizeEntry.TABLE_NAME + "." + GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID + " = ? ";
+
+        // create batch of delete operations
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+        ops.add(ContentProviderOperation.newDelete(uriGifts).withSelection(selectGifts, selectionArgs).build());
+        ops.add(ContentProviderOperation.newDelete(uriColors).withSelection(selectColors, selectionArgs).build());
+        ops.add(ContentProviderOperation.newDelete(uriSizes).withSelection(selectSizes, selectionArgs).build());
+
+        // delete all data for raw contact
+        try {
+            getActivity().getContentResolver().applyBatch(GiftwiseContract.CONTENT_AUTHORITY, ops);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Batch delete failed", e);
+            return;
+        }
+
+        // raw account name and type
         String accountName = getString(R.string.account_name);
         String accountType = getString(R.string.account_type);
-        // TODO: also delete all data from database
+
+        // delete raw contact from contact provider
         ContactsUtils.deleteRawContact(getActivity(), rawContactId, accountName, accountType);
     }
 
     private void editContact(long contactId) {
         // use content uri to edit contacts:
-        Uri mUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
+        Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
 
         // Creates a new Intent to edit a contact
         Intent editIntent = new Intent(Intent.ACTION_EDIT);
-        editIntent.setDataAndType(mUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+        editIntent.setDataAndType(uri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
         editIntent.putExtra("finishActivityOnSaveCompleted", true);
         editIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(editIntent);
