@@ -15,9 +15,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.honu.giftwise.data.ContactsUtils;
+import com.honu.giftwise.data.NotifyingAsyncQueryHandler;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements NotifyingAsyncQueryHandler.AsyncQueryListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -77,32 +78,30 @@ public class MainActivity extends ActionBarActivity {
     }
 
     protected void addContact() {
-        Log.i(LOG_TAG, "Add contact");
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setData(ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(intent, REQUEST_CODE_CONTACT_IMPORT);
     }
 
+    /**
+     * The Activity returns a lookup URI for the selected Contact. We kick off and
+     * async query to get the display name and launch our Activity to complete the import.
+     *
+     * Example content URI for contact:
+     *
+     *   content://com.android.contacts/contacts/lookup/1255i3bb07a668d7adab4/31
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // content://com.android.contacts/contacts/lookup/1255i3bb07a668d7adab4/31
-        Log.i(LOG_TAG, "Intent data returned: " + data);
+        Log.d(LOG_TAG, "Intent data returned: " + data);
 
         // Handle result from contact import request
         if (requestCode == REQUEST_CODE_CONTACT_IMPORT) {
 
-            // TODO: should use a loader
-            if(resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 Uri lookupUri = data.getData();
-                String displayName = getDisplayNameForContactLookupUri(lookupUri);
-                Log.i(LOG_TAG, "getDisplayName(): " + displayName);
-
-                Intent intent = new Intent(this, CreateContactActivity.class);
-                intent.putExtra(ContactsUtils.DISPLAY_NAME, displayName);
-                intent.putExtra(ContactsUtils.LOOKUP_URI, lookupUri);
-                startActivity(intent);
+                asyncQueryDisplayName(lookupUri);
             }
-
-            if (resultCode == RESULT_CANCELED) {
+            else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Contact import cancelled", Toast.LENGTH_SHORT).show();
             }
         }
@@ -114,7 +113,7 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    private String getDisplayNameForContactLookupUri(Uri lookupUri)
+    private void asyncQueryDisplayName(final Uri lookupUri)
     {
         final String DISPLAY_NAME_COL = Build.VERSION.SDK_INT
               >= Build.VERSION_CODES.HONEYCOMB ?
@@ -126,20 +125,32 @@ public class MainActivity extends ActionBarActivity {
               DISPLAY_NAME_COL,
         };
 
-        Cursor cursor = getContentResolver().query (
-              lookupUri,
-              projection,
-              null,
-              null,
-              null);
+        NotifyingAsyncQueryHandler asyncQuery = new NotifyingAsyncQueryHandler(this, this);
+        asyncQuery.startQuery(1, lookupUri,
+            lookupUri,
+            projection,
+            null,
+            null,
+            null);
+    }
 
-        if (!cursor.moveToNext()) // move to first (and only) row.
-            throw new IllegalStateException ("contact no longer exists for key");
+    @Override
+    public void onQueryComplete(int token, Object cookie, Cursor cursor) {
+        // move to first (and only) row
+        if (!cursor.moveToNext())
+            throw new IllegalStateException("contact no longer exists for key");
 
-        String name = cursor.getString(1);
-        cursor.close();
+        // display name is returned by cursor
+        String displayName = cursor.getString(1);
 
-        return name;
+        // lookupUri was passed by query as cookie
+        String lookupUri = cookie.toString();
+
+        // open activity to add raw contact
+        Intent intent = new Intent(this, CreateContactActivity.class);
+        intent.putExtra(ContactsUtils.DISPLAY_NAME, displayName);
+        intent.putExtra(ContactsUtils.LOOKUP_URI, lookupUri);
+        startActivity(intent);
     }
 
 }
