@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
@@ -27,7 +25,7 @@ import com.honu.giftwise.view.FloatingActionButton;
 /**
  * Fragments that displays Gift items in a ListView.
  */
-public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> { //}, PopupMenu.OnMenuItemClickListener {
+public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = IdeasFragment.class.getSimpleName();
 
@@ -63,7 +61,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         Bundle args = getArguments();
         mRawContactId =  args.getLong("rawContactId");
         mContactName =  args.getString("contactName");
-        Log.i(LOG_TAG, "onCreateView");
 
         // initialize adapter (no data)
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
@@ -80,42 +77,16 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
                 mPosition = position;
 
-                Log.i(LOG_TAG, "Item selected at position: " + position);
-                Log.i(LOG_TAG, "View clicked: " + view.getId());
-                //Object item = mIdeasAdapter.getItem(position);
-
                 // Get cursor from the adapter
                 Cursor cursor = mIdeasAdapter.getCursor();
 
                 // Extract data from the selected item
                 cursor.moveToPosition(position);
                 int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
-                Log.i(LOG_TAG, "Id of selected gift: " + giftId);
 
                 openGift(giftId);
             }
         });
-
-//        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                Log.i(LOG_TAG, "Item LONG pressed at position: " + position);
-//
-//                // Get cursor from the adapter
-//                Cursor cursor = mIdeasAdapter.getCursor();
-//
-//                // Extract data from the selected item
-//                cursor.moveToPosition(position);
-//                int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
-//                Log.i(LOG_TAG, "GiftId: " + giftId);
-//
-//                // delete item
-//                deleteGift(giftId);
-//
-//                return true;
-//            }
-//        });
-
 
         FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_gift_fab);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +96,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
+        // register a context menu (long-click)
         registerForContextMenu(mListView);
 
         return rootView;
@@ -158,16 +130,12 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        Log.d(LOG_TAG, "Selected itemId: " + item.getItemId());
-        Log.d(LOG_TAG, "Selected info.position: " + info.position);
-
         // Get cursor from the adapter
         Cursor cursor = mIdeasAdapter.getCursor();
 
         // Extract data from the selected item
         cursor.moveToPosition(info.position);
         int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
-
 
         switch (item.getItemId()) {
             case R.id.gift_view:
@@ -185,6 +153,12 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    public String getShareText() {
+        if (mIdeasAdapter != null)
+            return mIdeasAdapter.getShareText();
+        return null;
     }
 
     private void openGift(long giftId) {
@@ -226,28 +200,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         getActivity().getContentResolver().delete(uri, where, whereArgs);
     }
 
-    private void openUrl(long giftId) {
-        // Get cursor from the adapter
-        Cursor cursor = mIdeasAdapter.getCursor();
-
-        // get url from gift item
-        String url = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL));
-
-        // if empty, do nothing
-        if (TextUtils.isEmpty(url)) {
-            Toast.makeText(getActivity(), "No URL found", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        // add prefix if necessary
-        if (!url.startsWith("http://") && !url.startsWith("https://"))
-            url = "http://" + url;
-
-        // start activity to launch browser
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(browserIntent);
-    }
-
     private void addGift() {
         Log.i(LOG_TAG, "Add Gift for: " + mRawContactId);
 
@@ -261,9 +213,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
-        Log.i(LOG_TAG, "onCreateLoader");
-
         // uri for all gifts for a raw contact
         Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
 
@@ -285,43 +234,12 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             ListView listView = (ListView) getView().findViewById(R.id.gifts_listview);
             listView.smoothScrollToPosition(mPosition);
         }
+        // update the share intent
+        ContactActivity contactActivity = (ContactActivity) getActivity();
+        contactActivity.updateShareIntent(mIdeasAdapter.getShareText());
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
     }
-
-//    public void showPopup(View v) {
-//        Log.i(LOG_TAG, "Show popup");
-//        PopupMenu popup = new PopupMenu(v.getContext(), v);
-//
-//        final long giftId = (long) v.getTag();
-//
-//        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem menuItem) {
-//                switch (menuItem.getItemId()) {
-//                    case R.id.gift_edit:
-//                        editGift(giftId);
-//                        Log.i(LOG_TAG, "Edit pressed");
-//                        return true;
-//                    case R.id.gift_delete:
-//                        Log.i(LOG_TAG, "Delete pressed");
-//                        deleteGift(giftId);
-//                        return true;
-//                    case R.id.gift_open_url:
-//                        Log.i(LOG_TAG, "Open url pressed");
-//                        openUrl(giftId);
-//                        return true;
-//                    default:
-//                        return false;
-//                }
-//            }
-//        });
-//        MenuInflater inflater = popup.getMenuInflater();
-//        inflater.inflate(R.menu.menu_gift_item, popup.getMenu());
-//        popup.show();
-//    }
-
 }

@@ -3,9 +3,16 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.honu.giftwise.ContactActivity">
 
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/action_share"
+        app:showAsAction="never"
+        android:orderInCategory="100"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+
     <item android:id="@+id/action_edit_contact"
           android:title="@string/action_edit_contact"
-          android:orderInCategory="100"
+          android:orderInCategory="200"
           app:showAsAction="never"/>
 
 </menu>

@@ -12,8 +12,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -32,24 +34,22 @@ public class ContactActivity extends ActionBarActivity {
     private long mRawContactId;
 
     // display name of RawContact
-    private String mContactName = "Contact";
+    private String mContactName = "";
 
+    // Contact Id
     private long mContactId;
+
+
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
 
-//        if (savedInstanceState != null) {
-//
-//        }
-
         Intent intent = getIntent();
         if (intent != null) {
-            Log.i(LOG_TAG, "Activity with Intent: " + intent.toString());
             mContactName = intent.getStringExtra("name");
-            //mRawContactId = intent.getLongExtra("rawId", -1);
             mRawContactId = Long.parseLong(intent.getStringExtra("rawId"));
             mContactId = Long.parseLong(intent.getStringExtra("contactId"));
         }
@@ -58,9 +58,6 @@ public class ContactActivity extends ActionBarActivity {
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            //getSupportActionBar().setDisplayShowTitleEnabled(true);
-            //toolbar.setNavigationIcon(R.drawable.ic_action_accept);
-            //toolbar.setTitle(mContactName);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -68,22 +65,22 @@ public class ContactActivity extends ActionBarActivity {
 
 
         ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
-        SlidingTabLayout mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        mTabs.setDistributeEvenly(true);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        tabs.setDistributeEvenly(true);
 
-        mTabs.setSelectedIndicatorColors(R.color.selector);
+        tabs.setSelectedIndicatorColors(R.color.selector);
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
-        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
 
-        CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
-        mViewPager.setAdapter(mCustomPagerAdapter);
-        mTabs.setViewPager(mViewPager);
+        CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
+        mViewPager.setAdapter(customPagerAdapter);
+        tabs.setViewPager(mViewPager);
     }
 
 
@@ -91,6 +88,22 @@ public class ContactActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_contact, menu);
+
+        // Retrieve the share menu item
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+
+        // get the ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+
+        // create a default intent for the share action
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(createShareIntent(""));
+        } else {
+            Log.d(LOG_TAG, "Problem finding ShareActionProvider");
+            //shareActionProvider = new ShareActionProvider(getActivity());
+            //MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
+        }
+
         return true;
     }
 
@@ -131,6 +144,25 @@ public class ContactActivity extends ActionBarActivity {
         editIntent.putExtra("finishActivityOnSaveCompleted", true);
         editIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(editIntent, EDIT_CONTACT_RESULT);
+    }
+
+    private Intent createShareIntent(String shareText) {
+        Log.d(LOG_TAG, "Share gift item: " );
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        // prevents Activity selected for sharing from being placed on app stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, shareText);
+        return intent;
+    }
+
+    // call to update the share intent when content changes
+    public void updateShareIntent(String shareText) {
+
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(createShareIntent(shareText));
+        }
     }
 
     /**

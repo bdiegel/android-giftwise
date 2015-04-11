@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.honu.giftwise.data.BitmapUtils;
+import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftImageCache;
 import com.honu.giftwise.data.GiftwiseContract;
 
@@ -82,6 +83,37 @@ public class IdeasAdapter extends CursorAdapter {
 
         // display gift image
         loadBitmap(contentResolver, giftId, viewHolder.iconView, cursor);
+    }
+
+    public String getShareText() {
+        StringBuffer buffer = new StringBuffer();
+
+        if (mCursor.getCount() > 0 ) {
+            // note current position then reset cursor
+            int position = mCursor.getPosition();
+            mCursor.moveToPosition(-1);
+
+            while (mCursor.moveToNext()) {
+                Gift gift = Gift.createFromCursor(mCursor);
+
+                String priceTxt = "";
+                if (gift.getPrice() > 0)
+                    priceTxt = gift.getFormattedPrice();
+
+                buffer.append("----------------------------------------\n");
+                buffer.append(String.format("%s %s\n", gift.getName(), priceTxt));
+
+                if (!TextUtils.isEmpty(gift.getNotes()))
+                    buffer.append(String.format("Notes: %s\n", gift.getNotes()));
+                if (!TextUtils.isEmpty(gift.getUrl()))
+                    buffer.append(gift.getUrl());
+            }
+            buffer.append("----------------------------------------\n");
+
+            mCursor.moveToPosition(position);
+        }
+
+        return buffer.toString();
     }
 
     public static class ViewHolder {
