@@ -11,7 +11,6 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,7 +48,6 @@ public class EditGiftFragment extends Fragment {
 
     private GiftImageCache mImageCache;
 
-    private ShareActionProvider mShareActionProvider;
 
     /**
      * Create Fragment and setup the Bundle arguments
@@ -129,9 +127,6 @@ public class EditGiftFragment extends Fragment {
             mContactSpinner.setSelection((int)savedInstanceState.getLong("contact_index"));
         }
 
-        //nameTxt.clearFocus();
-        //nameTxt.setBackgroundColor(0);
-
         setHasOptionsMenu(true);
 
         return rootView;
@@ -184,13 +179,11 @@ public class EditGiftFragment extends Fragment {
                 gift.setBitmap(BitmapUtils.getBytes(resizedBitmap));
 
                 if (gift.getGiftId() != -1) {
-                    Log.d(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
+                    //Log.d(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
                     mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
-                } else {
-                    Log.d(LOG_TAG, "Image not cached; no giftId: " + gift.getGiftId());
                 }
             } catch (IOException e) {
-                Log.d(LOG_TAG, "Exception: ", e);
+                Log.d(LOG_TAG, "Error importing image: ", e);
                 e.printStackTrace();
             }
         }
@@ -200,18 +193,6 @@ public class EditGiftFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // inflate the fragment menu
         inflater.inflate(R.menu.menu_edit_gift_fragment, menu);
-
-//        // Retrieve the share menu item
-//        MenuItem shareItem = menu.findItem(R.id.action_share);
-//
-//        // Now get the ShareActionProvider from the item
-//        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-//
-//        if (mShareActionProvider != null) {
-//            mShareActionProvider.setShareIntent(createShareIntent());
-//        } else {
-//            Log.d(LOG_TAG, "Problem finding ShareActionProvider");
-//        }
     }
 
     @Override
@@ -225,43 +206,6 @@ public class EditGiftFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-//    private Intent createShareIntent() {
-//        Log.d(LOG_TAG, "Share gift item: " );
-//
-//        Intent intent = new Intent(Intent.ACTION_SEND);
-//        // prevents Activity selected for sharing from being placed on app stack
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-//        intent.setType("text/plain");
-//        intent.putExtra(Intent.EXTRA_TEXT, getTextDescription());
-//        return intent;
-//    }
-//
-//    private String getTextDescription() {
-//        View rootView = getView();
-//        EditText nameEdit = (EditText)rootView.findViewById(R.id.gift_name);
-//        EditText priceEdit = (EditText) rootView.findViewById(R.id.gift_price);
-//        EditText urlEdit = (EditText)rootView.findViewById(R.id.gift_url);
-//        EditText notesEdit = (EditText)rootView.findViewById(R.id.gift_notes);
-//
-//        double price = 0;
-//        String priceTxt = priceEdit.getText().toString();
-//        if (!TextUtils.isEmpty(priceTxt)) {
-//            try {
-//                price = Double.parseDouble(priceTxt);
-//            } catch (NumberFormatException nfe) {
-//                price = 0;
-//            }
-//        }
-//
-//        StringBuffer buffer = new StringBuffer();
-//        buffer.append(String.format("Gift: %s\n", nameEdit.getText().toString()));
-//        buffer.append(String.format("Price: %s\n", ContactsUtils.formatPrice(getActivity(), "USD", price)));
-//        buffer.append(String.format("Notes: %s\n", notesEdit.getText().toString()));
-//        buffer.append(String.format(urlEdit.getText().toString()));
-//
-//        return buffer.toString();
-//    }
 
     private void openUrl() {
         // get the url from the EditText field
@@ -311,26 +255,6 @@ public class EditGiftFragment extends Fragment {
             selectSpinnerItemByContactId(rawContactId);
         }
     }
-
-//    public void selectSpinnerItemByContactName(String value)
-//    {
-//        int position = 0;
-//        Cursor cursor = mContactAdapter.getCursor();
-//
-//        for (int i=0; i<mContactAdapter.getCount(); i++) {
-//            cursor.moveToPosition(i);
-//            String temp = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME);
-//            long rawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
-//
-//            if ( temp.contentEquals(value) ) {
-//                Log.d("TAG", "Found match at index: " + i);
-//                gift.setRawContactId(rawContactId);
-//                position = i;
-//                break;
-//            }
-//        }
-//        mContactSpinner.setSelection(position);
-//    }
 
     public void selectSpinnerItemByContactId(long value)
     {
