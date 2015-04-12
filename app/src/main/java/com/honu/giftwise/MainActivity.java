@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity implements NotifyingAsyncQue
 
         switch (id) {
             case R.id.about: {
-                // TODO
+                startActivity(new Intent(this, InfoActivity.class));
                 break;
             }
             case R.id.action_addcontact: {

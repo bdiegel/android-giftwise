@@ -81,15 +81,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.honu.giftwise.ContactActivity" />
         </activity>
-
         <activity
             android:name=".EditSizeActivity"
             android:label="@string/title_activity_edit_size"
-            android:windowSoftInputMode="stateVisible"
-            android:parentActivityName=".ContactActivity" >
+            android:parentActivityName=".ContactActivity"
+            android:windowSoftInputMode="stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.honu.giftwise.ContactActivity" />
+        </activity>
+        <activity
+            android:name=".InfoActivity"
+            android:label="@string/title_activity_info" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 
