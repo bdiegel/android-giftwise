@@ -3,14 +3,10 @@ package com.honu.giftwise;
 
 import android.app.Activity;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -78,7 +74,7 @@ public class ContactActivity extends ActionBarActivity {
             }
         });
 
-        CustomPagerAdapter customPagerAdapter = new CustomPagerAdapter(getSupportFragmentManager(), this);
+        ContactDetailPagerAdapter customPagerAdapter = new ContactDetailPagerAdapter(getSupportFragmentManager(), this, mContactName, mRawContactId, mContactId);
         mViewPager.setAdapter(customPagerAdapter);
         tabs.setViewPager(mViewPager);
     }
@@ -164,47 +160,4 @@ public class ContactActivity extends ActionBarActivity {
             mShareActionProvider.setShareIntent(createShareIntent(shareText));
         }
     }
-
-    /**
-     * Displays tabs:
-     *
-     *   1. GIFT IDEAS - list of gift ideas
-     *   2. PROFILE - personal info and preferences of contact
-     */
-    class CustomPagerAdapter extends FragmentPagerAdapter {
-
-        Context mContext;
-
-        String[] mTabTitles;
-
-        public CustomPagerAdapter(FragmentManager fm, Context context) {
-            super(fm);
-            mTabTitles = getResources().getStringArray(R.array.contact_tabs);
-            mContext = context;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-            switch (position) {
-                case 0:
-                    return IdeasFragment.getInstance(mRawContactId, mContactName);
-                case 1:
-                    return ProfileFragment.getInstance(mRawContactId, mContactId);
-            }
-
-            return  null;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTabTitles[position];
-        }
-    }
-
 }
