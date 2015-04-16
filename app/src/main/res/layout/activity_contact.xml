@@ -13,26 +13,26 @@
         />
 
 
-    <com.honu.giftwise.view.SlidingTabLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/tabs"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="5dp"
-        android:background="?attr/colorPrimary"
-        android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:textAppearanceLarge"
-        />
+    <!--<com.honu.giftwise.view.SlidingTabLayout-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/tabs"-->
+        <!--app:theme="@style/ThemeOverlay.AppCompat.Dark"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:elevation="5dp"-->
+        <!--android:background="?attr/colorPrimary"-->
+        <!--android:fontFamily="sans-serif-condensed"-->
+        <!--android:textAppearance="?android:textAppearanceLarge"-->
+        <!--/>-->
 
-        <android.support.v4.view.ViewPager
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+        <!--<android.support.v4.view.ViewPager-->
+            <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+            <!--android:id="@+id/pager"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="1">-->
 
-        </android.support.v4.view.ViewPager>
+        <!--</android.support.v4.view.ViewPager>-->
 
 
 </LinearLayout>
