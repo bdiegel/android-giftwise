@@ -135,7 +135,7 @@ public class ContactsUtils {
                   .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
                   .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
                   .build(),
-            ContactsContract.RawContacts._ID + " >= ?", new String[] {Long.toString(id)}
+            ContactsContract.RawContacts._ID + " = ?", new String[] {Long.toString(id)}
         );
 
         Log.d(LOG_TAG, "Delete count: " + deletedRawContacts);
