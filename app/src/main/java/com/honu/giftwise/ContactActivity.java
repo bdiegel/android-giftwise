@@ -7,17 +7,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.honu.giftwise.view.SlidingTabLayout;
 
 
 public class ContactActivity extends ActionBarActivity {
@@ -59,24 +58,15 @@ public class ContactActivity extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(mContactName);
 
+        Bundle bundleArgs = new Bundle();
+        bundleArgs.putString("name", mContactName);
+        bundleArgs.putLong("rawId", mRawContactId);
+        bundleArgs.putLong("contactId", mContactId);
 
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        tabs.setDistributeEvenly(true);
-
-        tabs.setSelectedIndicatorColors(R.color.selector);
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
-            }
-        });
-
-        ContactDetailPagerAdapter customPagerAdapter = new ContactDetailPagerAdapter(getSupportFragmentManager(), this, mContactName, mRawContactId, mContactId);
-        mViewPager.setAdapter(customPagerAdapter);
-        tabs.setViewPager(mViewPager);
+        Fragment contactFragment = new ContactDetailPagerFragment();
+        contactFragment.setArguments(bundleArgs);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, contactFragment).commit();
     }
 
 
