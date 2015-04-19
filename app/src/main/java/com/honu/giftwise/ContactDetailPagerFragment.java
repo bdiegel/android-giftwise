@@ -13,6 +13,8 @@ import com.honu.giftwise.view.SlidingTabLayout;
 
 public class ContactDetailPagerFragment extends Fragment {
 
+    private static final String LOG_TAG = ContactDetailPagerFragment.class.getSimpleName();
+
     private String mContactName;
     private long mRawContactId;
     private long mContactId;
@@ -23,8 +25,8 @@ public class ContactDetailPagerFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View result=inflater.inflate(R.layout.contact_pager, container, false);
-        ViewPager pager=(ViewPager)result.findViewById(R.id.pager);
+        View result = inflater.inflate(R.layout.contact_pager, container, false);
+        final ViewPager pager = (ViewPager) result.findViewById(R.id.pager);
         SlidingTabLayout tabs = (SlidingTabLayout) result.findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
 
@@ -44,9 +46,28 @@ public class ContactDetailPagerFragment extends Fragment {
         mContactId = args.getLong("contactId");
 
         pager.setAdapter(buildAdapter());
+
+        // restore page selection
+        if (savedInstanceState != null)  {
+            int position = savedInstanceState.getInt("position");
+            pager.setCurrentItem(position);
+        }
+
         tabs.setViewPager(pager);
 
         return(result);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // save selection tab position
+        View rootView = getView();
+        ViewPager pager= (ViewPager) rootView.findViewById(R.id.pager);
+
+        // save values to bundle
+        outState.putInt("position", pager.getCurrentItem());
     }
 
     private PagerAdapter buildAdapter() {

@@ -63,10 +63,12 @@ public class ContactActivity extends ActionBarActivity {
         bundleArgs.putLong("rawId", mRawContactId);
         bundleArgs.putLong("contactId", mContactId);
 
-        Fragment contactFragment = new ContactDetailPagerFragment();
-        contactFragment.setArguments(bundleArgs);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, contactFragment).commit();
+        if (savedInstanceState == null ) {
+            Fragment contactFragment = new ContactDetailPagerFragment();
+            contactFragment.setArguments(bundleArgs);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, contactFragment).commit();
+        }
     }
 
 
