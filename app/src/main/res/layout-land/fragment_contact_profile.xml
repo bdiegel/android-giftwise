@@ -15,11 +15,19 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            >
+
+
         <!-- Begin: Events -->
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -51,7 +59,7 @@
 
                 <TextView
                     android:id="@+id/contact_birthday_label"
-                    android:layout_width="120dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="4dp"
@@ -61,10 +69,11 @@
 
                 <TextView
                     android:id="@+id/contact_birthday_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
+                    android:minWidth="120dp"
+                    android:gravity="right"
                     android:fontFamily="sans-serif-condensed"
                     android:textColor="@color/grey_700"
                     android:text=""
@@ -85,7 +94,7 @@
                 android:id="@+id/contact_anniversary"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="invisible"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -100,20 +109,22 @@
 
                 <TextView
                     android:id="@+id/contact_anniversary_label"
-                    android:layout_width="120dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="4dp"
+                    android:minWidth="80dp"
                     android:text="@string/contact_anniversary"
                     android:textAppearance="?android:textAppearanceMedium"
                     />
 
                 <TextView
                     android:id="@+id/contact_anniversary_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
+                    android:minWidth="120dp"
+                    android:gravity="right"
                     android:fontFamily="sans-serif-condensed"
                     android:text=""
                     android:textColor="@color/grey_700"
@@ -136,10 +147,11 @@
         <!-- Colors  -->
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="8dp"
             android:orientation="vertical"
-            android:paddingTop="8dp"
             >
 
             <TextView
@@ -219,6 +231,8 @@
 
         </LinearLayout>
         <!-- End: Colors -->
+
+        </LinearLayout>
 
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"

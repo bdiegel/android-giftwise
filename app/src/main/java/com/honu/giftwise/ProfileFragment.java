@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,6 +110,15 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             }
         });
 
+        if (savedInstanceState != null) {
+            String birthday = savedInstanceState.getString("birthday");
+            String anniversary = savedInstanceState.getString("anniversary");
+            Log.d(LOG_TAG, "saved birthday: " + birthday);
+            setBirthday(rootView, birthday);
+            Log.d(LOG_TAG, "saved anniversary: " + anniversary);
+            setAnniversary(rootView, anniversary);
+        }
+
         return rootView;
     }
 
@@ -120,6 +130,15 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         getLoaderManager().initLoader(PROFILE_BIRTHDAY_LOADER, null, this);
         getLoaderManager().initLoader(PROFILE_ANNIVERSARY_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        TextView birthdayView = (TextView) getActivity().findViewById(R.id.contact_birthday_date);
+        TextView anniversaryView = (TextView) getActivity().findViewById(R.id.contact_anniversary_date);
+        outState.putString("birthday", birthdayView.getText().toString());
+        outState.putString("anniversary", anniversaryView.getText().toString());
     }
 
     private void addSize() {
@@ -401,7 +420,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 setEventDate(data);
                 break;
             case PROFILE_ANNIVERSARY_LOADER:
-                setEventDate(data);
+                if (data == null || data.getCount() == 0) {
+                    hideAnniversaryView();
+                } else {
+                    setEventDate(data);
+                }
                 break;
             default:
                 break;
@@ -411,6 +434,23 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private void setBirthday(View rootView, String birthday) {
+        TextView view = (TextView) rootView.findViewById(R.id.contact_birthday_date);
+        view.setText(birthday);
+    }
+
+    private void setAnniversary(View rootView, String anniversary) {
+        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.contact_anniversary);
+
+        if (TextUtils.isEmpty(anniversary)) {
+            layout.setVisibility(View.GONE);
+        } else {
+            layout.setVisibility(View.VISIBLE);
+            TextView view = (TextView) rootView.findViewById(R.id.contact_anniversary_date);
+            view.setText(anniversary);
+        }
     }
 
     private void setEventDate(Cursor c) {
@@ -423,6 +463,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             if (type == ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY) {
                 view = (TextView) getActivity().findViewById(R.id.contact_birthday_date);
             } else if (type == ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY) {
+                LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.contact_anniversary);
+                layout.setVisibility(View.VISIBLE);
                 view = (TextView) getActivity().findViewById(R.id.contact_anniversary_date);
             } else {
                 // not displaying custom ones yet
@@ -443,6 +485,12 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
                 view.setText(date);
             }
         }
+    }
+
+    private void hideAnniversaryView() {
+        Log.i(LOG_TAG, "no anniversary; hide layout");
+        LinearLayout view = (LinearLayout) getActivity().findViewById(R.id.contact_anniversary);
+        view.setVisibility(View.GONE);
     }
 
     public class SizeClickListener implements View.OnClickListener {
