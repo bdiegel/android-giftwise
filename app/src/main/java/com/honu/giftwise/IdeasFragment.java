@@ -16,11 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
+import com.melnykov.fab.FloatingActionButton;
 
 /**
  * Fragments that displays Gift items in a ListView.
@@ -88,13 +88,16 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
-        ImageButton addButton = (ImageButton) rootView.findViewById(R.id.add_gift_fab);
+        FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_gift_fab);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addGift();
             }
         });
+
+        // hide FAB on scroll
+        addButton.attachToListView(mListView);
 
         // register a context menu (long-click)
         registerForContextMenu(mListView);

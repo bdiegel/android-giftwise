@@ -20,11 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.GiftwiseContract;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -56,13 +56,15 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         mListView = (ListView) rootView.findViewById(R.id.contacts_listview);
         mListView.setAdapter(mContactAdapter);
 
-        ImageButton addButton = (ImageButton) rootView.findViewById(R.id.add_contact_fab);
+        FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_contact_fab);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity)getActivity()).addContact();
             }
         });
+        // hide FAB on scroll
+        addButton.attachToListView(mListView);
 
         registerForContextMenu(mListView);
 
