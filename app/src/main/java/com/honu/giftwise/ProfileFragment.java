@@ -67,7 +67,6 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         Bundle args = new Bundle();
         args.putLong("rawContactId", rawContactId);
         args.putLong("contactId", contactId);
-        args.putLong("contactId", contactId);
 
         // Set arguments to be fetched in the fragment onCreateView
         fragment.setArguments(args);
