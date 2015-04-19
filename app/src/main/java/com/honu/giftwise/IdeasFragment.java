@@ -16,11 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
-import com.honu.giftwise.view.FloatingActionButton;
 
 /**
  * Fragments that displays Gift items in a ListView.
@@ -88,7 +88,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
-        FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_gift_fab);
+        ImageButton addButton = (ImageButton) rootView.findViewById(R.id.add_gift_fab);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

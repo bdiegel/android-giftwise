@@ -15,12 +15,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftImageCache;
-import com.honu.giftwise.view.FloatingActionButton;
 
 /**
  * Fragment for viewing Gift details
@@ -94,7 +94,7 @@ public class ViewGiftFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // handler for the FAB edit button
-        FloatingActionButton editButton = (FloatingActionButton) rootView.findViewById(R.id.edit_gift_fab);
+        ImageButton editButton = (ImageButton) rootView.findViewById(R.id.edit_gift_fab);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
