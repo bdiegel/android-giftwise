@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -108,6 +109,7 @@ public class CreateContactActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_create_contact, container, false);
 
+            // If arguments have been passed we are importing a selected contact. Otherwise, a new contact was created.
             Bundle args = getArguments();
             if (args != null) {
                 String displayName = args.getString(ContactsUtils.DISPLAY_NAME);
@@ -115,6 +117,11 @@ public class CreateContactActivity extends ActionBarActivity {
                 if (!TextUtils.isEmpty(displayName)) {
                     Log.i(LOG_TAG, "Set displayName: " + displayName);
                     EditText nameEditText = (EditText) rootView.findViewById(R.id.contact_display_name);
+
+                    // hide keyboard and don't let user edit name
+                    nameEditText.setKeyListener(null);
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
                     nameEditText.setText(displayName);
                 }
             }
