@@ -19,6 +19,6 @@ An APK can be downloaded [here] (https://drive.google.com/file/d/0BzY8dMKto_MqZ3
 
 # Acknowledgments
 * The [FloatingActionButton](https://github.com/makovkastar/FloatingActionButton) library by [Melnykov Oleksandr] (https://github.com/makovkastar) was used
-* The [SlidingTabLayout] (https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/widget/SlidingTabLayout.java) and [SlidingTabStrip] (https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/widget/SlidingTabStrip.java) from the The Google I/O 2014 Android App (ioshed) [https://github.com/google/iosched] app were used
+* The [SlidingTabLayout] (https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/widget/SlidingTabLayout.java) and [SlidingTabStrip] (https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/widget/SlidingTabStrip.java) from the The Google I/O 2014 Android App [ioshed] (https://github.com/google/iosched) app were used
 * The [Android ColorPicker] (https://android.googlesource.com/platform/frameworks/opt/colorpicker) was used
 * The GiftWise launch icon was created with Blender by [Dino Morelli](https://github.com/dino-)
