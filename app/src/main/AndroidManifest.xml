@@ -22,6 +22,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="com.google.android.backup.api_key"
+                android:value="@string/android_backup_api_key" />
         </activity>
         <activity
             android:name=".ContactActivity"

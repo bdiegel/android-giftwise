@@ -38,3 +38,13 @@ dependencies {
     compile 'com.melnykov:floatingactionbutton:1.3.0'
     compile project(':colorpicker')
 }
+
+task copyAppConfig(type: Copy) {
+    String appDir = System.getenv('HOME') + '/.android/dev/' + android.defaultConfig.applicationId
+    println "Copying application configuration settings from: " + appDir
+    from appDir
+    into 'src/main/res/values'
+}
+
+clean.dependsOn copyAppConfig
+clean.mustRunAfter copyAppConfig
