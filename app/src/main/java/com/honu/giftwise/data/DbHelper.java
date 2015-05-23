@@ -21,6 +21,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "giftwise.db";
 
+    public static final Object[] dbLock = new Object[0];
+
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }

@@ -1,12 +1,15 @@
 package com.honu.giftwise.data;
 
+import android.app.backup.BackupManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 
 public class GiftContentProvider extends ContentProvider {
@@ -62,52 +65,63 @@ public class GiftContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
 
-        switch (match) {
-            case GIFTS_BY_CONTACT: {
-                db.insert(GiftwiseContract.GiftEntry.TABLE_NAME, null, values);
-                break;
+        synchronized (DbHelper.dbLock) {
+
+            final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            final int match = sUriMatcher.match(uri);
+
+            switch (match) {
+                case GIFTS_BY_CONTACT: {
+                    db.insert(GiftwiseContract.GiftEntry.TABLE_NAME, null, values);
+                    break;
+                }
+                case COLORS_BY_CONTACT: {
+                    db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
+                    break;
+                }
+                case SIZES_BY_CONTACT: {
+                    db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
+                    break;
+                }
+                default:
+                    throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
-            case COLORS_BY_CONTACT: {
-                db.insert(GiftwiseContract.ColorEntry.TABLE_NAME, null, values);
-                break;
-            }
-            case SIZES_BY_CONTACT: {
-                db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
-                break;
-            }
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+
         getContext().getContentResolver().notifyChange(uri, null);
+        notifyBackupManager(getContext());
 
         return uri;
     }
 
     @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
-
         int rowsDeleted;
-        switch (match) {
-            case GIFTS_BY_CONTACT:
-                rowsDeleted = db.delete(GiftwiseContract.GiftEntry.TABLE_NAME, where, whereArgs);
-                break;
-            case COLORS_BY_CONTACT:
-                rowsDeleted = db.delete(GiftwiseContract.ColorEntry.TABLE_NAME, where, whereArgs);
-                break;
-            case SIZES_BY_CONTACT:
-                rowsDeleted = db.delete(GiftwiseContract.SizeEntry.TABLE_NAME, where, whereArgs);
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+        synchronized (DbHelper.dbLock) {
+
+            final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            final int match = sUriMatcher.match(uri);
+
+            switch (match) {
+                case GIFTS_BY_CONTACT:
+                    rowsDeleted = db.delete(GiftwiseContract.GiftEntry.TABLE_NAME, where, whereArgs);
+                    break;
+                case COLORS_BY_CONTACT:
+                    rowsDeleted = db.delete(GiftwiseContract.ColorEntry.TABLE_NAME, where, whereArgs);
+                    break;
+                case SIZES_BY_CONTACT:
+                    rowsDeleted = db.delete(GiftwiseContract.SizeEntry.TABLE_NAME, where, whereArgs);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
         }
 
         if (rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
+            notifyBackupManager(getContext());
         }
 
         return rowsDeleted;
@@ -115,24 +129,30 @@ public class GiftContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        final int match = sUriMatcher.match(uri);
+
         int rowsUpdated;
 
-        switch (match) {
-            case GIFTS_BY_CONTACT: {
-                rowsUpdated = db.update(GiftwiseContract.GiftEntry.TABLE_NAME, values, selection, selectionArgs);
-                break;
+        synchronized (DbHelper.dbLock) {
+
+            final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            final int match = sUriMatcher.match(uri);
+
+            switch (match) {
+                case GIFTS_BY_CONTACT: {
+                    rowsUpdated = db.update(GiftwiseContract.GiftEntry.TABLE_NAME, values, selection, selectionArgs);
+                    break;
+                }
+                case SIZES_BY_CONTACT: {
+                    rowsUpdated = db.update(GiftwiseContract.SizeEntry.TABLE_NAME, values, selection, selectionArgs);
+                    break;
+                }
+                default:
+                    throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
-            case SIZES_BY_CONTACT: {
-                rowsUpdated = db.update(GiftwiseContract.SizeEntry.TABLE_NAME, values, selection, selectionArgs);
-                break;
-            }
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         if (rowsUpdated != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
+            notifyBackupManager(getContext());
         }
 
         return rowsUpdated;
@@ -211,4 +231,12 @@ public class GiftContentProvider extends ContentProvider {
               sortOrder
         );
     }
+
+    private void notifyBackupManager(Context ctx) {
+        Log.d("GiftwiseContentProvider", "Requesting BACKUP");
+        // notify the BackupManager there is changed data
+        BackupManager backupManager = new BackupManager(ctx);
+        backupManager.dataChanged();
+    }
+
 }
