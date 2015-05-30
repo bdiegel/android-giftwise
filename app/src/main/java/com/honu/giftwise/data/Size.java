@@ -12,7 +12,7 @@ public class Size implements Parcelable {
 
     private String notes;
 
-    private long rawContactId = -1;
+    private String giftwiseId = null;
 
     private long sizeId = -1;
 
@@ -22,9 +22,9 @@ public class Size implements Parcelable {
         this.notes = notes;
     }
 
-    public Size(long rawContactId) {
-        this.rawContactId = rawContactId;
-    }
+    public Size(String giftwiseId) {
+    this.giftwiseId = giftwiseId;
+}
 
     public String getItem() {
         return item;
@@ -50,13 +50,9 @@ public class Size implements Parcelable {
         this.notes = notes;
     }
 
-    public long getRawContactId() {
-        return rawContactId;
-    }
+    public String getGiftwiseId() { return giftwiseId; }
 
-    public void setRawContactId(long rawContactId) {
-        this.rawContactId = rawContactId;
-    }
+    public void setGiftwiseId(String giftwiseId) { this.giftwiseId = giftwiseId; }
 
     public long getSizeId() {
         return sizeId;
@@ -70,7 +66,7 @@ public class Size implements Parcelable {
         item = in.readString();
         size = in.readString();
         notes = in.readString();
-        rawContactId = in.readLong();
+        giftwiseId = in.readString();
         sizeId = in.readLong();
     }
 
@@ -84,7 +80,7 @@ public class Size implements Parcelable {
         dest.writeString(item);
         dest.writeString(size);
         dest.writeString(notes);
-        dest.writeLong(rawContactId);
+        dest.writeString(giftwiseId);
         dest.writeLong(sizeId);
     }
 
@@ -103,14 +99,14 @@ public class Size implements Parcelable {
 
     public static Size createFromCursor(Cursor cursor) {
         int sizeId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.SizeEntry._ID));
-        int rawContactId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID));
+        String gwid = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_GIFTWISE_ID));
         String item = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME));
         String sizeName = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME));
         String notes = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES));
 
         Size size = new Size(item, sizeName, notes);
         size.setSizeId(sizeId);
-        size.setRawContactId(rawContactId);
+        size.setGiftwiseId(gwid);
 
         return size;
     }

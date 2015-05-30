@@ -14,14 +14,16 @@ public class ContactDetailPagerAdapter extends FragmentPagerAdapter {
     private String mContactName;
     private long mRawContactId;
     private long mContactId;
+    private String mGiftwiseId;
 
-    public ContactDetailPagerAdapter(FragmentManager fm, Context context, String contactName, long rawContactId, long contactId) {
+    public ContactDetailPagerAdapter(FragmentManager fm, Context context, String contactName, long rawContactId, long contactId, String giftwiseId) {
         super(fm);
 
         mContext = context;
         mContactName = contactName;
         mRawContactId = rawContactId;
         mContactId = contactId;
+        mGiftwiseId = giftwiseId;
 
         mTabTitles = mContext.getResources().getStringArray(R.array.contact_tabs);
     }
@@ -31,9 +33,9 @@ public class ContactDetailPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return IdeasFragment.getInstance(mRawContactId, mContactName);
+                return IdeasFragment.getInstance(mGiftwiseId, mContactName);
             case 1:
-                return ProfileFragment.getInstance(mRawContactId, mContactId);
+                return ProfileFragment.getInstance(mGiftwiseId, mContactId);
         }
 
         return  null;

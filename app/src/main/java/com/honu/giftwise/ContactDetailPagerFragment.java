@@ -18,6 +18,7 @@ public class ContactDetailPagerFragment extends Fragment {
     private String mContactName;
     private long mRawContactId;
     private long mContactId;
+    private String mGiftwiseId;
 
 
     @Override
@@ -44,6 +45,7 @@ public class ContactDetailPagerFragment extends Fragment {
         mContactName = args.getString("name");
         mRawContactId = args.getLong("rawId");
         mContactId = args.getLong("contactId");
+        mGiftwiseId = args.getString("gwId");
 
         pager.setAdapter(buildAdapter());
 
@@ -71,6 +73,6 @@ public class ContactDetailPagerFragment extends Fragment {
     }
 
     private PagerAdapter buildAdapter() {
-        return(new ContactDetailPagerAdapter(getChildFragmentManager(), getActivity(), mContactName, mRawContactId, mContactId));
+        return(new ContactDetailPagerAdapter(getChildFragmentManager(), getActivity(), mContactName, mRawContactId, mContactId, mGiftwiseId));
     }
 }

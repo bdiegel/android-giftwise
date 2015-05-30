@@ -32,7 +32,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_GIFT_TABLE = "CREATE TABLE " + GiftEntry.TABLE_NAME + " (" +
               GiftEntry._ID + " INTEGER PRIMARY KEY, " +
-              GiftEntry.COLUMN_GIFT_RAWCONTACT_ID + " INTEGER NOT NULL, " +
+              GiftEntry.COLUMN_GIFT_GIFTWISE_ID + " TEXT NOT NULL, " +
               GiftEntry.COLUMN_GIFT_NAME + " TEXT NOT NULL, " +
               GiftEntry.COLUMN_GIFT_URL + " TEXT, " +
               GiftEntry.COLUMN_GIFT_PRICE + " REAL, " +
@@ -45,7 +45,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_COLOR_TABLE = "CREATE TABLE " + ColorEntry.TABLE_NAME + " (" +
               ColorEntry._ID + " INTEGER PRIMARY KEY, " +
-              ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " INTEGER NOT NULL, " +
+              ColorEntry.COLUMN_COLOR_GIFTWISE_ID + " TEXT NOT NULL, " +
               ColorEntry.COLUMN_COLOR_VALUE + " INTEGER NOT NULL, " +
               ColorEntry.COLUMN_COLOR_LIKED + " INTEGER DEFAULT 1 " +
               ");";
@@ -54,7 +54,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_SIZE_TABLE = "CREATE TABLE " + SizeEntry.TABLE_NAME + " (" +
               SizeEntry._ID + " INTEGER PRIMARY KEY, " +
-              SizeEntry.COLUMN_SIZE_RAWCONTACT_ID + " INTEGER NOT NULL, " +
+              SizeEntry.COLUMN_SIZE_GIFTWISE_ID + " TEXT NOT NULL, " +
               SizeEntry.COLUMN_SIZE_ITEM_NAME + " TEXT NOT NULL, " +
               SizeEntry.COLUMN_SIZE_NAME + " TEXT NOT NULL, " +
               SizeEntry.COLUMN_SIZE_NOTES + " TEXT " +

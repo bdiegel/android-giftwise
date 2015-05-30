@@ -27,9 +27,9 @@ public class GiftContentProvider extends ContentProvider {
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT + "/" + GiftwiseContract.PATH_CONTACT + "/#", GIFTS_BY_CONTACT);
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR + "/" + GiftwiseContract.PATH_CONTACT + "/#", COLORS_BY_CONTACT);
-        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE + "/" + GiftwiseContract.PATH_CONTACT + "/#", SIZES_BY_CONTACT);
+        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT + "/" + GiftwiseContract.PATH_GWID + "/*", GIFTS_BY_CONTACT);
+        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR + "/" + GiftwiseContract.PATH_GWID + "/*", COLORS_BY_CONTACT);
+        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE + "/" + GiftwiseContract.PATH_GWID + "/*", SIZES_BY_CONTACT);
         return matcher;
     }
 
@@ -176,10 +176,10 @@ public class GiftContentProvider extends ContentProvider {
     }
 
     private Cursor getGiftsForRawContactId(Uri uri, String[] projection, String sortOrder) {
-        long rawContactId = GiftwiseContract.GiftEntry.getIdFromUri(uri);
+        String gwid = GiftwiseContract.GiftEntry.getIdFromUri(uri);
 
-        String selection = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(rawContactId) };
+        String selection = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry.COLUMN_GIFT_GIFTWISE_ID + " = ? ";
+        String[] selectionArgs =  new String[]{ gwid };
 
         return mDbHelper.getReadableDatabase().query(
               GiftwiseContract.GiftEntry.TABLE_NAME,
@@ -193,15 +193,14 @@ public class GiftContentProvider extends ContentProvider {
     }
 
     private Cursor getColorsForRawContactId(Uri uri, String[] projection, String selection, String[] args, String sortOrder) {
-        long rawContactId = GiftwiseContract.ColorEntry.getIdFromUri(uri);
+        String gwid = GiftwiseContract.ColorEntry.getIdFromUri(uri);
 
-
-        String selectionClause = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " = ?  ";
+        String selectionClause = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry.COLUMN_COLOR_GIFTWISE_ID + " = ?  ";
         if (!TextUtils.isEmpty(selection)) {
             selectionClause = selectionClause + " AND " + selection;
         }
         String[] selectionArgs =  new String[args.length + 1];
-        selectionArgs[0] = Long.toString(rawContactId);
+        selectionArgs[0] = gwid;
         System.arraycopy(args, 0, selectionArgs, 1, args.length);
 
         return mDbHelper.getReadableDatabase().query(
@@ -216,10 +215,10 @@ public class GiftContentProvider extends ContentProvider {
     }
 
     private Cursor getSizesForRawContactId(Uri uri, String[] projection, String sortOrder) {
-        long rawContactId = GiftwiseContract.SizeEntry.getIdFromUri(uri);
+        String gwid = GiftwiseContract.SizeEntry.getIdFromUri(uri);
 
-        String selection = GiftwiseContract.SizeEntry.TABLE_NAME + "." + GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID + " = ? ";
-        String[] selectionArgs =  new String[]{  Long.toString(rawContactId) };
+        String selection = GiftwiseContract.SizeEntry.TABLE_NAME + "." + GiftwiseContract.SizeEntry.COLUMN_SIZE_GIFTWISE_ID + " = ? ";
+        String[] selectionArgs =  new String[]{ gwid };
 
         return mDbHelper.getReadableDatabase().query(
               GiftwiseContract.SizeEntry.TABLE_NAME,

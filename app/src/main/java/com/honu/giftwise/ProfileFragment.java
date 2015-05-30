@@ -58,16 +58,18 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     // id of RawContact
     private long mRawContactId;
 
+    private String mGiftwiseId;
+
     private long mContactId;
 
 
-    public static ProfileFragment getInstance(long rawContactId, long contactId) {
+    public static ProfileFragment getInstance(String giftwiseId, long contactId) {
         ProfileFragment fragment = new ProfileFragment();
 
         // attach data to the fragment used to populate our fragment layouts
         Bundle args = new Bundle();
-        args.putLong("rawContactId", rawContactId);
         args.putLong("contactId", contactId);
+        args.putString("gwId", giftwiseId);
 
         // Set arguments to be fetched in the fragment onCreateView
         fragment.setArguments(args);
@@ -85,11 +87,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
         // get args supplied when the fragment was instantiated by the CustomPagerAdapter
         Bundle args = getArguments();
-        mRawContactId = args.getLong("rawContactId");
         mContactId = args.getLong("contactId");
+        mGiftwiseId = args.getString("gwId");
 
         // create adapters for liked and disliked colors
-        Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+        Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForGiftwiseIdUri(mGiftwiseId);
         String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ?";
         Cursor likedColorsCursor = getActivity().getContentResolver().query(colorsUri, null, selection, new String[] { "1" }, null);
         mLikedColorsAdapter = new ColorAdapter(getActivity(), likedColorsCursor, 0);
@@ -97,7 +99,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         mDislikedColorsAdapter = new ColorAdapter(getActivity(), dislikedColorsCursor, 0);
 
         // create adapter for sizes
-        Uri sizesUri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(mRawContactId);
+        Uri sizesUri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(mGiftwiseId);
         Cursor sizesCursor = getActivity().getContentResolver().query(sizesUri, null, null, null, null);
         mSizeAdapter = new SizeAdapter(getActivity(), sizesCursor, 0);
 
@@ -142,11 +144,11 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void addSize() {
-        Log.i(LOG_TAG, "Add size for: " + mRawContactId);
+        Log.i(LOG_TAG, "Add size for: " + mGiftwiseId);
 
         // start activity to add/edit size details
         Intent intent = new Intent(getActivity(), EditSizeActivity.class);
-        Size size = new Size(mRawContactId);
+        Size size = new Size(mGiftwiseId);
         intent.putExtra("size", size);
 
         startActivityForResult(intent, 1);
@@ -164,8 +166,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void deleteSize(long sizeId) {
         Log.i(LOG_TAG, "Delete size id: " + sizeId);
-        //Uri uri = GiftwiseContract.SizeEntry.buildSizeUri(sizeId);
-        Uri uri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(mRawContactId);
+        Uri uri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(mGiftwiseId);
         String where = GiftwiseContract.SizeEntry._ID  + " = ?";
         String[] whereArgs = new String[] {"" + sizeId};
 
@@ -287,7 +288,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         int[] deletedColors = Ints.toArray(deleted);
         int[] addedColors = Ints.toArray(added);
 
-        Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+        Uri colorsUri = GiftwiseContract.ColorEntry.buildColorsForGiftwiseIdUri(mGiftwiseId);
 
         // remove DELETE colors from database for contact
         if (deletedColors.length > 0 ) {
@@ -312,7 +313,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             ContentValues[] allValues = new ContentValues[addedColors.length];
             for (int i = 0; i < addedColors.length; i++) {
                 ContentValues values = new ContentValues();
-                values.put(GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID, mRawContactId);
+                values.put(GiftwiseContract.ColorEntry.COLUMN_COLOR_GIFTWISE_ID, mGiftwiseId);
                 values.put(GiftwiseContract.ColorEntry.COLUMN_COLOR_VALUE, addedColors[i]);
                 values.put(GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED, liked);
                 Log.i(LOG_TAG, "Values: " + values);
@@ -372,17 +373,17 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
             case PROFILE_COLORS_LIKED_LOADER: {
                 String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ? ";
                 String[] selectionArgs = new String[] { "1" };
-                Uri uri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+                Uri uri = GiftwiseContract.ColorEntry.buildColorsForGiftwiseIdUri(mGiftwiseId);
                 return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
             }
             case PROFILE_COLORS_DISLIKED_LOADER: {
                 String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ? ";
                 String[] selectionArgs = new String[] { "0" };
-                Uri uri = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(mRawContactId);
+                Uri uri = GiftwiseContract.ColorEntry.buildColorsForGiftwiseIdUri(mGiftwiseId);
                 return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
             }
             case PROFILE_SIZES_LOADER: {
-                Uri uri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(mRawContactId);
+                Uri uri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(mGiftwiseId);
                 return new CursorLoader(getActivity(), uri, null, null, null, null);
             }
             case PROFILE_BIRTHDAY_LOADER: {

@@ -155,12 +155,12 @@ public class EditSizeFragment extends Fragment {
             return false;
         }
 
-        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID, size.getRawContactId());
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_GIFTWISE_ID, size.getGiftwiseId());
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME, itemName);
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME, sizeName);
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES, notesEdit.getText().toString());
 
-        Uri uri = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(size.getRawContactId());
+        Uri uri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(size.getGiftwiseId());
 
         // insert or update the database
         if (size.getSizeId() == -1) {

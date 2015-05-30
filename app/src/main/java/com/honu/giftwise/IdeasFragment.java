@@ -33,20 +33,20 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private int mPosition = ListView.INVALID_POSITION;
 
-    private long mRawContactId;
+    private String mGiftwiseId;
 
     private String mContactName;
 
     // loader id
     private static final int GIFT_IDEAS_LOADER = 1;
 
-    public static IdeasFragment getInstance(long rawContactId, String contactName) {
+    public static IdeasFragment getInstance(String giftwiseId, String contactName) {
         IdeasFragment fragment = new IdeasFragment();
 
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
-        args.putLong("rawContactId", rawContactId);
         args.putString("contactName", contactName);
+        args.putString("gwId", giftwiseId);
 
         // Set the arguments on the fragment that will be fetched by the edit activity
         fragment.setArguments(args);
@@ -59,12 +59,12 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         View rootView = inflater.inflate(R.layout.fragment_contact_ideas, container, false);
 
         Bundle args = getArguments();
-        mRawContactId =  args.getLong("rawContactId");
         mContactName =  args.getString("contactName");
+        mGiftwiseId =  args.getString("gwId");
 
         // initialize adapter (no data)
-        Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
-        Cursor cur = getActivity().getContentResolver().query(giftsForRawContactUri, null, null, null, null);
+        Uri giftsForGwidUri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
+        Cursor cur = getActivity().getContentResolver().query(giftsForGwidUri, null, null, null, null);
         mIdeasAdapter = new IdeasAdapter(getActivity(), cur, 0);
 
         // Get a reference to the ListView, and attach this adapter to it.
@@ -196,7 +196,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private void deleteGift(long giftId) {
         Log.i(LOG_TAG, "Delete Gift id: " + giftId);
-        Uri uri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
+        Uri uri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
         String where = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry._ID + " = ? ";
         String[] whereArgs =  new String[]{  Long.toString(giftId) };
         mIdeasAdapter.removeImageFromCache("" + giftId);
@@ -204,11 +204,11 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void addGift() {
-        Log.i(LOG_TAG, "Add Gift for: " + mRawContactId);
+        Log.i(LOG_TAG, "Add Gift for gwid: " + mGiftwiseId);
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        Gift gift = new Gift(mRawContactId);
+        Gift gift = new Gift(mGiftwiseId);
         intent.putExtra("gift", gift);
 
         startActivityForResult(intent, 1);
@@ -216,13 +216,15 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.i(LOG_TAG, "Query Gifts for: " + mGiftwiseId);
+
         // uri for all gifts for a raw contact
-        Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(mRawContactId);
+        Uri giftsForGiftwiseIdUri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
 
         // create CursorLoader that will take care of creating a Cursor for the data being displayed
         return new CursorLoader(
               getActivity(),
-              giftsForRawContactUri,
+              giftsForGiftwiseIdUri,
               null,
               null,
               null,

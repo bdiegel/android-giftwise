@@ -117,7 +117,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         cursor.moveToPosition(info.position);
         long contactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
         long rawId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
-
+        String gwid = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
 
         switch (item.getItemId()) {
             case R.id.contact_view:
@@ -130,7 +130,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
                 return true;
             case R.id.contact_delete:
                 Log.d(LOG_TAG, "Delete pressed");
-                deleteContact(rawId);
+                deleteContact(rawId, gwid);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -170,6 +170,8 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         String contactId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
         String contactName = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME);
         String rawId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
+        String gwId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
+
         //String mContactKey = getString(CONTACT_KEY_INDEX);
         // Create the contact's content Uri
         //Uri mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
@@ -178,22 +180,23 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         intent.putExtra("name", contactName );
         intent.putExtra("contactId", contactId );
         intent.putExtra("rawId", rawId );
+        intent.putExtra("gwId", gwId );
         getActivity().startActivity(intent);
     }
 
-    private void deleteContact(long rawContactId) {
-        Log.d(LOG_TAG, "rawContactId: " + rawContactId);
+    private void deleteContact(long rawContactId, String gwid) {
+        Log.d(LOG_TAG, "rawContactId: " + rawContactId + " gwid: " + gwid);
 
         // uris for deleting data
-        Uri uriGifts = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(rawContactId);
-        Uri uriColors = GiftwiseContract.ColorEntry.buildColorsForRawContactUri(rawContactId);
-        Uri uriSizes = GiftwiseContract.SizeEntry.buildSizesForRawContactUri(rawContactId);
+        Uri uriGifts = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(gwid);
+        Uri uriColors = GiftwiseContract.ColorEntry.buildColorsForGiftwiseIdUri(gwid);
+        Uri uriSizes = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(gwid);
 
         // selection criteria for delete
-        String[] selectionArgs =  new String[]{  Long.toString(rawContactId) };
-        String selectGifts = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID + " = ? ";
-        String selectColors = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry.COLUMN_COLOR_RAWCONTACT_ID + " = ? ";
-        String selectSizes = GiftwiseContract.SizeEntry.TABLE_NAME + "." + GiftwiseContract.SizeEntry.COLUMN_SIZE_RAWCONTACT_ID + " = ? ";
+        String[] selectionArgs =  new String[]{ gwid };
+        String selectGifts = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry.COLUMN_GIFT_GIFTWISE_ID + " = ? ";
+        String selectColors = GiftwiseContract.ColorEntry.TABLE_NAME + "." + GiftwiseContract.ColorEntry.COLUMN_COLOR_GIFTWISE_ID + " = ? ";
+        String selectSizes = GiftwiseContract.SizeEntry.TABLE_NAME + "." + GiftwiseContract.SizeEntry.COLUMN_SIZE_GIFTWISE_ID + " = ? ";
 
         // create batch of delete operations
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();

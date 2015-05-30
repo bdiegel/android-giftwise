@@ -248,24 +248,24 @@ public class EditGiftFragment extends Fragment {
         mContactSpinner.setAdapter(mContactAdapter);
 
         // If a contact id is available set the spinner selection:
-        long rawContactId = gift.getRawContactId();
-        if (rawContactId == -1) {
+        String gwid = gift.getGiftwiseId();
+        if (gwid == null) {
             mContactSpinner.setSelection(0);
         } else {
-            selectSpinnerItemByContactId(rawContactId);
+            selectSpinnerItemByContactId(gwid);
         }
     }
 
-    public void selectSpinnerItemByContactId(long value)
+    public void selectSpinnerItemByContactId(String value)
     {
         int position = 0;
         Cursor cursor = mContactAdapter.getCursor();
 
         for (int i=0; i<mContactAdapter.getCount(); i++) {
             cursor.moveToPosition(i);
-            long temp = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
+            String temp = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
 
-            if ( temp == value ) {
+            if ( temp.equals(value) ) {
                 Log.d("TAG", "Found match at index: " + i);
                 position = i;
                 break;

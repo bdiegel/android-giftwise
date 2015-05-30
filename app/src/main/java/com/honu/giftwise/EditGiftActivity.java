@@ -118,8 +118,8 @@ public class EditGiftActivity extends ActionBarActivity {
         Spinner contact_spin = (Spinner) findViewById(R.id.contacts_spinner);
         Cursor cursor = (Cursor)(contact_spin.getSelectedItem());
         if (cursor != null) {
-            long rawContactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
-            gift.setRawContactId(rawContactId);
+            String gwid = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
+            gift.setGiftwiseId(gwid);
         }
 
         TextView name_tv = (TextView) findViewById(R.id.gift_name);
@@ -148,11 +148,11 @@ public class EditGiftActivity extends ActionBarActivity {
             }
         }
 
-        Uri giftsForRawContactUri = GiftwiseContract.GiftEntry.buildGiftsForRawContactUri(gift.getRawContactId());
+        Uri uri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(gift.getGiftwiseId());
 
         // create content values
         ContentValues values = new ContentValues();
-        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_RAWCONTACT_ID, gift.getRawContactId());
+        values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_GIFTWISE_ID, gift.getGiftwiseId());
         values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME, name);
 
         if (price != 0)
@@ -175,13 +175,14 @@ public class EditGiftActivity extends ActionBarActivity {
         // insert new gift
         if (gift.getGiftId() == -1) {
             //getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
-            getContentResolver().insert(giftsForRawContactUri, values);
+            //getContentResolver().insert(giftsForRawContactUri, values);
+            getContentResolver().insert(uri, values);
        // update existing gift
         } else {
             String selection = GiftwiseContract.GiftEntry._ID + " = ?";
             String[] selectionArgs = new String[] { gift.getGiftId() + "" };
             //getContentResolver().update(GiftwiseContract.GiftEntry.GIFT_URI, values, selection, selectionArgs);
-            getContentResolver().update(giftsForRawContactUri, values, selection, selectionArgs);
+            getContentResolver().update(uri, values, selection, selectionArgs);
         }
 
         return true;

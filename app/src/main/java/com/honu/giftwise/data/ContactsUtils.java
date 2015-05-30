@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class ContactsUtils {
@@ -41,7 +42,8 @@ public class ContactsUtils {
         static final String[] projection = new String[]{
               ContactsContract.RawContacts._ID,
               ContactsContract.RawContacts.CONTACT_ID,
-              ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY
+              ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY,
+              ContactsContract.RawContacts.SOURCE_ID
         };
 
         // sort by display name
@@ -51,6 +53,7 @@ public class ContactsUtils {
         public static final int COL_RAW_CONTACT_ID = 0;
         public static final int COL_CONTACT_ID = 1;
         public static final int COL_CONTACT_NAME = 2;
+        public static final int COL_CONTACT_GWID = 3;
     }
 
 
@@ -100,12 +103,15 @@ public class ContactsUtils {
 
         String accountType = context.getString(R.string.account_type);
 
+        UUID uuid = UUID.randomUUID();
+
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
         int rawContactInsertIndex = ops.size();
         ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
               .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
               .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
+              .withValue(ContactsContract.RawContacts.SOURCE_ID, uuid.toString())
               .build());
 
         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)

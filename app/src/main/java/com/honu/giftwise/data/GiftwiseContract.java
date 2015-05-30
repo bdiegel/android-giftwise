@@ -15,7 +15,7 @@ public class GiftwiseContract {
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     // URI paths:
-    public static final String PATH_CONTACT = "contact";
+    public static final String PATH_GWID = "gwid";
     public static final String PATH_GIFT = "gift";
     public static final String PATH_COLOR = "color";
     public static final String PATH_SIZE = "size";
@@ -32,7 +32,7 @@ public class GiftwiseContract {
     public static final class GiftEntry implements BaseColumns {
 
         public static final Uri GIFT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GIFT).build();
-        public static final Uri GIFTS_BYCONTACT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GIFT).appendPath(PATH_CONTACT).build();
+        public static final Uri GIFTS_BYGWID_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GIFT).appendPath(PATH_GWID).build();
 
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GIFT;
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GIFT;
@@ -47,26 +47,19 @@ public class GiftwiseContract {
         public static final String COLUMN_GIFT_CURRENCY_CODE = "currency_code";
         public static final String COLUMN_GIFT_IMAGE = "image";
         public static final String COLUMN_GIFT_NOTES = "notes";
-        public static final String COLUMN_GIFT_RAWCONTACT_ID = "rawcontact_id";
-
+        public static final String COLUMN_GIFT_GIFTWISE_ID = "gwid";
 
         public static Uri buildGiftUri(long id) {
             return ContentUris.withAppendedId(GIFT_URI, id);
         }
 
-        public static Uri buildGiftsForRawContactUri(long rawContactId) {
-            return ContentUris.withAppendedId(GIFTS_BYCONTACT_URI, rawContactId);
+        public static Uri buildGiftsForGiftwiseIdUri(String giftwiseId) {
+            return GIFTS_BYGWID_URI.buildUpon().appendEncodedPath(giftwiseId).build();
         }
 
-        // return id for uri in either format
-        public static long getIdFromUri(Uri uri) {
-            //return  Long.parseLong(uri.getPathSegments().get(1));
-            return  Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
+        public static String getIdFromUri(Uri uri) {
+            return  uri.getPathSegments().get(uri.getPathSegments().size()-1);
         }
-
-//        public static long getIdFromUriWithContactId(Uri uri) {
-//            return  Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
-//        }
     }
 
     // Color Table Entry:
@@ -74,7 +67,7 @@ public class GiftwiseContract {
 
         // Uris
         public static final Uri COLOR_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_COLOR).build();
-        public static final Uri COLOR_BYCONTACT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_COLOR).appendPath(PATH_CONTACT).build();
+        public static final Uri COLOR_BYGWID_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_COLOR).appendPath(PATH_GWID).build();
 
         // Content types
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_COLOR;
@@ -85,19 +78,19 @@ public class GiftwiseContract {
 
         // Column names:
         public static final String COLUMN_COLOR_VALUE = "color";
-        public static final String COLUMN_COLOR_RAWCONTACT_ID = "rawcontact_id";
+        public static final String COLUMN_COLOR_GIFTWISE_ID = "giftwise_id";
         public static final String COLUMN_COLOR_LIKED = "liked";
 
         public static Uri buildColorUri(long id) {
             return ContentUris.withAppendedId(COLOR_URI, id);
         }
 
-        public static Uri buildColorsForRawContactUri(long rawContactId) {
-            return ContentUris.withAppendedId(COLOR_BYCONTACT_URI, rawContactId);
+        public static Uri buildColorsForGiftwiseIdUri(String giftwiseId) {
+            return COLOR_BYGWID_URI.buildUpon().appendEncodedPath(giftwiseId).build();
         }
 
-        public static long getIdFromUri(Uri uri) {
-            return  Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
+        public static String getIdFromUri(Uri uri) {
+            return  uri.getPathSegments().get(uri.getPathSegments().size()-1);
         }
     }
 
@@ -105,7 +98,7 @@ public class GiftwiseContract {
     public static final class SizeEntry implements BaseColumns {
         // Uris
         public static final Uri SIZE_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SIZE).build();
-        public static final Uri SIZE_BYCONTACT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SIZE).appendPath(PATH_CONTACT).build();
+        public static final Uri SIZE_BYGWID_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_SIZE).appendPath(PATH_GWID).build();
 
         // Content types
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SIZE;
@@ -115,7 +108,7 @@ public class GiftwiseContract {
         public static final String TABLE_NAME = "size";
 
         // Column names:
-        public static final String COLUMN_SIZE_RAWCONTACT_ID = "rawcontact_id";
+        public static final String COLUMN_SIZE_GIFTWISE_ID = "giftwise_id";
         public static final String COLUMN_SIZE_ITEM_NAME = "item";
         public static final String COLUMN_SIZE_NAME = "size";
         public static final String COLUMN_SIZE_NOTES = "notes";
@@ -124,12 +117,12 @@ public class GiftwiseContract {
             return ContentUris.withAppendedId(SIZE_URI, id);
         }
 
-        public static Uri buildSizesForRawContactUri(long rawContactId) {
-            return ContentUris.withAppendedId(SIZE_BYCONTACT_URI, rawContactId);
+        public static Uri buildSizesForGiftwiseIdUri(String giftwiseId) {
+            return SIZE_BYGWID_URI.buildUpon().appendEncodedPath(giftwiseId).build();
         }
 
-        public static long getIdFromUri(Uri uri) {
-            return  Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
+        public static String getIdFromUri(Uri uri) {
+            return  uri.getPathSegments().get(uri.getPathSegments().size()-1);
         }
     }
 }

@@ -31,6 +31,9 @@ public class ContactActivity extends ActionBarActivity {
     // display name of RawContact
     private String mContactName = "";
 
+    // GiftWise UUID from the RawContact SOURCE_ID
+    private String mGiftwiseId = "";
+
     // Contact Id
     private long mContactId;
 
@@ -47,6 +50,7 @@ public class ContactActivity extends ActionBarActivity {
             mContactName = intent.getStringExtra("name");
             mRawContactId = Long.parseLong(intent.getStringExtra("rawId"));
             mContactId = Long.parseLong(intent.getStringExtra("contactId"));
+            mGiftwiseId = intent.getStringExtra("gwId");
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -62,6 +66,7 @@ public class ContactActivity extends ActionBarActivity {
         bundleArgs.putString("name", mContactName);
         bundleArgs.putLong("rawId", mRawContactId);
         bundleArgs.putLong("contactId", mContactId);
+        bundleArgs.putString("gwId", mGiftwiseId);
 
         if (savedInstanceState == null ) {
             Fragment contactFragment = new ContactDetailPagerFragment();
