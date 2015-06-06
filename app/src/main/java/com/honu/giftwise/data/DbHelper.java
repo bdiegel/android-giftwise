@@ -8,6 +8,7 @@ import android.util.Log;
 import com.honu.giftwise.data.GiftwiseContract.ColorEntry;
 import com.honu.giftwise.data.GiftwiseContract.GiftEntry;
 import com.honu.giftwise.data.GiftwiseContract.SizeEntry;
+import com.honu.giftwise.data.GiftwiseContract.ContactEntry;
 
 /**
  * Created by bdiegel on 3/7/15.
@@ -61,6 +62,16 @@ public class DbHelper extends SQLiteOpenHelper {
               ");";
 
         db.execSQL(SQL_CREATE_SIZE_TABLE);
+
+        final String SQL_CREATE_CONTACT_TABLE = "CREATE TABLE " + ContactEntry.TABLE_NAME + " (" +
+              ContactEntry._ID + " INTEGER PRIMARY KEY, " +
+              ContactEntry.COLUMN_CONTACT_GIFTWISE_ID + " TEXT NOT NULL, " +
+              ContactEntry.COLUMN_CONTACT_DISPLAY_NAME + " TEXT NOT NULL, " +
+              ContactEntry.COLUMN_CONTACT_ACCOUNT_NAME + " TEXT NOT NULL, " +
+              ContactEntry.COLUMN_CONTACT_ACCOUNT_TYPE + " TEXT NOT NULL " +
+              ");";
+
+        db.execSQL(SQL_CREATE_CONTACT_TABLE);
     }
 
     @Override
@@ -70,6 +81,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + GiftEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ColorEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SizeEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ContactEntry.TABLE_NAME);
         onCreate(db);
     }
 }
