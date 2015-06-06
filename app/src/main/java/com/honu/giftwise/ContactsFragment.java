@@ -217,7 +217,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         String accountType = getString(R.string.account_type);
 
         // delete raw contact from contact provider
-        ContactsUtils.deleteRawContact(getActivity(), rawContactId, accountName, accountType);
+        ContactsUtils.deleteRawContact(getActivity(), rawContactId, gwid, accountName, accountType);
     }
 
     private void editContact(long contactId) {

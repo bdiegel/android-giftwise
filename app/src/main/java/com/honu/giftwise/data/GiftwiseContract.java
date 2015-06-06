@@ -19,6 +19,7 @@ public class GiftwiseContract {
     public static final String PATH_GIFT = "gift";
     public static final String PATH_COLOR = "color";
     public static final String PATH_SIZE = "size";
+    public static final String PATH_CONTACT = "contact";
 
     //public static final Uri GIFT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GIFT).build();
 
@@ -119,6 +120,30 @@ public class GiftwiseContract {
 
         public static Uri buildSizesForGiftwiseIdUri(String giftwiseId) {
             return SIZE_BYGWID_URI.buildUpon().appendEncodedPath(giftwiseId).build();
+        }
+
+        public static String getIdFromUri(Uri uri) {
+            return  uri.getPathSegments().get(uri.getPathSegments().size()-1);
+        }
+    }
+
+    public static final class ContactEntry implements BaseColumns {
+        // Table name
+        public static final String TABLE_NAME = "contact";
+
+        // Contact Uri (by gwid)
+        public static final Uri CONTACT_BYGWID_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTACT).appendPath(PATH_GWID).build();
+        public static final Uri CONTACTS_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_CONTACT).build();
+
+        // Column names:
+        public static final String COLUMN_CONTACT_GIFTWISE_ID = "giftwise_id";
+        public static final String COLUMN_CONTACT_DISPLAY_NAME = "display_name";
+        public static final String COLUMN_CONTACT_ACCOUNT_NAME = "account_name";
+        public static final String COLUMN_CONTACT_ACCOUNT_TYPE = "account_type";
+
+
+        public static Uri buildContactForGiftwiseIdUri(String giftwiseId) {
+            return CONTACT_BYGWID_URI.buildUpon().appendEncodedPath(giftwiseId).build();
         }
 
         public static String getIdFromUri(Uri uri) {

@@ -21,15 +21,19 @@ public class GiftContentProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // URIs: queries and notifications are per contact:
-    private static final int GIFTS_BY_CONTACT = 102;               // gifts by raw contact id
-    private static final int COLORS_BY_CONTACT = 202;              // colors by raw contact id
-    private static final int SIZES_BY_CONTACT = 302;               // sizes by raw contact id
+    private static final int GIFTS_BY_CONTACT = 102;               // gifts by raw contact gwid
+    private static final int COLORS_BY_CONTACT = 202;              // colors by raw contact gwid
+    private static final int SIZES_BY_CONTACT = 302;               // sizes by raw contact gwid
+    private static final int CONTACT_BY_GWID = 402;               // contact by contact gwid
+    private static final int CONTACTS = 403;
 
     private static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_GIFT + "/" + GiftwiseContract.PATH_GWID + "/*", GIFTS_BY_CONTACT);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_COLOR + "/" + GiftwiseContract.PATH_GWID + "/*", COLORS_BY_CONTACT);
         matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_SIZE + "/" + GiftwiseContract.PATH_GWID + "/*", SIZES_BY_CONTACT);
+        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_CONTACT + "/" + GiftwiseContract.PATH_GWID + "/*", CONTACT_BY_GWID);
+        matcher.addURI(GiftwiseContract.CONTENT_AUTHORITY, GiftwiseContract.PATH_CONTACT, CONTACTS);
         return matcher;
     }
 
@@ -53,6 +57,14 @@ public class GiftContentProvider extends ContentProvider {
             }
             case SIZES_BY_CONTACT: {
                 retCursor = getSizesForRawContactId(uri, projection, sortOrder);
+                break;
+            }
+            case CONTACT_BY_GWID: {
+                retCursor = getContactForGwid(uri, projection, sortOrder);
+                break;
+            }
+            case CONTACTS: {
+                retCursor = getContacts(uri, projection, sortOrder);
                 break;
             }
             default:
@@ -84,6 +96,10 @@ public class GiftContentProvider extends ContentProvider {
                     db.insert(GiftwiseContract.SizeEntry.TABLE_NAME, null, values);
                     break;
                 }
+                case CONTACT_BY_GWID: {
+                    db.insert(GiftwiseContract.ContactEntry.TABLE_NAME, null, values);
+                    break;
+                }
                 default:
                     throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
@@ -113,6 +129,10 @@ public class GiftContentProvider extends ContentProvider {
                     break;
                 case SIZES_BY_CONTACT:
                     rowsDeleted = db.delete(GiftwiseContract.SizeEntry.TABLE_NAME, where, whereArgs);
+                    break;
+
+                case CONTACT_BY_GWID:
+                    rowsDeleted = db.delete(GiftwiseContract.ContactEntry.TABLE_NAME, where, whereArgs);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -222,6 +242,36 @@ public class GiftContentProvider extends ContentProvider {
 
         return mDbHelper.getReadableDatabase().query(
               GiftwiseContract.SizeEntry.TABLE_NAME,
+              projection,
+              selection,
+              selectionArgs,
+              null,
+              null,
+              sortOrder
+        );
+    }
+
+    private Cursor getContacts(Uri uri, String[] projection, String sortOrder) {
+
+        return mDbHelper.getReadableDatabase().query(
+              GiftwiseContract.ContactEntry.TABLE_NAME,
+              projection,
+              null,
+              null,
+              null,
+              null,
+              sortOrder
+        );
+    }
+
+    private Cursor getContactForGwid(Uri uri, String[] projection, String sortOrder) {
+        String gwid = GiftwiseContract.ContactEntry.getIdFromUri(uri);
+
+        String selection = GiftwiseContract.ContactEntry.TABLE_NAME + "." + GiftwiseContract.ContactEntry.COLUMN_CONTACT_GIFTWISE_ID + " = ? ";
+        String[] selectionArgs =  new String[]{ gwid };
+
+        return mDbHelper.getReadableDatabase().query(
+              GiftwiseContract.ContactEntry.TABLE_NAME,
               projection,
               selection,
               selectionArgs,

@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
@@ -97,13 +98,31 @@ public class ContactsUtils {
 
 
     /**
-     * Create a new RawContact for our app-specific account type.
+     * Create a new RawContact for our app-specific account type. This also creates the lookup
+     * table in GiftWise that is used to restore RawContacts on device upgrade/re-install.
      */
     public static void createRawContact(Context context, String accountName, String displayName) {
 
         String accountType = context.getString(R.string.account_type);
-
         UUID uuid = UUID.randomUUID();
+
+        insertRawContact(context, accountName, accountType, displayName, uuid.toString());
+        insertGiftwiseContact(context, accountName, accountType, displayName, uuid.toString());
+    }
+
+    /**
+     * Inserts a new RawContact in the system Contacts content provider. SOURCE_ID is populated
+     * with an identifier to uniquely identify the contact to GiftWise. This giftwiseId is also
+     * stored in SQLite so RawContacts can be restored on device upgrade/re-install.
+     *
+     * @param context
+     * @param accountName
+     * @param accountType
+     * @param displayName
+     * @param giftwiseId
+     */
+
+    public static void insertRawContact(Context context, String accountName, String accountType, String displayName, String giftwiseId) {
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
@@ -111,7 +130,7 @@ public class ContactsUtils {
         ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
               .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
               .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
-              .withValue(ContactsContract.RawContacts.SOURCE_ID, uuid.toString())
+              .withValue(ContactsContract.RawContacts.SOURCE_ID, giftwiseId)
               .build());
 
         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
@@ -127,11 +146,34 @@ public class ContactsUtils {
         } catch (OperationApplicationException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    public static void deleteRawContact(Context context, long id, String accountName, String accountType) {
+    /**
+     * Creates an entry in the GiftWise database. This provides the ability to recreate RawContacts
+     * when restoring data from backup after a device upgrade or re-install.
+     *
+     * @param context
+     * @param accountName
+     * @param accountType
+     * @param displayName
+     * @param giftwiseId
+     */
+    public static void insertGiftwiseContact(Context context, String accountName, String accountType, String displayName, String giftwiseId) {
+        Uri contactUri = GiftwiseContract.ContactEntry.buildContactForGiftwiseIdUri(giftwiseId);
+        ContentValues contactValues = new ContentValues();
+        contactValues.put(GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_TYPE, accountType);
+        contactValues.put(GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_NAME, accountName);
+        contactValues.put(GiftwiseContract.ContactEntry.COLUMN_CONTACT_DISPLAY_NAME, displayName);
+        contactValues.put(GiftwiseContract.ContactEntry.COLUMN_CONTACT_GIFTWISE_ID, giftwiseId);
+
+        try {
+            context.getContentResolver().insert(contactUri, contactValues);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteRawContact(Context context, long id, String gwid, String accountName, String accountType) {
 
         Log.d(LOG_TAG, "Deleting RawContact for id: " + id);
 
@@ -145,6 +187,18 @@ public class ContactsUtils {
         );
 
         Log.d(LOG_TAG, "Delete count: " + deletedRawContacts);
+
+        deleteGiftwiseContact(context, gwid, accountName, accountType);
+    }
+
+    public static void deleteGiftwiseContact(Context context, String gwid, String accountName, String accountType) {
+
+        Log.d(LOG_TAG, "Deleting GiftwiseContact for gwid: " + gwid);
+
+        Uri contactUri = GiftwiseContract.ContactEntry.buildContactForGiftwiseIdUri(gwid);
+        String where = GiftwiseContract.ContactEntry.COLUMN_CONTACT_GIFTWISE_ID  + " = ?";
+        String[] whereArgs = new String[] {gwid};
+        context.getContentResolver().delete(contactUri, where, whereArgs);
     }
 
     /**
@@ -166,6 +220,60 @@ public class ContactsUtils {
             String acctType = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.ACCOUNT_TYPE));
             String dispName = cursor.getString(cursor.getColumnIndex(ContactsContract.RawContacts.DISPLAY_NAME_PRIMARY));
             Log.i(LOG_TAG, "Found account: id=" + id + " name=" + acctName + " type=" + acctType + " display=" + dispName);
+        }
+        cursor.close();
+    }
+
+    public static void readGiftwiseContacts(Context context) {
+
+        Cursor cursor = context.getContentResolver().query(
+              GiftwiseContract.ContactEntry.CONTACTS_URI,
+              new String[] {GiftwiseContract.ContactEntry._ID,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_GIFTWISE_ID,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_NAME,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_TYPE,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_DISPLAY_NAME
+              },
+              null,
+              null,
+              null
+        );
+
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry._ID));
+            String gwId = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_GIFTWISE_ID));
+            String acctName = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_NAME));
+            String acctType = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_TYPE));
+            String dispName = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_DISPLAY_NAME));
+            Log.i(LOG_TAG, "Found GW contact: id=" + id + " gwId=" + gwId + " name=" + acctName + " type=" + acctType + " display=" + dispName);
+        }
+        cursor.close();
+    }
+
+    public static void restoreRawContacts(Context context) {
+
+        Cursor cursor = context.getContentResolver().query(
+              GiftwiseContract.ContactEntry.CONTACTS_URI,
+              new String[] {GiftwiseContract.ContactEntry._ID,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_GIFTWISE_ID,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_NAME,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_TYPE,
+                    GiftwiseContract.ContactEntry.COLUMN_CONTACT_DISPLAY_NAME
+              },
+              null,
+              null,
+              null
+        );
+
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry._ID));
+            String gwId = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_GIFTWISE_ID));
+            String acctName = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_NAME));
+            String acctType = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_ACCOUNT_TYPE));
+            String dispName = cursor.getString(cursor.getColumnIndex(GiftwiseContract.ContactEntry.COLUMN_CONTACT_DISPLAY_NAME));
+            Log.i(LOG_TAG, "Restore GW contact: id=" + id + " gwId=" + gwId + " name=" + acctName + " type=" + acctType + " display=" + dispName);
+
+            ContactsUtils.insertRawContact(context, acctName, acctType,dispName, gwId);
         }
         cursor.close();
     }

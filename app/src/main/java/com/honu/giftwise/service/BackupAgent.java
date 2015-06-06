@@ -8,6 +8,7 @@ import android.app.backup.FileBackupHelper;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.DbHelper;
 
 import java.io.IOException;
@@ -41,6 +42,8 @@ public class BackupAgent extends BackupAgentHelper {
             Log.d(LOG_TAG, "onRestore in-lock");
 
             super.onRestore(data, appVersionCode, newState);
+
+            ContactsUtils.restoreRawContacts(this.getApplicationContext());
         }
     }
 
