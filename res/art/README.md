@@ -73,6 +73,17 @@ Generator
      other files (it gets committed to source control as well)
 
 
+### Play Store feature image
+
+The feature image master artwork is `res/art/feature-image.xcf`.
+Also contained in this directory is the original background photo
+`res/art/feature-photo.jpg`.
+
+After editing `feature-image.xcf`, export a JPEG image to
+`res/prod/feature-image.jpg`. This is the final artwork to be
+uploaded to Google.
+
+
 ### Deploying Into The Project Dir
 
 The next step is to deploy the files in this ZIP to their proper
