@@ -1,6 +1,6 @@
 GiftWise
 ========
-GiftWise is an app for organizing gift ideas. It simplifies storing gift ideas and personal information about your family and friends.
+GiftWise is an app for organizing gift ideas. It simplifies storing gift details and personal information about your family and friends.
 
 With GiftWise you can:
 
