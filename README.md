@@ -10,6 +10,7 @@ With GiftWise you can:
 - see special events such as birthdays at a glance
 - add a gift idea by sharing a URL from your browser
 - share your GiftWise ideas by email or social media
+- keep notes about sizes and items for yourself
 
 <img src='res/prod/screenshots/nexus5/gw-main.png' width=175/>
 <img src='res/prod/screenshots/nexus5/gw-gift-ideas.png' width=175/>
