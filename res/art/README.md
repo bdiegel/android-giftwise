@@ -80,8 +80,8 @@ Also contained in this directory is the original background photo
 `res/art/feature-photo.jpg`.
 
 After editing `feature-image.xcf`, export a JPEG image to
-`res/prod/feature-image.jpg`. This is the final artwork to be
-uploaded to Google.
+`res/prod/feature-image.jpg`. Use Quality: 100%. This is the final
+artwork to be uploaded to Google.
 
 
 ### Deploying Into The Project Dir
