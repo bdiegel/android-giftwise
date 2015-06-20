@@ -115,10 +115,19 @@ public class EditGiftActivity extends ActionBarActivity {
     private boolean createOrSaveGift() {
         Log.i(LOG_TAG, "create or save gift idea");
 
+        Uri prevUri = null;
+
         Spinner contact_spin = (Spinner) findViewById(R.id.contacts_spinner);
         Cursor cursor = (Cursor)(contact_spin.getSelectedItem());
         if (cursor != null) {
             String gwid = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
+
+            // If recipient was modified we will need the old Uri to explicitly send an update notification later
+            String prevGwid = gift.getGiftwiseId();
+            if (prevGwid != null && !gwid.equals(prevGwid)) {
+                prevUri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(gift.getGiftwiseId());
+            }
+
             gift.setGiftwiseId(gwid);
         }
 
@@ -183,6 +192,10 @@ public class EditGiftActivity extends ActionBarActivity {
             String[] selectionArgs = new String[] { gift.getGiftId() + "" };
             //getContentResolver().update(GiftwiseContract.GiftEntry.GIFT_URI, values, selection, selectionArgs);
             getContentResolver().update(uri, values, selection, selectionArgs);
+
+            // If recipient has changed, explicitly notify old uri
+            if (prevUri != null)
+                getContentResolver().notifyChange(prevUri, null);
         }
 
         return true;
