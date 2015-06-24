@@ -16,6 +16,9 @@
     <!--<color name="md_teal_800">#00695C</color>-->
     <!--<color name="md_teal_900">#004D40</color>-->
 
+
+    <color name="md_yellow_700">#FBC02D</color>
+    <!--<color name="md_yellow_600">#FDD835</color>-->
     <color name="md_yellow_500">#FFEB3B</color>
     <color name="md_yellow_400">#FFEE58</color>
     <!--<color name="md_yellow_300">#FFF176</color>-->
@@ -64,5 +67,8 @@
         <item>#000000</item>  <!-- black -->
     </string-array>
 
+    <color name="welcome_color_0">@color/primary</color>
+    <color name="welcome_color_1">@color/accent</color>
+    <color name="welcome_color_2">@color/md_yellow_700</color>
 
 </resources>

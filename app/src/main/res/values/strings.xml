@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">GiftWise</string>
 
+    <!-- Welcome page headers -->
+    <string name="welcome_header_0">Page 0</string>
+    <string name="welcome_header_1">Page 1</string>
+    <string name="welcome_header_2">Page 2</string>
+
+    <!-- Welcome page text content -->
+    <string name="welcome_content_0">Description of the first page</string>
+    <string name="welcome_content_1">Description of the second page</string>
+    <string name="welcome_content_2">Description of the third page</string>
+
     <string name="action_addcontact">Add contact</string>
     <string name="action_createcontact">New contact</string>
 
@@ -29,11 +39,13 @@
     <string name="color_picker_disliked_title">Select colors disliked: </string>
 
     <string-array name="size_choices">
+        <item>XXSmall</item>
         <item>XSmall</item>
         <item>Small</item>
         <item>Medium</item>
         <item>Large</item>
         <item>XLarge</item>
+        <item>2XLarge</item>
     </string-array>
 
     <string-array name="clothing_choices">

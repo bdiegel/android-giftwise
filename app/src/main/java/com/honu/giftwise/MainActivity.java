@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.honu.aloha.WelcomeHelper;
 import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.NotifyingAsyncQueryHandler;
 
@@ -27,6 +28,8 @@ public class MainActivity extends ActionBarActivity implements NotifyingAsyncQue
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        maybeShowWelcomeActivity();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -46,6 +49,17 @@ public class MainActivity extends ActionBarActivity implements NotifyingAsyncQue
 
         // make sure the account is created
         ContactsUtils.getOrCreateAccount(this);
+    }
+
+    private void maybeShowWelcomeActivity() {
+
+        // NOTE: uncomment to force display of welcome activity for testing
+        // WelcomeHelper.setAlwaysShowWelcome(true);
+
+        if (WelcomeHelper.isWelcomeRequired(this)) {
+            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
     }
 
     @Override
