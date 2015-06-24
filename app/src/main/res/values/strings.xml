@@ -2,14 +2,14 @@
     <string name="app_name">GiftWise</string>
 
     <!-- Welcome page headers -->
-    <string name="welcome_header_0">Page 0</string>
-    <string name="welcome_header_1">Page 1</string>
-    <string name="welcome_header_2">Page 2</string>
+    <string name="welcome_header_0">Contacts</string>
+    <string name="welcome_header_1">Gift ideas</string>
+    <string name="welcome_header_2">Profile</string>
 
     <!-- Welcome page text content -->
-    <string name="welcome_content_0">Description of the first page</string>
-    <string name="welcome_content_1">Description of the second page</string>
-    <string name="welcome_content_2">Description of the third page</string>
+    <string name="welcome_content_0">Select and add family and friends from your contact list</string>
+    <string name="welcome_content_1">Share links from your browser and other apps to add gifts</string>
+    <string name="welcome_content_2">Note preferences for sizes, brands, and colors</string>
 
     <string name="action_addcontact">Add contact</string>
     <string name="action_createcontact">New contact</string>
