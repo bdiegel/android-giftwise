@@ -73,6 +73,13 @@ Generator
      other files (it gets committed to source control as well)
 
 
+### How to work on the Welcome images
+
+Edit the files (e.g. `res/art/welcome_image_0.xcf`) and then 
+`File menu -> Export As...` to
+`app/src/main/res/drawable/welcome_image_0.png`
+
+
 ### Play Store feature image
 
 The feature image master artwork is `res/art/feature-image.xcf`.
