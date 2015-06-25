@@ -25,10 +25,11 @@ public class MainActivity extends ActionBarActivity implements NotifyingAsyncQue
 
     private static final int REQUEST_CODE_CONTACT_IMPORT = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        maybeShowWelcomeActivity();
+
+        if (savedInstanceState == null)
+            maybeShowWelcomeActivity();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -54,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements NotifyingAsyncQue
     private void maybeShowWelcomeActivity() {
 
         // NOTE: uncomment to force display of welcome activity for testing
-        // WelcomeHelper.setAlwaysShowWelcome(true);
+        //WelcomeHelper.setAlwaysShowWelcome(true);
 
         if (WelcomeHelper.isWelcomeRequired(this)) {
             startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
