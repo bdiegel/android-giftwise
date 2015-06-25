@@ -24,6 +24,8 @@ import android.widget.LinearLayout;
  */
 public abstract class BaseWelcomeActivity extends AppCompatActivity {
 
+    private static final String LOG_TAG = BaseWelcomeActivity.class.getSimpleName();
+
     protected ViewPager mViewPager;
     protected PagerAdapter mPagerAdapter;
     protected LinearLayout mPageIndicator;

@@ -1,6 +1,7 @@
 package com.honu.giftwise;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.honu.aloha.BaseWelcomeActivity;
 import com.honu.aloha.PageDescriptor;
@@ -10,9 +11,12 @@ import com.honu.aloha.PageDescriptor;
  */
 public class WelcomeActivity extends BaseWelcomeActivity {
 
+    private static final String LOG_TAG = BaseWelcomeActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "onCreate with savedInstanceState=" + savedInstanceState);
     }
 
     @Override

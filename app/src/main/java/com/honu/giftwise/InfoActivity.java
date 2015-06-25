@@ -33,6 +33,9 @@ public class InfoActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // REMOVE: for testing
+        //WelcomeHelper.clearLastRunVersionCode(this);
+
         setContentView(R.layout.activity_info);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
