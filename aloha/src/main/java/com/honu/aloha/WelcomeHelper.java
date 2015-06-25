@@ -6,11 +6,14 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Utility functions to help with determining if the welcome activity should be displayed.
  */
 public class WelcomeHelper {
+
+    private static final String LOG_TAG = WelcomeHelper.class.getSimpleName();
 
     // name of shared preference to store last version code
     public final static String PREF_LAST_RUN_VERSION_CODE = "lastRunVersionCode";
@@ -66,12 +69,22 @@ public class WelcomeHelper {
         return getSharedPreferenceInt(context, PREF_LAST_RUN_VERSION_CODE);
     }
 
+    public static void clearLastRunVersionCode(Context context) {
+        setLastRunVersionCode(context, -1);
+    }
+
+    public static void updatetLastRunVersionCode(Context context) {
+        int installVersionCode = getInstallVersionCode(context);
+        setLastRunVersionCode(context, installVersionCode);
+    }
+
     /**
      * Stores the specified version code in a shared preference
      * @param context
      * @param versionCode
      */
     public static void setLastRunVersionCode(Context context, int versionCode) {
+        Log.d(LOG_TAG, "Setting " + PREF_LAST_RUN_VERSION_CODE + " to: " + versionCode);
         putSharedPreferenceInt(context, PREF_LAST_RUN_VERSION_CODE, versionCode);
     }
 
