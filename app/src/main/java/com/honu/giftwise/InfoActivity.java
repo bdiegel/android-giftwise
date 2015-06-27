@@ -52,7 +52,7 @@ public class InfoActivity extends ActionBarActivity {
         List<Pair<String, String>> data;
         data = new ArrayList();
         data.add(new Pair("Version", BuildConfig.VERSION_NAME));
-        data.add(new Pair("License", "BSD-3"));
+        data.add(new Pair("License", "ISC"));
         data.add(new Pair("Feedback", "Send feedback"));
         data.add(new Pair("Author", "Honu Apps"));
 
@@ -84,7 +84,7 @@ public class InfoActivity extends ActionBarActivity {
         alert.setTitle("License information");
 
         TextView tv = new TextView(this);
-        tv.setText(Html.fromHtml(getString(R.string.bsd3_license)));
+        tv.setText(Html.fromHtml(getString(R.string.isc_license)));
         tv.setMovementMethod(new ScrollingMovementMethod());
         tv.setPadding(12, 0, 12, 0);
         alert.setView(tv);
