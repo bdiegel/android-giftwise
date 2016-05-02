@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -99,30 +97,15 @@ public class ViewGiftFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // inflate the fragment menu
         inflater.inflate(R.menu.menu_view_gift_fragment, menu);
-
-        // Retrieve the share menu item
-        MenuItem shareItem = menu.findItem(R.id.action_share);
-
-        // Now get the ShareActionProvider from the item
-        ShareActionProvider mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(createShareIntent());
-            //mShareActionProvider.setShareHistoryFileName(null);
-        } else {
-            Log.d(LOG_TAG, "Problem finding ShareActionProvider");
-            //shareActionProvider = new ShareActionProvider(getActivity());
-            //MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
-        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-//            case R.id.action_share:
-//                newGame();
-//                return true;
+            case R.id.action_share:
+                shareGift();
+                return true;
 //            case R.id.action_browse:
 //                openUrl();
 //                return true;
@@ -144,16 +127,11 @@ public class ViewGiftFragment extends Fragment {
         startActivityForResult(intent, 1);
     }
 
-
-    private Intent createShareIntent() {
-        Log.d(LOG_TAG, "Share gift item: " );
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        // prevents Activity selected for sharing from being placed on app stack
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, getTextDescription());
-        return intent;
+    private void shareGift() {
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/html");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getTextDescription());
+        startActivity(Intent.createChooser(sharingIntent, "Share gift details using"));
     }
 
     private String getTextDescription() {
@@ -166,7 +144,8 @@ public class ViewGiftFragment extends Fragment {
 
         if (!TextUtils.isEmpty(gift.getNotes()))
             buffer.append(String.format("Notes: %s\n", gift.getNotes()));
-        buffer.append(gift.getUrl());
+        if (!TextUtils.isEmpty(gift.getUrl()))
+            buffer.append(gift.getUrl());
 
         return buffer.toString();
     }
