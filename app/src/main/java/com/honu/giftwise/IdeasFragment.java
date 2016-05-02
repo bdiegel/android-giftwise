@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -20,7 +21,6 @@ import android.widget.ListView;
 
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
-import com.melnykov.fab.FloatingActionButton;
 
 /**
  * Fragments that displays Gift items in a ListView.
@@ -95,9 +95,6 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
                 addGift();
             }
         });
-
-        // hide FAB on scroll
-        addButton.attachToListView(mListView);
 
         // register a context menu (long-click)
         registerForContextMenu(mListView);

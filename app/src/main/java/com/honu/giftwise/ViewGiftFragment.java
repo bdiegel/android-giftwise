@@ -15,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -93,16 +92,6 @@ public class ViewGiftFragment extends Fragment {
         // show options menu
         setHasOptionsMenu(true);
 
-        // handler for the FAB edit button
-        ImageButton editButton = (ImageButton) rootView.findViewById(R.id.edit_gift_fab);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //((MainActivity)getActivity()).addContact();
-                editGift();
-            }
-        });
-
         return rootView;
     }
 
@@ -137,9 +126,9 @@ public class ViewGiftFragment extends Fragment {
 //            case R.id.action_browse:
 //                openUrl();
 //                return true;
-//            case R.id.action_edit:
-//                editGift();
-//                return true;
+            case R.id.action_edit:
+                editGift();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

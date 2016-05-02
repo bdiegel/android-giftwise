@@ -13,21 +13,17 @@
         android:layout_height="match_parent"
         android:id="@+id/gifts_listview"
         />
-        <!--android:divider="@null"/>-->
 
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_gift_fab"
+        style="@style/FabStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_add_white_24dp"
+        android:clickable="true"
+        android:layout_gravity="right"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_add_white_24dp"
-        fab:fab_colorNormal="@color/colorAccent"
-        fab:fab_colorPressed="@color/colorAccent"
-        fab:fab_colorRipple="@color/fab_color_1_muted" />
-s
+        android:layout_alignParentEnd="true"/>
+
 </RelativeLayout>
