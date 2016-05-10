@@ -71,4 +71,6 @@
     <color name="welcome_color_1">@color/accent</color>
     <color name="welcome_color_2">@color/md_yellow_700</color>
 
+    <color name="divider">#1F000000</color>
+    <color name="window_background">#FFF5F5F5</color>
 </resources>
