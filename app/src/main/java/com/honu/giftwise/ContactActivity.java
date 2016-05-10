@@ -11,7 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,7 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class ContactActivity extends ActionBarActivity {
+public class ContactActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = ContactActivity.class.getSimpleName();
 

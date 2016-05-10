@@ -3,7 +3,7 @@ package com.honu.giftwise;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import com.honu.giftwise.data.Gift;
 
 
-public class ViewGiftActivity extends ActionBarActivity {
+public class ViewGiftActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = ViewGiftActivity.class.getSimpleName();
 
