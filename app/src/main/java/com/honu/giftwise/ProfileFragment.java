@@ -47,8 +47,8 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     private static final int PROFILE_SIZES_LOADER = 22;
 
     // data loaders for special dates
-    private static final int PROFILE_BIRTHDAY_LOADER = 30;
-    private static final int PROFILE_ANNIVERSARY_LOADER = 31;
+    public static final int PROFILE_BIRTHDAY_LOADER = 30;
+    public static final int PROFILE_ANNIVERSARY_LOADER = 31;
 
     // adapters for color items amd sizes:
     private ColorAdapter mLikedColorsAdapter;
