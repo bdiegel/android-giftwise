@@ -29,6 +29,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Fragment for viewing Gift details
  *
@@ -38,11 +41,27 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
 
     private static final String LOG_TAG = ViewGiftFragment.class.getSimpleName();
 
-    private Gift gift;
+    private Gift mGift;
+
+    private String mContactName;
 
     private int mContactId;
 
-    private ContactImageCache mImageCache;
+    private GiftImageCache mGiftImageCache;
+
+    private ContactImageCache mContactImageCache;
+
+    @Bind(R.id.gift_name) TextView mNameTxt;
+    @Bind(R.id.contact_display_name) TextView mRecipientTV;
+    @Bind(R.id.gift_price) TextView mPriceTxt;
+    @Bind(R.id.gift_notes) TextView mNotesTxt;
+    @Bind(R.id.gift_url_container) ViewGroup mUrlViewGroup;
+    @Bind(R.id.gift_url) TextView mUrlTxt;
+    @Bind(R.id.gift_image) ImageView mGiftImageView;
+    @Bind(R.id.ic_contact_bitmap) ImageView mContactImageView;
+    @Bind(R.id.contact_birthday_date) TextView mBirthdayTxt;
+    @Bind(R.id.contact_anniversary) ViewGroup mAnniversaryViewGroup;
+    @Bind(R.id.contact_anniversary_date) TextView mAnniversaryTxt;
 
     /**
      * Create Fragment and setup the Bundle arguments
@@ -52,7 +71,7 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
 
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
-        args.putParcelable("gift", gift);
+        args.putParcelable("mGift", gift);
         args.putString("contactName", contactName);
         args.putInt("contactId", contactId);
 
@@ -65,67 +84,19 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_view_gift, container, false);
+        ButterKnife.bind(this, rootView);
 
-        mImageCache = ((GiftwiseApplication)getActivity().getApplicationContext()).getContactImageCache();
+        mContactImageCache = ((GiftwiseApplication)getActivity().getApplicationContext()).getContactImageCache();
 
-        GiftImageCache mImageCache = ((GiftwiseApplication) getActivity().getApplicationContext()).getGiftImageCache();
+        mGiftImageCache = ((GiftwiseApplication) getActivity().getApplicationContext()).getGiftImageCache();
 
         // Get the Id of the raw contact
         Bundle args = getArguments();
-        gift = args.getParcelable("gift");
-        String mContactName = args.getString("contactName");
+        mGift = args.getParcelable("mGift");
+        mContactName = args.getString("contactName");
         mContactId = args.getInt("contactId");
 
-        // gift name
-        TextView nameTxt = (TextView)rootView.findViewById(R.id.gift_name);
-        nameTxt.setText(gift.getName());
-
-        // recipient name
-        TextView recipientTV = (TextView)rootView.findViewById(R.id.contact_display_name);
-        recipientTV.setText(mContactName);
-
-        // gift price
-        TextView priceTxt = (TextView) rootView.findViewById(R.id.gift_price);
-        priceTxt.setText(gift.getFormattedPrice());
-
-        // notes about gift
-        TextView notesTxt = (TextView)rootView.findViewById(R.id.gift_notes);
-        String notes = gift.getNotes();
-        if (TextUtils.isEmpty(notes)) {
-            notesTxt.setVisibility(View.GONE);
-        } else {
-            notesTxt.setVisibility(View.VISIBLE);
-            notesTxt.setText(notes);
-        }
-
-        // website URL
-        ViewGroup urlViewGroup = (ViewGroup) rootView.findViewById(R.id.gift_url_container);
-        TextView urlTxt = (TextView)rootView.findViewById(R.id.gift_url);
-        String url = gift.getUrl();
-        //Linkify.addLinks(urlTxt, Linkify.WEB_URLS);
-        if (TextUtils.isEmpty(url)) {
-            urlViewGroup.setVisibility(View.GONE);
-        } else {
-            urlViewGroup.setVisibility(View.VISIBLE);
-            urlTxt.setText(url);
-        }
-
-        // set image from cache if exists
-        ImageView imageView = (ImageView)rootView.findViewById(R.id.gift_image);
-        BitmapDrawable bitmap = mImageCache.getBitmapFromMemCache(gift.getGiftId() + "");
-        if (bitmap != null ) {
-            //imageView.setImageBitmap(bitmap);
-            Log.i(LOG_TAG, "Bitmap loaded from cache for giftId: " + gift.getGiftId());
-            //imageView.setImageDrawable(bitmap);
-            imageView.setImageDrawable(BitmapUtils.getRoundedBitmapDrawable(getResources(), bitmap.getBitmap()));
-        } else {
-            Log.i(LOG_TAG, "No bitmap found in cache for giftId: " + gift.getGiftId());
-        }
-
-        ImageView contactImageView = (ImageView)rootView.findViewById(R.id.ic_contact_bitmap);
-        loadBitmap(getActivity().getContentResolver(), mContactId, contactImageView);
-
-        // show options menu
+        initViews();
         setHasOptionsMenu(true);
 
         return rootView;
@@ -148,14 +119,11 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+
         switch (item.getItemId()) {
             case R.id.action_share:
                 shareGift();
                 return true;
-//            case R.id.action_browse:
-//                openUrl();
-//                return true;
             case R.id.action_edit:
                 editGift();
                 return true;
@@ -164,12 +132,48 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
         }
     }
 
-    private void editGift() {
-        Log.i(LOG_TAG, "Open GiftId: " + gift.getGiftId());
+    private void initViews() {
+        mNameTxt.setText(mGift.getName());
+        mRecipientTV.setText(mContactName);
+        mPriceTxt.setText(mGift.getFormattedPrice());
 
-        // start activity to add/edit gift idea
+        // notes about Gift
+        String notes = mGift.getNotes();
+        if (TextUtils.isEmpty(notes)) {
+            mNotesTxt.setVisibility(View.GONE);
+        } else {
+            mNotesTxt.setVisibility(View.VISIBLE);
+            mNotesTxt.setText(notes);
+        }
+
+        // website URL
+        String url = mGift.getUrl();
+        if (TextUtils.isEmpty(url)) {
+            mUrlViewGroup.setVisibility(View.GONE);
+        } else {
+            mUrlViewGroup.setVisibility(View.VISIBLE);
+            mUrlTxt.setText(url);
+        }
+
+        // set image from cache if exists
+        BitmapDrawable bitmap = mGiftImageCache.getBitmapFromMemCache(mGift.getGiftId() + "");
+        if (bitmap != null ) {
+            Log.i(LOG_TAG, "Bitmap loaded from cache for giftId: " + mGift.getGiftId());
+            mGiftImageView.setImageDrawable(BitmapUtils.getRoundedBitmapDrawable(getResources(), bitmap.getBitmap()));
+        } else {
+            Log.i(LOG_TAG, "No bitmap found in cache for giftId: " + mGift.getGiftId());
+        }
+
+        // load contact avatar image
+        loadContactBitmap(getActivity().getContentResolver(), mContactId, mContactImageView);
+    }
+
+    private void editGift() {
+        Log.i(LOG_TAG, "Open GiftId: " + mGift.getGiftId());
+
+        // start activity to add/edit mGift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        intent.putExtra("gift", gift);
+        intent.putExtra("mGift", mGift);
 
         startActivityForResult(intent, 1);
     }
@@ -178,21 +182,21 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/html");
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getTextDescription());
-        startActivity(Intent.createChooser(sharingIntent, "Share gift details using"));
+        startActivity(Intent.createChooser(sharingIntent, "Share mGift details using"));
     }
 
     private String getTextDescription() {
         String priceTxt = "";
-        if (gift.getPrice() > 0)
-            priceTxt = gift.getFormattedPrice();
+        if (mGift.getPrice() > 0)
+            priceTxt = mGift.getFormattedPrice();
 
         StringBuffer buffer = new StringBuffer();
-        buffer.append(String.format("%s %s\n", gift.getName(), priceTxt));
+        buffer.append(String.format("%s %s\n", mGift.getName(), priceTxt));
 
-        if (!TextUtils.isEmpty(gift.getNotes()))
-            buffer.append(String.format("Notes: %s\n", gift.getNotes()));
-        if (!TextUtils.isEmpty(gift.getUrl()))
-            buffer.append(gift.getUrl());
+        if (!TextUtils.isEmpty(mGift.getNotes()))
+            buffer.append(String.format("Notes: %s\n", mGift.getNotes()));
+        if (!TextUtils.isEmpty(mGift.getUrl()))
+            buffer.append(mGift.getUrl());
 
         return buffer.toString();
     }
@@ -202,16 +206,16 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
      * Start an async task to load image from the contacts content provider. If an
      * image is found, replace the place-holder and cache the image.
      */
-    public void loadBitmap(ContentResolver contentResolver, int resId, ImageView imageView) {
+    public void loadContactBitmap(ContentResolver contentResolver, int resId, ImageView imageView) {
         final String imageKey = String.valueOf(resId);
 
-        final RoundedBitmapDrawable bitmap = mImageCache.getBitmapFromMemCache(imageKey);
+        final RoundedBitmapDrawable bitmap = mContactImageCache.getBitmapFromMemCache(imageKey);
 
         if (bitmap != null) {
             imageView.setImageDrawable(bitmap);
         } else {
             // set temporary placeholder image
-            imageView.setImageDrawable(mImageCache.getPlaceholderImage());
+            imageView.setImageDrawable(mContactImageCache.getPlaceholderImage());
 
             // start background task to load image from contacts provider
             ContactBitmapTask task = new ContactBitmapTask(imageView);
@@ -221,28 +225,18 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
 
     @Override
     public void onBirthdayDateLoaded(String date) {
-        setBirthday(getView(), formatDateString(date));
+        mBirthdayTxt.setText(formatDateString(date));
     }
 
     @Override
     public void onAnniversaryDateLoaded(String date) {
-        setAnniversary(getView(), formatDateString(date));
-    }
-
-    private void setBirthday(View rootView, String birthday) {
-        TextView view = (TextView) rootView.findViewById(R.id.contact_birthday_date);
-        view.setText(birthday);
-    }
-
-    private void setAnniversary(View rootView, String anniversary) {
-        ViewGroup layout = (ViewGroup) rootView.findViewById(R.id.contact_anniversary);
+        String anniversary = formatDateString(date);
 
         if (TextUtils.isEmpty(anniversary)) {
-            layout.setVisibility(View.GONE);
+            mAnniversaryViewGroup.setVisibility(View.GONE);
         } else {
-            layout.setVisibility(View.VISIBLE);
-            TextView view = (TextView) rootView.findViewById(R.id.contact_anniversary_date);
-            view.setText(anniversary);
+            mAnniversaryViewGroup.setVisibility(View.VISIBLE);
+            mAnniversaryTxt.setText(anniversary);
         }
     }
 
