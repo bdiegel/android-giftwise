@@ -3,6 +3,7 @@ package com.honu.giftwise;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -31,6 +32,7 @@ import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Fragment for viewing Gift details
@@ -152,7 +154,7 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
             mUrlViewGroup.setVisibility(View.GONE);
         } else {
             mUrlViewGroup.setVisibility(View.VISIBLE);
-            mUrlTxt.setText(url);
+            mUrlTxt.setText(trimUrl(url));
         }
 
         // set image from cache if exists
@@ -169,12 +171,8 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
     }
 
     private void editGift() {
-        Log.i(LOG_TAG, "Open GiftId: " + mGift.getGiftId());
-
-        // start activity to add/edit mGift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        intent.putExtra("mGift", mGift);
-
+        intent.putExtra("gift", mGift);
         startActivityForResult(intent, 1);
     }
 
@@ -182,7 +180,42 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/html");
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getTextDescription());
-        startActivity(Intent.createChooser(sharingIntent, "Share mGift details using"));
+        startActivity(Intent.createChooser(sharingIntent, "Share gift details using"));
+    }
+
+    @OnClick(R.id.open_url_button)
+    public void viewUrl() {
+        String url = mGift.getUrl();
+
+        if (TextUtils.isEmpty(url)) {
+            return;
+        }
+
+        // add prefix if necessary
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "http://" + url;
+        }
+
+        Uri webpage = Uri.parse(url);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    private String trimUrl(String url) {
+        String trimmedUrl = url;
+
+        if (!TextUtils.isEmpty(url)) {
+            trimmedUrl = Uri.parse(url).getHost();
+        }
+
+        if (TextUtils.isEmpty(trimmedUrl)) {
+            trimmedUrl = url;
+        }
+
+        return trimmedUrl;
     }
 
     private String getTextDescription() {
