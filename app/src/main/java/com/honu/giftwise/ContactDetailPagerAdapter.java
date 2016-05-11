@@ -33,7 +33,7 @@ public class ContactDetailPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return IdeasFragment.getInstance(mGiftwiseId, mContactName);
+                return IdeasFragment.getInstance(mGiftwiseId, mContactName, (int)mContactId);
             case 1:
                 return ProfileFragment.getInstance(mGiftwiseId, mContactId);
         }

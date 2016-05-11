@@ -1,167 +1,192 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
     >
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Gift image - scale to fill width -->
+            <ImageView
+                android:id="@+id/gift_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/gift_silhouette_48dp"
+                />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical"
         >
 
-        <TextView
-            android:id="@+id/gift_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:fontFamily="sans-serif-condensed"
-            android:gravity="center"
-            android:textColor="#FFFFFF"
-            android:textSize="@dimen/abc_text_size_display_1_material"/>
-
+        <!-- Name and price -->
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_half"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:orientation="horizontal"
             >
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/gift_name"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#FFFFFF"
-                android:orientation="vertical"
-                >
+                android:gravity="left"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                tools:text="Gift Name"
+                />
+
+            <TextView
+                android:id="@+id/gift_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gift_price_label2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                tools:text="$99"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/gift_notes"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            tools:text="Some notes about the gift to buy"
+            />
+
+        <RelativeLayout
+            android:id="@+id/gift_url_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            >
+
+            <TextView
+                android:id="@+id/label_gift_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_gift_url"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/gift_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/label_gift_url"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/open_url_button"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                tools:text="Website Name"/>
+
+            <Button
+                android:id="@+id/open_url_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/rounded_button"
+                android:text="@string/view_button"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"/>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_half"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/divider"/>
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/contact_avatar"
+                android:layout_width="@dimen/avatar_frame_small"
+                android:layout_height="@dimen/avatar_frame_small"
+                android:layout_gravity="center_horizontal">
 
                 <ImageView
-                    android:id="@+id/gift_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:background="#FFFFFF"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/gift_silhouette_48dp"
-                    />
+                    android:id="@+id/ic_contact_bitmap"
+                    android:layout_width="@dimen/avatar_circle_small"
+                    android:layout_height="@dimen/avatar_circle_small"
+                    android:layout_gravity="center_horizontal"
+                    tools:background="@color/primary"/>
 
-            </LinearLayout>
+            </FrameLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/gift_image"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
                 >
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/contact_display_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    tools:text="Test Name"
+                    />
 
-                    <ImageView
-                        android:id="@+id/ic_contact_display_name"
-                        android:layout_width="40dp"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_person_grey600_24dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/contact_display_name"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed"
-                        android:text="@string/contact_display_name_label"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/ic_gift_price"
-                        android:layout_width="40dp"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_label_grey600_24dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/gift_price"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:fontFamily="sans-serif-condensed"
-                        android:text="@string/gift_price_label2"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/ic_gift_url"
-                        android:layout_width="40dp"
-                        android:layout_height="fill_parent"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_open_in_browser_grey600_24dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/gift_url"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:ellipsize="end"
-                        android:fontFamily="sans-serif-condensed"
-                        android:singleLine="true"
-                        android:text="@string/fragment_view_gift_url_label"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        />
-
-                </LinearLayout>
-
-                <LinearLayout
+                <include
+                    layout="@layout/item_birthday_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="4dp">
+                    />
 
-                    <ImageView
-                        android:id="@+id/ic_gift_notes"
-                        android:layout_width="40dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_description_grey600_24dp"
-                        />
-
-                    <TextView
-                        android:id="@+id/gift_notes"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed"
-                        android:text="@string/fragment_view_gift_notes_label"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        />
-
-                </LinearLayout>
+                <include
+                    layout="@layout/item_anniversary_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
 
             </LinearLayout>
 
@@ -169,4 +194,5 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
+

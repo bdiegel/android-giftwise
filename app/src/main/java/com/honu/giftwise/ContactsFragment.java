@@ -1,8 +1,10 @@
 package com.honu.giftwise;
 
+import android.Manifest;
 import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
@@ -22,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.GiftwiseContract;
@@ -32,7 +36,9 @@ import java.util.ArrayList;
  * Fragment for displaying list of contacts for Main activity
  */
 public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-      AdapterView.OnItemClickListener { //}, AdapterView.OnItemLongClickListener {
+      AdapterView.OnItemClickListener {
+
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
     private static final String LOG_TAG = ContactsFragment.class.getSimpleName();
 
@@ -72,8 +78,8 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
-        // initialize loader of GiftWise contacts
-        getLoaderManager().initLoader(CONTACTS_LOADER, null, this);
+        // initialize loader of GiftWise contacts (requires permission)
+        showContacts();
 
         // listen for contact selections
         mListView.setOnItemClickListener(this);
@@ -81,6 +87,30 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
         super.onActivityCreated(savedInstanceState);
     }
+
+    private void showContacts() {
+        int hasReadContactPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS);
+
+        if (hasReadContactPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            return;
+        }
+
+        getLoaderManager().initLoader(CONTACTS_LOADER, null, this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                showContacts();
+            } else {
+                Toast.makeText(getActivity(), "Until you grant the permission, we canot display the names", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

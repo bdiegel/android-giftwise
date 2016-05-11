@@ -8,11 +8,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,9 +21,10 @@ import android.widget.TextView;
 import com.android.colorpicker.ColorPickerDialog;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
-import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.data.Size;
+import com.honu.giftwise.loaders.ContactEventDateLoader;
+import com.honu.giftwise.loaders.GiftwiseProfileLoader;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -37,18 +34,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class ProfileFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ProfileFragment extends Fragment implements ContactEventDateLoader.ContactEventDateLoaderListener, GiftwiseProfileLoader.GiftwiseProfileLoaderListener {
 
     private static final String LOG_TAG = ProfileFragment.class.getSimpleName();
-
-    // data loaders for colors and sizes:
-    private static final int PROFILE_COLORS_LIKED_LOADER = 20;
-    private static final int PROFILE_COLORS_DISLIKED_LOADER = 21;
-    private static final int PROFILE_SIZES_LOADER = 22;
-
-    // data loaders for special dates
-    public static final int PROFILE_BIRTHDAY_LOADER = 30;
-    public static final int PROFILE_ANNIVERSARY_LOADER = 31;
 
     // adapters for color items amd sizes:
     private ColorAdapter mLikedColorsAdapter;
@@ -126,11 +114,14 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(PROFILE_COLORS_LIKED_LOADER, null, this);
-        getLoaderManager().initLoader(PROFILE_COLORS_DISLIKED_LOADER, null, this);
-        getLoaderManager().initLoader(PROFILE_SIZES_LOADER, null, this);
-        getLoaderManager().initLoader(PROFILE_BIRTHDAY_LOADER, null, this);
-        getLoaderManager().initLoader(PROFILE_ANNIVERSARY_LOADER, null, this);
+        GiftwiseProfileLoader profileLoader = new GiftwiseProfileLoader(this.getContext(), this, mGiftwiseId);
+        getLoaderManager().initLoader(GiftwiseProfileLoader.PROFILE_COLORS_LIKED_LOADER, null, profileLoader);
+        getLoaderManager().initLoader(GiftwiseProfileLoader.PROFILE_COLORS_DISLIKED_LOADER, null, profileLoader);
+        getLoaderManager().initLoader(GiftwiseProfileLoader.PROFILE_SIZES_LOADER, null, profileLoader);
+
+        ContactEventDateLoader eventLoader = new ContactEventDateLoader(this.getContext(), this,(int) mContactId);
+        getActivity().getSupportLoaderManager().initLoader(ContactEventDateLoader.PROFILE_BIRTHDAY_LOADER, null, eventLoader);
+        getActivity().getSupportLoaderManager().initLoader(ContactEventDateLoader.PROFILE_ANNIVERSARY_LOADER, null, eventLoader);
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -366,75 +357,34 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(LOG_TAG, "onCreateLoader");
-
-        switch (id) {
-            case PROFILE_COLORS_LIKED_LOADER: {
-                String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ? ";
-                String[] selectionArgs = new String[] { "1" };
-                Uri uri = GiftwiseContract.ColorEntry.buildColorsForGiftwiseIdUri(mGiftwiseId);
-                return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
-            }
-            case PROFILE_COLORS_DISLIKED_LOADER: {
-                String selection = GiftwiseContract.ColorEntry.COLUMN_COLOR_LIKED + " = ? ";
-                String[] selectionArgs = new String[] { "0" };
-                Uri uri = GiftwiseContract.ColorEntry.buildColorsForGiftwiseIdUri(mGiftwiseId);
-                return new CursorLoader(getActivity(), uri, null, selection, selectionArgs, null);
-            }
-            case PROFILE_SIZES_LOADER: {
-                Uri uri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(mGiftwiseId);
-                return new CursorLoader(getActivity(), uri, null, null, null, null);
-            }
-            case PROFILE_BIRTHDAY_LOADER: {
-                return ContactsUtils.getContactEventDateCurosrLoader(getActivity(), mContactId, ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY);
-            }
-            case PROFILE_ANNIVERSARY_LOADER: {
-                return ContactsUtils.getContactEventDateCurosrLoader(getActivity(), mContactId, ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY);
-            }
-            default:
-                return null;
-        }
+    public void onBirthdayDateLoaded(String date) {
+        setBirthday(getView(), formatDateString(date));
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Log.d(LOG_TAG, "onLoadFinished: " + loader.getId());
-
-        switch (loader.getId()) {
-            case PROFILE_COLORS_DISLIKED_LOADER:
-                mDislikedColorsAdapter.swapCursor(data);
-                LinearLayout editDislikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_dislike_list);
-                addColorsFromAdapter(editDislikedColors, mDislikedColorsAdapter);
-                break;
-            case PROFILE_COLORS_LIKED_LOADER:
-                mLikedColorsAdapter.swapCursor(data);
-                LinearLayout editLikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_liked_list);
-                addColorsFromAdapter(editLikedColors, mLikedColorsAdapter);
-                break;
-            case PROFILE_SIZES_LOADER:
-                mSizeAdapter.swapCursor(data);
-                LinearLayout sizeLayout = (LinearLayout) getActivity().findViewById(R.id.sizes_list);
-                addSizesToView(sizeLayout, mSizeAdapter);
-                break;
-            case PROFILE_BIRTHDAY_LOADER:
-                setEventDate(data);
-                break;
-            case PROFILE_ANNIVERSARY_LOADER:
-                if (data == null || data.getCount() == 0) {
-                    hideAnniversaryView();
-                } else {
-                    setEventDate(data);
-                }
-                break;
-            default:
-                break;
-        }
+    public void onAnniversaryDateLoaded(String date) {
+        setAnniversary(getView(), formatDateString(date));
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLikedColorsLoaded(Cursor cursor) {
+        mLikedColorsAdapter.swapCursor(cursor);
+        LinearLayout editLikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_liked_list);
+        addColorsFromAdapter(editLikedColors, mLikedColorsAdapter);
+    }
 
+    @Override
+    public void onDislikedColorsLoaded(Cursor cursor) {
+        mDislikedColorsAdapter.swapCursor(cursor);
+        LinearLayout editDislikedColors = (LinearLayout) getActivity().findViewById(R.id.colors_dislike_list);
+        addColorsFromAdapter(editDislikedColors, mDislikedColorsAdapter);
+    }
+
+    @Override
+    public void onSizesLoaded(Cursor cursor) {
+        mSizeAdapter.swapCursor(cursor);
+        LinearLayout sizeLayout = (LinearLayout) getActivity().findViewById(R.id.sizes_list);
+        addSizesToView(sizeLayout, mSizeAdapter);
     }
 
     private void setBirthday(View rootView, String birthday) {
@@ -443,7 +393,7 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     private void setAnniversary(View rootView, String anniversary) {
-        LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.contact_anniversary);
+        ViewGroup layout = (ViewGroup) rootView.findViewById(R.id.contact_anniversary);
 
         if (TextUtils.isEmpty(anniversary)) {
             layout.setVisibility(View.GONE);
@@ -454,44 +404,18 @@ public class ProfileFragment extends Fragment implements LoaderManager.LoaderCal
         }
     }
 
-    private void setEventDate(Cursor c) {
+    private String formatDateString(String date) {
+        if (TextUtils.isEmpty(date)) return date;
 
-        if ( c != null && c.moveToNext()) {
-            TextView view;
-
-            int type = c.getInt(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.TYPE));
-
-            if (type == ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY) {
-                view = (TextView) getActivity().findViewById(R.id.contact_birthday_date);
-            } else if (type == ContactsContract.CommonDataKinds.Event.TYPE_ANNIVERSARY) {
-                LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.contact_anniversary);
-                layout.setVisibility(View.VISIBLE);
-                view = (TextView) getActivity().findViewById(R.id.contact_anniversary_date);
-            } else {
-                // not displaying custom ones yet
-                return;
-            }
-
-            String date = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Event.START_DATE));
-            Log.i(LOG_TAG, "Found contact event: type=" + type + " date=" + date);
-
-            // format date
-            try {
-                DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date d = parseFormat.parse(date);
-                DateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy");
-                view.setText(displayFormat.format(d));
-            } catch (ParseException e) {
-                Log.e(LOG_TAG, "date parse failed", e);
-                view.setText(date);
-            }
+        try {
+            DateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date d = parseFormat.parse(date);
+            DateFormat displayFormat = new SimpleDateFormat("MMMM dd, yyyy");
+            return displayFormat.format(d);
+        } catch (ParseException e) {
+            Log.e(LOG_TAG, "date parse failed", e);
+            return date;
         }
-    }
-
-    private void hideAnniversaryView() {
-        Log.i(LOG_TAG, "no anniversary; hide layout");
-        LinearLayout view = (LinearLayout) getActivity().findViewById(R.id.contact_anniversary);
-        view.setVisibility(View.GONE);
     }
 
     public class SizeClickListener implements View.OnClickListener {

@@ -77,6 +77,8 @@
     <string name="profile_events_label">EVENTS</string>
     <string name="contact_birthday_text">Birthday:</string>
     <string name="contact_anniversary">Anniversary:</string>
+    <string name="contact_birthday_text2">Birthday</string>
+    <string name="contact_anniversary2">Anniversary</string>
     <string name="profile_colors_label">COLORS</string>
     <string name="profile_sizes_label">SIZES</string>
     <string name="profile_addsize_button_label">Add Size</string>
@@ -126,4 +128,6 @@
         </p>
         </html>]]>
     </string>
+    <string name="view_button">View</string>
+    <string name="label_gift_url">Gift from:</string>
 </resources>

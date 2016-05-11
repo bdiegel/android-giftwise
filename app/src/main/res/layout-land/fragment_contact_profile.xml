@@ -54,7 +54,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_cake_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_cake_grey600_24dp"
                     />
 
                 <TextView
@@ -104,7 +105,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_local_bar_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_local_bar_grey600_24dp"
                     />
 
                 <TextView
@@ -181,7 +183,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_thumb_up_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_thumb_up_grey600_24dp"
                     />
 
                 <!-- this is a container where ImageViews for liked colors are dynamically added -->
@@ -213,7 +216,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_thumb_down_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_thumb_down_grey600_24dp"
                     />
 
                 <!-- this is a container where ImageViews for disliked colors are dynamically added -->

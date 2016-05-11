@@ -24,23 +24,23 @@ public class ViewGiftActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_gift);
 
+        Intent intent = getIntent();
+        Gift gift = intent.getExtras().getParcelable("gift");
+        String mContactName = intent.getStringExtra("contactName");
+        int mContactId = intent.getIntExtra("contactId", -1);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            //toolbar.setNavigationIcon(R.drawable.ic_action_accept);
         }
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setTitle(mContactName);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        Intent intent = getIntent();
-        Gift gift = intent.getExtras().getParcelable("gift");
-        String mContactName = intent.getStringExtra("contactName");
-
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                  .add(R.id.container, ViewGiftFragment.getInstance(gift, mContactName), VIEW_GIFT_FRAGMENT_TAG)
+                  .add(R.id.container, ViewGiftFragment.getInstance(gift, mContactName, mContactId), VIEW_GIFT_FRAGMENT_TAG)
                   .commit();
         }
     }
