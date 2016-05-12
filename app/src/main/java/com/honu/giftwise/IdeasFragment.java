@@ -4,11 +4,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -17,21 +18,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
 
+import com.honu.giftwise.adapters.GiftItemAdapter;
 import com.honu.giftwise.data.Gift;
 import com.honu.giftwise.data.GiftwiseContract;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Fragments that displays Gift items in a ListView.
  */
 public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String LOG_TAG = IdeasFragment.class.getSimpleName();
+    private static final String TAG = IdeasFragment.class.getSimpleName();
 
-    private IdeasAdapter mIdeasAdapter;
+    @Bind(R.id.gifts_recycler_view) RecyclerView mGiftRecyclerView;
 
-    private int mPosition = ListView.INVALID_POSITION;
+    private GiftItemAdapter mGiftAdapter;
+
+    //private int mPosition = ListView.INVALID_POSITION;
 
     private String mGiftwiseId;
 
@@ -58,8 +65,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout resource that'll be returned
         View rootView = inflater.inflate(R.layout.fragment_contact_ideas, container, false);
+        ButterKnife.bind(this, rootView);
 
         Bundle args = getArguments();
         mContactName =  args.getString("contactName");
@@ -69,39 +76,20 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         // initialize adapter (no data)
         Uri giftsForGwidUri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
         Cursor cur = getActivity().getContentResolver().query(giftsForGwidUri, null, null, null, null);
-        mIdeasAdapter = new IdeasAdapter(getActivity(), cur, 0);
-
-        // Get a reference to the ListView, and attach this adapter to it.
-        ListView mListView = (ListView) rootView.findViewById(R.id.gifts_listview);
-        mListView.setAdapter(mIdeasAdapter);
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
+        mGiftAdapter = new GiftItemAdapter(getActivity(), cur, new GiftItemAdapter.GiftItemClickListener() {
             @Override
-            public void onItemClick(AdapterView adapterView, View view, int position, long l) {
-                mPosition = position;
-
-                // Get cursor from the adapter
-                Cursor cursor = mIdeasAdapter.getCursor();
-
-                // Extract data from the selected item
-                cursor.moveToPosition(position);
-                int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
-
-                openGift(giftId);
+            public void onGiftItemClick(View view, Gift selection) {
+                openGift(selection.getGiftId());
             }
         });
 
-        FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_gift_fab);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addGift();
-            }
-        });
+        mGiftRecyclerView.setAdapter(mGiftAdapter);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        mGiftRecyclerView.setLayoutManager(llm);
 
         // register a context menu (long-click)
-        registerForContextMenu(mListView);
+        registerForContextMenu(mGiftRecyclerView);
 
         return rootView;
     }
@@ -119,15 +107,16 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.menu_gift_item, menu);
 
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-        // Get cursor from the adapter
-        Cursor cursor = mIdeasAdapter.getCursor();
-
-        // Extract Name from the selected item for menu title
-        cursor.moveToPosition(info.position);
-        String name = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME));
-        menu.setHeaderTitle(name);
+        // TODO: the menuInfo is null so we do not the position of the item
+//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+//
+//        // Get cursor from the adapter
+//        Cursor cursor = mGiftAdapter.getCursor();
+//
+//        // Extract Name from the selected item for menu title
+//        cursor.moveToPosition(info.position);
+//        String name = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME));
+//        menu.setHeaderTitle(name);
     }
 
     @Override
@@ -135,7 +124,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         // Get cursor from the adapter
-        Cursor cursor = mIdeasAdapter.getCursor();
+        Cursor cursor = mGiftAdapter.getCursor();
 
         // Extract data from the selected item
         cursor.moveToPosition(info.position);
@@ -157,16 +146,16 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public String getShareText() {
-        if (mIdeasAdapter != null)
-            return mIdeasAdapter.getShareText();
+        if (mGiftAdapter != null)
+            return mGiftAdapter.getShareText();
         return null;
     }
 
     private void openGift(long giftId) {
-        Log.i(LOG_TAG, "Open GiftId: " + giftId);
+        Log.d(TAG, "Open GiftId: " + giftId);
 
         // Get cursor from the adapter
-        Cursor cursor = mIdeasAdapter.getCursor();
+        Cursor cursor = mGiftAdapter.getCursor();
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
@@ -179,10 +168,10 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void editGift(long giftId) {
-        Log.i(LOG_TAG, "Edit GiftId: " + giftId);
+        Log.d(TAG, "Edit GiftId: " + giftId);
 
         // Get cursor from the adapter
-        Cursor cursor = mIdeasAdapter.getCursor();
+        Cursor cursor = mGiftAdapter.getCursor();
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
@@ -194,16 +183,17 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     private void deleteGift(long giftId) {
-        Log.i(LOG_TAG, "Delete Gift id: " + giftId);
+        Log.d(TAG, "Delete Gift id: " + giftId);
         Uri uri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
         String where = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry._ID + " = ? ";
         String[] whereArgs =  new String[]{  Long.toString(giftId) };
-        mIdeasAdapter.removeImageFromCache("" + giftId);
+        mGiftAdapter.removeImageFromCache("" + giftId);
         getActivity().getContentResolver().delete(uri, where, whereArgs);
     }
 
-    private void addGift() {
-        Log.i(LOG_TAG, "Add Gift for gwid: " + mGiftwiseId);
+    @OnClick(R.id.add_gift_fab)
+    public void addGiftClicked() {
+        Log.d(TAG, "Add Gift for gwid: " + mGiftwiseId);
 
         // start activity to add/edit gift idea
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
@@ -215,7 +205,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.i(LOG_TAG, "Query Gifts for: " + mGiftwiseId);
+        Log.i(TAG, "Query Gifts for: " + mGiftwiseId);
 
         // uri for all gifts for a raw contact
         Uri giftsForGiftwiseIdUri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
@@ -233,14 +223,17 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mIdeasAdapter.swapCursor(cursor);
-        if (mPosition != ListView.INVALID_POSITION) {
-            ListView listView = (ListView) getView().findViewById(R.id.gifts_listview);
-            listView.smoothScrollToPosition(mPosition);
-        }
+        mGiftAdapter.swapCursor(cursor);
+
+        // TODO: move to position
+//        if (mPosition != ListView.INVALID_POSITION) {
+//            ListView listView = (ListView) getView().findViewById(R.id.gifts_listview);
+//            listView.smoothScrollToPosition(mPosition);
+//        }
+
         // update the share intent
         ContactActivity contactActivity = (ContactActivity) getActivity();
-        contactActivity.updateShareIntent(mIdeasAdapter.getShareText());
+        contactActivity.updateShareIntent(mGiftAdapter.getShareText());
     }
 
     @Override
