@@ -7,7 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,7 +19,7 @@ import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.NotifyingAsyncQueryHandler;
 
 
-public class MainActivity extends ActionBarActivity implements NotifyingAsyncQueryHandler.AsyncQueryListener {
+public class MainActivity extends AppCompatActivity implements NotifyingAsyncQueryHandler.AsyncQueryListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -37,9 +37,11 @@ public class MainActivity extends ActionBarActivity implements NotifyingAsyncQue
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
             toolbar.setNavigationIcon(null);
             toolbar.setNavigationIcon(R.mipmap.ic_launcher);
+        }
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
         }
 
         if (savedInstanceState == null) {

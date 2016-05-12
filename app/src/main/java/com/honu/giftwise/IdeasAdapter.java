@@ -2,6 +2,7 @@ package com.honu.giftwise;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -34,7 +35,6 @@ public class IdeasAdapter extends CursorAdapter {
 
     private GiftImageCache mImageCache;
 
-
     public IdeasAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
         mImageCache = ((GiftwiseApplication) context.getApplicationContext()).getGiftImageCache();
@@ -42,10 +42,7 @@ public class IdeasAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        // inflate view
         View view = LayoutInflater.from(context).inflate(R.layout.list_item_gift, parent, false);
-
-        // use ViewHolder to save inflated views:
         ViewHolder viewHolder = new ViewHolder(view);
         view.setTag(viewHolder);
 
@@ -60,7 +57,6 @@ public class IdeasAdapter extends CursorAdapter {
         long giftId = cursor.getLong(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
 
         viewHolder.nameView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME)));
-        //viewHolder.urlView.setText(cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_URL)));
         viewHolder.priceView.setText("");
 
         // format a price if there is one
@@ -119,16 +115,12 @@ public class IdeasAdapter extends CursorAdapter {
     public static class ViewHolder {
         public final ImageView iconView;
         public final TextView nameView;
-        //public final TextView urlView;
         public final TextView priceView;
-        //public final ImageView menuView;
 
         public ViewHolder(final View view) {
             iconView = (ImageView) view.findViewById(R.id.list_item_gift_image);
             nameView = (TextView) view.findViewById(R.id.list_item_gift_name_textview);
-            //urlView = (TextView)view.findViewById(R.id.list_item_gift_url_textview);
             priceView = (TextView) view.findViewById(R.id.list_item_gift_price_textview);
-            //Linkify.addLinks(urlView, Linkify.WEB_URLS);
         }
     }
 
@@ -139,7 +131,6 @@ public class IdeasAdapter extends CursorAdapter {
 
     public void loadBitmap(ContentResolver contentResolver, long resId, ImageView imageView, Cursor cursor) {
         final String imageKey = String.valueOf(resId);
-
         final BitmapDrawable bitmap = mImageCache.getBitmapFromMemCache(imageKey);
 
         if (bitmap != null) {
@@ -159,9 +150,11 @@ public class IdeasAdapter extends CursorAdapter {
     class BitmapWorkerTask extends AsyncTask<Long, Void, Bitmap> {
         private final WeakReference<ImageView> mImageView;
         private final byte[] mBlob;
+        private final Resources mResources;
 
         public BitmapWorkerTask(ImageView imageView, byte[] blob) {
             mImageView = new WeakReference<ImageView>(imageView);
+            mResources = mImageView.get().getResources();
             mBlob = blob;
         }
 
@@ -172,7 +165,7 @@ public class IdeasAdapter extends CursorAdapter {
             final String imageKey = String.valueOf(resId);
 
             Bitmap bitmap = BitmapUtils.getImage(mBlob);
-            mImageCache.updateBitmapToMemoryCache(imageKey, new BitmapDrawable(mImageView.get().getResources(), bitmap));
+            mImageCache.updateBitmapToMemoryCache(imageKey, new BitmapDrawable(mResources, bitmap));
 
             return bitmap;
         }

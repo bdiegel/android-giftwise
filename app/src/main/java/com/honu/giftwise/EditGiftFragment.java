@@ -31,6 +31,10 @@ import com.honu.giftwise.data.GiftImageCache;
 
 import java.io.IOException;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Fragment for the gift editor
  */
@@ -40,14 +44,18 @@ public class EditGiftFragment extends Fragment {
 
     public static final int SELECT_IMAGE = 1;
 
-    private Spinner mContactSpinner;
-
     private SimpleCursorAdapter mContactAdapter;
 
     private Gift gift;
 
     private GiftImageCache mImageCache;
 
+    @Bind(R.id.gift_name) EditText mNameEdit;
+    @Bind(R.id.gift_price) EditText mPriceEdit;
+    @Bind(R.id.gift_url) EditText mUrlEdit;
+    @Bind(R.id.gift_notes) EditText mNotesEdit;
+    @Bind(R.id.gift_image) ImageView mImageView;
+    @Bind(R.id.contacts_spinner) Spinner mContactSpinner;
 
     /**
      * Create Fragment and setup the Bundle arguments
@@ -67,6 +75,7 @@ public class EditGiftFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_gift, container, false);
+        ButterKnife.bind(this, rootView);
 
         mImageCache = ((GiftwiseApplication)getActivity().getApplicationContext()).getGiftImageCache();
 
@@ -74,59 +83,7 @@ public class EditGiftFragment extends Fragment {
         Bundle args = getArguments();
         gift = args.getParcelable("gift");
 
-        // populate form with value:
-        EditText nameTxt = (EditText)rootView.findViewById(R.id.gift_name);
-        nameTxt.setText(gift.getName());
-        if (gift.getPrice() > 0) {
-            EditText priceTxt = (EditText) rootView.findViewById(R.id.gift_price);
-            priceTxt.setText("" + gift.getFormattedPriceNoCurrency());
-        }
-        EditText urlTxt = (EditText)rootView.findViewById(R.id.gift_url);
-        urlTxt.setText(gift.getUrl());
-        EditText notesTxt = (EditText)rootView.findViewById(R.id.gift_notes);
-        notesTxt.setText(gift.getNotes());
-
-        // select image from gallery on click:
-        ImageView imageView = (ImageView)rootView.findViewById(R.id.gift_image);
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_PICK);
-                intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(Intent.createChooser(intent, "Select image"), SELECT_IMAGE);
-            }
-        });
-
-        // set image from cache if exists
-        BitmapDrawable bitmap = mImageCache.getBitmapFromMemCache(gift.getGiftId() + "");
-        if (bitmap != null ) {
-            //imageView.setImageBitmap(bitmap);
-            Log.i(LOG_TAG, "Bitmap loaded from cache for giftId: " + gift.getGiftId());
-            imageView.setImageDrawable(bitmap);
-        } else {
-            Log.i(LOG_TAG, "No bitmap found in cache for giftId: " + gift.getGiftId());
-            bitmap = mImageCache.getPlaceholderImage();
-            imageView.setImageDrawable(bitmap);
-        }
-
-        // populate values for the recipient spin control:
-        populateContactsSpinner(rootView);
-
-        // repopulate form fields from state:
-        if (savedInstanceState != null) {
-            nameTxt.setText(savedInstanceState.getString("gift_name"));
-            urlTxt.setText(savedInstanceState.getString("gift_url"));
-            notesTxt.setText(savedInstanceState.getString("gift_notes"));
-            double price = savedInstanceState.getDouble("gift_price");
-            if (price > 0) {
-                EditText priceTxt = (EditText) rootView.findViewById(R.id.gift_price);
-                priceTxt.setText(savedInstanceState.getDouble("gift_price") + "");
-            }
-            mContactSpinner.setSelection((int)savedInstanceState.getLong("contact_index"));
-        }
-
+        initViews(rootView, savedInstanceState);
         setHasOptionsMenu(true);
 
         return rootView;
@@ -136,15 +93,8 @@ public class EditGiftFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // get values from all fields:
-        View rootView = getView();
-        EditText nameEdit = (EditText)rootView.findViewById(R.id.gift_name);
-        EditText priceEdit = (EditText) rootView.findViewById(R.id.gift_price);
-        EditText urlEdit = (EditText)rootView.findViewById(R.id.gift_url);
-        EditText notesEdit = (EditText)rootView.findViewById(R.id.gift_notes);
-
         double price = 0;
-        String priceTxt = priceEdit.getText().toString();
+        String priceTxt = mPriceEdit.getText().toString();
         if (!TextUtils.isEmpty(priceTxt)) {
             try {
                 price = Double.parseDouble(priceTxt);
@@ -154,9 +104,9 @@ public class EditGiftFragment extends Fragment {
         }
 
         // save values to bundle
-        outState.putString("gift_name", nameEdit.getText().toString());
-        outState.putString("gift_url", urlEdit.getText().toString());
-        outState.putString("gift_notes", notesEdit.getText().toString());
+        outState.putString("gift_name", mNameEdit.getText().toString());
+        outState.putString("gift_url", mUrlEdit.getText().toString());
+        outState.putString("gift_notes", mNotesEdit.getText().toString());
         outState.putDouble("gift_price", price);
         outState.putLong("contact_index", mContactSpinner.getSelectedItemId());
     }
@@ -165,22 +115,17 @@ public class EditGiftFragment extends Fragment {
 
         if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
-            //String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
-
                 Bitmap resizedBitmap = BitmapUtils.resizeBitmap(bitmap, 480);
-
-                ImageView imageView = (ImageView) getView().findViewById(R.id.gift_image);
-                imageView.setImageBitmap(resizedBitmap);
+                mImageView.setImageBitmap(resizedBitmap);
 
                 // save to gift
                 gift.setBitmap(BitmapUtils.getBytes(resizedBitmap));
 
                 if (gift.getGiftId() != -1) {
-                    //Log.d(LOG_TAG, "Saving image to cache for giftId: " + gift.getGiftId());
-                    mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(imageView.getResources(), resizedBitmap));
+                    mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(mImageView.getResources(), resizedBitmap));
                 }
             } catch (IOException e) {
                 Log.d(LOG_TAG, "Error importing image: ", e);
@@ -191,13 +136,11 @@ public class EditGiftFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // inflate the fragment menu
         inflater.inflate(R.menu.menu_edit_gift_fragment, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_browse:
                 openUrl();
@@ -207,11 +150,52 @@ public class EditGiftFragment extends Fragment {
         }
     }
 
+    private void initViews(View rootView, Bundle savedInstanceState) {
+        mNameEdit.setText(gift.getName());
+        if (gift.getPrice() > 0) {
+            mPriceEdit.setText("" + gift.getFormattedPriceNoCurrency());
+        }
+        mUrlEdit.setText(gift.getUrl());
+        mNotesEdit.setText(gift.getNotes());
+
+        // set image from cache if exists
+        BitmapDrawable bitmap = mImageCache.getBitmapFromMemCache(gift.getGiftId() + "");
+        if (bitmap != null ) {
+            Log.d(LOG_TAG, "Bitmap loaded from cache for giftId: " + gift.getGiftId());
+            mImageView.setImageDrawable(bitmap);
+        } else {
+            Log.d(LOG_TAG, "No bitmap found in cache for giftId: " + gift.getGiftId());
+            bitmap = mImageCache.getPlaceholderImage();
+            mImageView.setImageDrawable(bitmap);
+        }
+
+        // populate values for the recipient spin control:
+        populateContactsSpinner(rootView);
+
+        // repopulate form fields from state:
+        if (savedInstanceState != null) {
+            mNameEdit.setText(savedInstanceState.getString("gift_name"));
+            mUrlEdit.setText(savedInstanceState.getString("gift_url"));
+            mNotesEdit.setText(savedInstanceState.getString("gift_notes"));
+            double price = savedInstanceState.getDouble("gift_price");
+            if (price > 0) {
+                mPriceEdit.setText(savedInstanceState.getDouble("gift_price") + "");
+            }
+            mContactSpinner.setSelection((int)savedInstanceState.getLong("contact_index"));
+        }
+    }
+
+    @OnClick(R.id.gift_image)
+    public void onSelectImageClicked() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_PICK);
+        intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(Intent.createChooser(intent, "Select image"), SELECT_IMAGE);
+    }
+
     private void openUrl() {
-        // get the url from the EditText field
-        View rootView = getView();
-        EditText urlEdit = (EditText)rootView.findViewById(R.id.gift_url);
-        String url = urlEdit.getText().toString();
+        String url = mUrlEdit.getText().toString();
 
         // if empty, do nothing
         if (TextUtils.isEmpty(url)) {
@@ -229,8 +213,6 @@ public class EditGiftFragment extends Fragment {
     }
 
     private void populateContactsSpinner(View root) {
-        mContactSpinner = (Spinner) root.findViewById(R.id.contacts_spinner);
-
         // Query for list of contacts
         String accountName = getString(R.string.account_name);
         String accountType = getString(R.string.account_type);
@@ -261,12 +243,12 @@ public class EditGiftFragment extends Fragment {
         int position = 0;
         Cursor cursor = mContactAdapter.getCursor();
 
-        for (int i=0; i<mContactAdapter.getCount(); i++) {
+        for (int i=0; i < mContactAdapter.getCount(); i++) {
             cursor.moveToPosition(i);
             String temp = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
 
-            if ( temp.equals(value) ) {
-                Log.d("TAG", "Found match at index: " + i);
+            if (temp.equals(value)) {
+                Log.d(LOG_TAG, "Found match at index: " + i);
                 position = i;
                 break;
             }

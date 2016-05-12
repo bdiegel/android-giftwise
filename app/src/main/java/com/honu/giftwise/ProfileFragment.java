@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,6 +31,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class ProfileFragment extends Fragment implements ContactEventDateLoader.ContactEventDateLoaderListener, GiftwiseProfileLoader.GiftwiseProfileLoaderListener {
@@ -67,8 +69,8 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // inflate the layout
         View rootView = inflater.inflate(R.layout.fragment_contact_profile, container, false);
+        ButterKnife.bind(this, rootView);
 
         // create color picker
         initColorPicker(rootView);
@@ -90,15 +92,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
         Uri sizesUri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(mGiftwiseId);
         Cursor sizesCursor = getActivity().getContentResolver().query(sizesUri, null, null, null, null);
         mSizeAdapter = new SizeAdapter(getActivity(), sizesCursor, 0);
-
-        // add listener to add size button
-        Button addSizeButton = (Button) rootView.findViewById(R.id.size_button);
-        addSizeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addSize();
-            }
-        });
 
         if (savedInstanceState != null) {
             String birthday = savedInstanceState.getString("birthday");
@@ -134,8 +127,9 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
         outState.putString("anniversary", anniversaryView.getText().toString());
     }
 
-    private void addSize() {
-        Log.i(LOG_TAG, "Add size for: " + mGiftwiseId);
+    @OnClick(R.id.size_button)
+    public void addSizeClicked() {
+        Log.d(LOG_TAG, "Add size for: " + mGiftwiseId);
 
         // start activity to add/edit size details
         Intent intent = new Intent(getActivity(), EditSizeActivity.class);
@@ -156,7 +150,7 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
     }
 
     private void deleteSize(long sizeId) {
-        Log.i(LOG_TAG, "Delete size id: " + sizeId);
+        Log.d(LOG_TAG, "Delete size id: " + sizeId);
         Uri uri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(mGiftwiseId);
         String where = GiftwiseContract.SizeEntry._ID  + " = ?";
         String[] whereArgs = new String[] {"" + sizeId};
@@ -165,7 +159,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
     }
 
     private void initColorPicker(final View rootView) {
-
         // add click listener for liked colors:
         ViewGroup editLikedColors = (ViewGroup) rootView.findViewById(R.id.contact_colors_like);
         editLikedColors.setOnClickListener(new View.OnClickListener() {
@@ -178,7 +171,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
                       getColors(mLikedColorsAdapter),
                       4,
                       ColorPickerDialog.SIZE_SMALL);
-                //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
 
                 dialog.setDialogSelectedListener(new ColorPickerDialog.DialogSelectionListener() {
 
@@ -194,7 +186,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
                 });
 
                 dialog.show(getActivity().getFragmentManager(), "color_picker");
-                //dialog.show(getActivity().getSupportFragmentManager().beginTransaction(), "");
             }
         });
 
@@ -210,7 +201,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
                       getColors(mDislikedColorsAdapter),
                       4,
                       ColorPickerDialog.SIZE_SMALL);
-                //Utils.isTablet(this)? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
 
                 dialog.setDialogSelectedListener(new ColorPickerDialog.DialogSelectionListener() {
 
@@ -227,7 +217,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
 
 
                 dialog.show(getActivity().getFragmentManager(), "color_picker_dislike");
-                //dialog.show(getActivity().getSupportFragmentManager().beginTransaction(), "");
             }
         });
 
@@ -248,7 +237,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
     }
 
     private int getColorIdFromAdapter(int color, int liked) {
-
         // get cursor from selected adapter
         ColorAdapter adapter = (liked == 1) ? mLikedColorsAdapter : mDislikedColorsAdapter;
         Cursor cursor = adapter.getCursor();
@@ -267,7 +255,6 @@ public class ProfileFragment extends Fragment implements ContactEventDateLoader.
 
 
     private void updateContentProvider(int[] oldColors, int[] newColors, int liked){
-
         // do some set algebra to determine new and deleted colors
         Set<Integer> oldSet = new HashSet<Integer> (Ints.asList(oldColors));
         Set<Integer> newSet = new HashSet<Integer> (Ints.asList(newColors));

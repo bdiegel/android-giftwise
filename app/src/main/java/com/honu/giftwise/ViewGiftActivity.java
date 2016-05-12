@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,10 +13,7 @@ import com.honu.giftwise.data.Gift;
 
 public class ViewGiftActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = ViewGiftActivity.class.getSimpleName();
-
     private static final String VIEW_GIFT_FRAGMENT_TAG = "VIEW_GIFT_FRAGMENT_TAG";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +30,11 @@ public class ViewGiftActivity extends AppCompatActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
-        getSupportActionBar().setTitle(mContactName);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(mContactName);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -47,19 +45,15 @@ public class ViewGiftActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_view_gift, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // handle action bar item clicks
         int id = item.getItemId();
 
-        // navigation icon selected (done)
         if (id == android.R.id.home) {
-            Log.i(LOG_TAG, "navigation icon clicked");
             Intent intent = NavUtils.getParentActivityIntent(this);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             NavUtils.navigateUpTo(this, intent);

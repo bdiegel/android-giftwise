@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -32,11 +31,15 @@ import com.honu.giftwise.data.GiftwiseContract;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
+
 /**
  * Fragment for displaying list of contacts for Main activity
  */
-public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-      AdapterView.OnItemClickListener {
+public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
@@ -44,7 +47,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
     private static final int CONTACTS_LOADER = 0;
 
-    private ListView mListView;
+    @Bind(R.id.contacts_listview) ListView mListView;
 
     private ContactAdapter mContactAdapter;
 
@@ -54,21 +57,11 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        ButterKnife.bind(this, rootView);
 
         // initialize adapter (no data)
         mContactAdapter = new ContactAdapter(getActivity(), null, 0);
-
-        // Get a reference to the ListView, and attach this adapter to it.
-        mListView = (ListView) rootView.findViewById(R.id.contacts_listview);
         mListView.setAdapter(mContactAdapter);
-
-        FloatingActionButton addButton = (FloatingActionButton) rootView.findViewById(R.id.add_contact_fab);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).addContact();
-            }
-        });
 
         registerForContextMenu(mListView);
 
@@ -81,11 +74,12 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         // initialize loader of GiftWise contacts (requires permission)
         showContacts();
 
-        // listen for contact selections
-        mListView.setOnItemClickListener(this);
-        //mListView.setOnItemLongClickListener(this);
-
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @OnClick(R.id.add_contact_fab)
+    public void onAddContactClicked() {
+        ((MainActivity)getActivity()).addContact();
     }
 
     private void showContacts() {
@@ -110,7 +104,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
             }
         }
     }
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -182,14 +175,13 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    @OnItemClick(R.id.contacts_listview)
+    public void onContactClicked(AdapterView<?> parent, int position) {
         Log.i(LOG_TAG, "Item clicked: " + position);
         viewContact((ContactAdapter)parent.getAdapter(), position);
     }
 
     private void viewContact(CursorAdapter adapter, int position) {
-
         // Get the Cursor
         Cursor cursor = adapter.getCursor();
 

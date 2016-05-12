@@ -53,14 +53,6 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
 
     private ContactImageCache mContactImageCache;
 
-    @Bind(R.id.gift_name) TextView mNameTxt;
-    @Bind(R.id.contact_display_name) TextView mRecipientTV;
-    @Bind(R.id.gift_price) TextView mPriceTxt;
-    @Bind(R.id.gift_notes) TextView mNotesTxt;
-    @Bind(R.id.gift_url_container) ViewGroup mUrlViewGroup;
-    @Bind(R.id.gift_url) TextView mUrlTxt;
-    @Bind(R.id.gift_image) ImageView mGiftImageView;
-    @Bind(R.id.ic_contact_bitmap) ImageView mContactImageView;
     @Bind(R.id.contact_birthday_date) TextView mBirthdayTxt;
     @Bind(R.id.contact_anniversary) ViewGroup mAnniversaryViewGroup;
     @Bind(R.id.contact_anniversary_date) TextView mAnniversaryTxt;
@@ -73,7 +65,7 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
 
         // Attach some data needed to populate our fragment layouts
         Bundle args = new Bundle();
-        args.putParcelable("mGift", gift);
+        args.putParcelable("gift", gift);
         args.putString("contactName", contactName);
         args.putInt("contactId", contactId);
 
@@ -89,16 +81,14 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
         ButterKnife.bind(this, rootView);
 
         mContactImageCache = ((GiftwiseApplication)getActivity().getApplicationContext()).getContactImageCache();
-
         mGiftImageCache = ((GiftwiseApplication) getActivity().getApplicationContext()).getGiftImageCache();
 
-        // Get the Id of the raw contact
         Bundle args = getArguments();
-        mGift = args.getParcelable("mGift");
+        mGift = args.getParcelable("gift");
         mContactName = args.getString("contactName");
         mContactId = args.getInt("contactId");
 
-        initViews();
+        initViews(rootView);
         setHasOptionsMenu(true);
 
         return rootView;
@@ -134,40 +124,49 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
         }
     }
 
-    private void initViews() {
-        mNameTxt.setText(mGift.getName());
-        mRecipientTV.setText(mContactName);
-        mPriceTxt.setText(mGift.getFormattedPrice());
+    private void initViews(View rootView) {
+        TextView nameTxt = ButterKnife.findById(rootView, R.id.gift_name);
+        TextView recipientTV = ButterKnife.findById(rootView, R.id.contact_display_name);
+        TextView priceTxt = ButterKnife.findById(rootView, R.id.gift_price);
+        TextView notesTxt = ButterKnife.findById(rootView, R.id.gift_notes);
+        ViewGroup urlViewGroup = ButterKnife.findById(rootView, R.id.gift_url_container);
+        TextView urlTxt = ButterKnife.findById(rootView, R.id.gift_url);
+        ImageView giftImageView = ButterKnife.findById(rootView, R.id.gift_image);
+        ImageView contactImageView = ButterKnife.findById(rootView, R.id.ic_contact_bitmap);
+
+        nameTxt.setText(mGift.getName());
+        recipientTV.setText(mContactName);
+        priceTxt.setText(mGift.getFormattedPrice());
 
         // notes about Gift
         String notes = mGift.getNotes();
         if (TextUtils.isEmpty(notes)) {
-            mNotesTxt.setVisibility(View.GONE);
+            notesTxt.setVisibility(View.GONE);
         } else {
-            mNotesTxt.setVisibility(View.VISIBLE);
-            mNotesTxt.setText(notes);
+            notesTxt.setVisibility(View.VISIBLE);
+            notesTxt.setText(notes);
         }
 
         // website URL
         String url = mGift.getUrl();
         if (TextUtils.isEmpty(url)) {
-            mUrlViewGroup.setVisibility(View.GONE);
+            urlViewGroup.setVisibility(View.GONE);
         } else {
-            mUrlViewGroup.setVisibility(View.VISIBLE);
-            mUrlTxt.setText(trimUrl(url));
+            urlViewGroup.setVisibility(View.VISIBLE);
+            urlTxt.setText(trimUrl(url));
         }
 
         // set image from cache if exists
         BitmapDrawable bitmap = mGiftImageCache.getBitmapFromMemCache(mGift.getGiftId() + "");
         if (bitmap != null ) {
-            Log.i(LOG_TAG, "Bitmap loaded from cache for giftId: " + mGift.getGiftId());
-            mGiftImageView.setImageDrawable(BitmapUtils.getRoundedBitmapDrawable(getResources(), bitmap.getBitmap()));
+            Log.d(LOG_TAG, "Bitmap loaded from cache for giftId: " + mGift.getGiftId());
+            giftImageView.setImageDrawable(BitmapUtils.getRoundedBitmapDrawable(getResources(), bitmap.getBitmap()));
         } else {
-            Log.i(LOG_TAG, "No bitmap found in cache for giftId: " + mGift.getGiftId());
+            Log.d(LOG_TAG, "No bitmap found in cache for giftId: " + mGift.getGiftId());
         }
 
         // load contact avatar image
-        loadContactBitmap(getActivity().getContentResolver(), mContactId, mContactImageView);
+        loadContactBitmap(getActivity().getContentResolver(), mContactId, contactImageView);
     }
 
     private void editGift() {

@@ -144,14 +144,11 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         switch (item.getItemId()) {
             case R.id.gift_view:
                 openGift(giftId);
-                Log.d(LOG_TAG, "View pressed");
                 return true;
             case R.id.gift_edit:
                 editGift(giftId);
-                Log.d(LOG_TAG, "Edit pressed");
                 return true;
             case R.id.gift_delete:
-                Log.d(LOG_TAG, "Delete pressed");
                 deleteGift(giftId);
                 return true;
             default:
