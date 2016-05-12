@@ -31,7 +31,7 @@
     </string-array>
     <string name="title_activity_create_contact">Create contact</string>
     <string name="title_activity_edit_gift">GiftWise</string>
-    <string name="gift_name">Name</string>
+    <string name="gift_name">Gift</string>
     <string name="action_share">Share</string>
     <string name="action_browse">Open URL</string>
 
@@ -86,7 +86,7 @@
     <string name="gift_recipient_label">Recipient</string>
     <string name="gift_details_label">Gift</string>
     <string name="gift_price_label">Price</string>
-    <string name="gift_url_label">URL</string>
+    <string name="gift_url_label">Website URL</string>
     <string name="gift_notes_label">Notes</string>
     <string name="gift_item_label">Item</string>
     <string name="item_spinner_hint">Shirt</string>
