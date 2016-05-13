@@ -85,6 +85,15 @@ public class GiftItemAdapter extends CursorRecyclerViewAdapter<GiftItemAdapter.V
 
             viewHolder.priceView.setText(format.format(price));
         }
+
+        String notes = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NOTES));
+        if (TextUtils.isEmpty(notes)) {
+            viewHolder.notesView.setVisibility(View.GONE);
+        } else {
+            viewHolder.notesView.setVisibility(View.VISIBLE);
+            viewHolder.notesView.setText(notes);
+        }
+
         // tag the menu view with the GiftId for retrieval in the menu selection handler later
         //viewHolder.menuView.setTag(giftId);
 
@@ -96,6 +105,7 @@ public class GiftItemAdapter extends CursorRecyclerViewAdapter<GiftItemAdapter.V
         @Bind(R.id.list_item_gift_image) ImageView iconView;
         @Bind(R.id.list_item_gift_name_textview) TextView nameView;
         @Bind(R.id.list_item_gift_price_textview) TextView priceView;
+        @Bind(R.id.list_item_gift_notes) TextView notesView;
 
         public ViewHolder(View itemView) {
             super(itemView);

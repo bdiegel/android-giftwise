@@ -8,8 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -84,9 +84,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         });
 
         mGiftRecyclerView.setAdapter(mGiftAdapter);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        mGiftRecyclerView.setLayoutManager(llm);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        mGiftRecyclerView.setLayoutManager(layoutManager);
 
         // register a context menu (long-click)
         registerForContextMenu(mGiftRecyclerView);
