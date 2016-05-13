@@ -7,12 +7,16 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,13 +45,15 @@ public class GiftItemAdapter extends CursorRecyclerViewAdapter<GiftItemAdapter.V
 
     private GiftImageCache mImageCache;
 
-    private GiftItemClickListener mListener;
+    private GiftItemActionListener mListener;
 
-    public interface GiftItemClickListener {
-        public void onGiftItemClick(View view, Gift selection);
+    public interface GiftItemActionListener {
+        void openGift(Gift gift);
+        void editGift(Gift gift);
+        void deleteGift(Gift gift);
     }
 
-    public GiftItemAdapter(Context context, Cursor cursor, GiftItemClickListener listener) {
+    public GiftItemAdapter(Context context, Cursor cursor, GiftItemActionListener listener) {
         super(context, cursor);
         mListener = listener;
         mImageCache = ((GiftwiseApplication) context.getApplicationContext()).getGiftImageCache();
@@ -61,8 +67,9 @@ public class GiftItemAdapter extends CursorRecyclerViewAdapter<GiftItemAdapter.V
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-        long giftId = cursor.getLong(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
+    public void onBindViewHolder(final ViewHolder viewHolder, Cursor cursor) {
+        final long giftId = cursor.getLong(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
+        final int position = cursor.getPosition();
 
         // enable a long-click context menu
         viewHolder.itemView.setLongClickable(true);
@@ -95,7 +102,20 @@ public class GiftItemAdapter extends CursorRecyclerViewAdapter<GiftItemAdapter.V
         }
 
         // tag the menu view with the GiftId for retrieval in the menu selection handler later
-        //viewHolder.menuView.setTag(giftId);
+        //viewHolder.menuView.setTag(mGiftId);
+
+        viewHolder.menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //mGiftId
+                Log.d(TAG, "onOverflowClick CLICK");
+                PopupMenu popup = new PopupMenu(getContext(), viewHolder.menuButton);
+                popup.setOnMenuItemClickListener(new OverflowMenuListener(position, giftId));
+                MenuInflater inflater = popup.getMenuInflater();
+                inflater.inflate(R.menu.menu_gift_item, popup.getMenu());
+                popup.show();
+            }
+        });
 
         // display gift image
         loadBitmap(getContext().getContentResolver(), giftId, viewHolder.iconView, cursor);
@@ -106,37 +126,51 @@ public class GiftItemAdapter extends CursorRecyclerViewAdapter<GiftItemAdapter.V
         @Bind(R.id.list_item_gift_name_textview) TextView nameView;
         @Bind(R.id.list_item_gift_price_textview) TextView priceView;
         @Bind(R.id.list_item_gift_notes) TextView notesView;
+        @Bind(R.id.card_overflow) ImageButton menuButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
-         //   itemView.setOnCreateContextMenuListener(this);
         }
 
         @OnClick(R.id.list_item_card)
         public void onClick() {
-            // this moves the cursor to desired position:
             GiftItemAdapter.this.getItemId(getAdapterPosition());
             Gift gift = Gift.createFromCursor(getCursor());
-            mListener.onGiftItemClick(this.itemView, gift);
+            mListener.openGift(gift);
+        }
+    }
+
+    class OverflowMenuListener implements PopupMenu.OnMenuItemClickListener {
+
+        int mPosition;
+        long mGiftId;
+
+        public OverflowMenuListener(int position, long giftId) {
+            mPosition = position;
+            mGiftId = giftId;
         }
 
-//        @Override
-//        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-//            MenuInflater inflater = getMenuInflater();
-//            inflater.inflate(R.menu.menu_gift_item, menu);
-//
-//            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-//
-//            // Get cursor from the adapter
-//            Cursor cursor = getCursor();
-//
-//            // Extract Name from the selected item for menu title
-//            cursor.moveToPosition(info.position);
-//            String name = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME));
-//            menu.setHeaderTitle(name);
-//        }
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            Cursor cursor = getCursor();
+            cursor.moveToPosition(mPosition);
+            Gift gift = Gift.createFromCursor(cursor);
+
+            switch (item.getItemId()) {
+                case R.id.gift_view:
+                    mListener.openGift(gift);
+                    return true;
+                case R.id.gift_edit:
+                    mListener.editGift(gift);
+                    return true;
+                case R.id.gift_delete:
+                    mListener.deleteGift(gift);
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 
     public void loadBitmap(ContentResolver contentResolver, long resId, ImageView imageView, Cursor cursor) {
@@ -166,7 +200,7 @@ public class GiftItemAdapter extends CursorRecyclerViewAdapter<GiftItemAdapter.V
         StringBuffer buffer = new StringBuffer();
 
         if (getItemCount() > 0 ) {
-            // note current position then reset cursor
+            // note current mPosition then reset cursor
             int position = getCursor().getPosition();
             getCursor().moveToPosition(-1);
 

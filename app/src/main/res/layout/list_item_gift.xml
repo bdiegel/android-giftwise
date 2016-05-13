@@ -35,25 +35,43 @@
             android:layout_marginRight="@dimen/activity_vertical_margin_half"
             android:orientation="vertical"
             >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/list_item_gift_name_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                tools:text="Gift name"
-                android:textAppearance="@style/CardTextTitle"
-                />
+                <TextView
+                    android:id="@+id/list_item_gift_name_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Gift name"
+                    android:textAppearance="@style/CardTextTitle"
+                    />
 
-            <TextView
-                android:id="@+id/list_item_gift_price_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text=""
-                tools:text="$59.99"
-                android:textAppearance="@style/CardTextPrice"
-                />
+                <TextView
+                    android:id="@+id/list_item_gift_price_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text=""
+                    android:layout_below="@+id/list_item_gift_name_textview"
+                    tools:text="$59.99"
+                    android:textAppearance="@style/CardTextPrice"
+                    />
+
+                <ImageButton
+                    android:id="@+id/card_overflow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/list_item_gift_name_textview"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/ic_menu_overflow_card_dark_normal"
+                    />
+
+            </RelativeLayout>
+
+
 
             <TextView
                 android:id="@+id/list_item_gift_notes"

@@ -11,13 +11,9 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.honu.giftwise.adapters.GiftItemAdapter;
 import com.honu.giftwise.data.Gift;
@@ -30,7 +26,7 @@ import butterknife.OnClick;
 /**
  * Fragments that displays Gift items in a ListView.
  */
-public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, GiftItemAdapter.GiftItemActionListener {
 
     private static final String TAG = IdeasFragment.class.getSimpleName();
 
@@ -76,12 +72,7 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         // initialize adapter (no data)
         Uri giftsForGwidUri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
         Cursor cur = getActivity().getContentResolver().query(giftsForGwidUri, null, null, null, null);
-        mGiftAdapter = new GiftItemAdapter(getActivity(), cur, new GiftItemAdapter.GiftItemClickListener() {
-            @Override
-            public void onGiftItemClick(View view, Gift selection) {
-                openGift(selection.getGiftId());
-            }
-        });
+        mGiftAdapter = new GiftItemAdapter(getActivity(), cur, this);
 
         mGiftRecyclerView.setAdapter(mGiftAdapter);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -99,94 +90,33 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu_gift_item, menu);
-
-        // TODO: the menuInfo is null so we do not the position of the item
-//        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-//
-//        // Get cursor from the adapter
-//        Cursor cursor = mGiftAdapter.getCursor();
-//
-//        // Extract Name from the selected item for menu title
-//        cursor.moveToPosition(info.position);
-//        String name = cursor.getString(cursor.getColumnIndex(GiftwiseContract.GiftEntry.COLUMN_GIFT_NAME));
-//        menu.setHeaderTitle(name);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        // Get cursor from the adapter
-        Cursor cursor = mGiftAdapter.getCursor();
-
-        // Extract data from the selected item
-        cursor.moveToPosition(info.position);
-        int giftId = cursor.getInt(cursor.getColumnIndex(GiftwiseContract.GiftEntry._ID));
-
-        switch (item.getItemId()) {
-            case R.id.gift_view:
-                openGift(giftId);
-                return true;
-            case R.id.gift_edit:
-                editGift(giftId);
-                return true;
-            case R.id.gift_delete:
-                deleteGift(giftId);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-    }
-
     public String getShareText() {
         if (mGiftAdapter != null)
             return mGiftAdapter.getShareText();
         return null;
     }
 
-    private void openGift(long giftId) {
-        Log.d(TAG, "Open GiftId: " + giftId);
-
-        // Get cursor from the adapter
-        Cursor cursor = mGiftAdapter.getCursor();
-
-        // start activity to add/edit gift idea
+    public void openGift(Gift gift) {
         Intent intent = new Intent(getActivity(), ViewGiftActivity.class);
-        Gift gift = Gift.createFromCursor(cursor);
         intent.putExtra("gift", gift);
         intent.putExtra("contactName", mContactName);
         intent.putExtra("contactId", mContactId);
-
         startActivityForResult(intent, 1);
     }
 
-    private void editGift(long giftId) {
-        Log.d(TAG, "Edit GiftId: " + giftId);
-
-        // Get cursor from the adapter
-        Cursor cursor = mGiftAdapter.getCursor();
-
-        // start activity to add/edit gift idea
+    public void editGift(Gift gift) {
         Intent intent = new Intent(getActivity(), EditGiftActivity.class);
-        Gift gift = Gift.createFromCursor(cursor);
         intent.putExtra("gift", gift);
         intent.putExtra("contactName", mContactName);
-
         startActivityForResult(intent, 1);
     }
 
-    private void deleteGift(long giftId) {
-        Log.d(TAG, "Delete Gift id: " + giftId);
+    public void deleteGift(Gift gift) {
+        Log.d(TAG, "Delete Gift id: " + gift.getGiftId());
         Uri uri = GiftwiseContract.GiftEntry.buildGiftsForGiftwiseIdUri(mGiftwiseId);
         String where = GiftwiseContract.GiftEntry.TABLE_NAME + "." + GiftwiseContract.GiftEntry._ID + " = ? ";
-        String[] whereArgs =  new String[]{  Long.toString(giftId) };
-        mGiftAdapter.removeImageFromCache("" + giftId);
+        String[] whereArgs =  new String[]{  Long.toString(gift.getGiftId()) };
+        mGiftAdapter.removeImageFromCache("" + gift.getGiftId());
         getActivity().getContentResolver().delete(uri, where, whereArgs);
     }
 
