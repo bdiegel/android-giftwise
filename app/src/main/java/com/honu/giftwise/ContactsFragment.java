@@ -14,18 +14,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
+import com.honu.giftwise.adapters.ContactAdapter;
 import com.honu.giftwise.data.ContactsUtils;
 import com.honu.giftwise.data.GiftwiseContract;
 
@@ -34,12 +31,11 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 
 /**
  * Fragment for displaying list of contacts for Main activity
  */
-public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public  class ContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, ContactAdapter.ContactItemActionListener {
 
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
 
@@ -47,7 +43,7 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
     private static final int CONTACTS_LOADER = 0;
 
-    @Bind(R.id.contacts_listview) ListView mListView;
+    @Bind(R.id.contacts_listview) RecyclerView mContactList;
 
     private ContactAdapter mContactAdapter;
 
@@ -60,17 +56,15 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         ButterKnife.bind(this, rootView);
 
         // initialize adapter (no data)
-        mContactAdapter = new ContactAdapter(getActivity(), null, 0);
-        mListView.setAdapter(mContactAdapter);
-
-        registerForContextMenu(mListView);
+        mContactAdapter = new ContactAdapter(getContext(), null,this);
+        mContactList.setAdapter(mContactAdapter);
+        mContactList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-
         // initialize loader of GiftWise contacts (requires permission)
         showContacts();
 
@@ -106,59 +100,6 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu_contact_item, menu);
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-
-        // Get cursor from the adapter
-        Cursor cursor = mContactAdapter.getCursor();
-
-        // Extract Name from the selected item for menu title
-        cursor.moveToPosition(info.position);
-        String contactName = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME);
-
-        menu.setHeaderTitle(contactName);
-    }
-
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
-        Log.d(LOG_TAG, "Selected info.position: " + info.position);
-
-        // Get cursor from the adapter
-        Cursor cursor = mContactAdapter.getCursor();
-
-        // Extract data from the selected item
-        cursor.moveToPosition(info.position);
-        long contactId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
-        long rawId = cursor.getLong(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
-        String gwid = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
-
-        switch (item.getItemId()) {
-            case R.id.contact_view:
-                viewContact(mContactAdapter, info.position);
-                Log.d(LOG_TAG, "View pressed");
-                return true;
-            case R.id.contact_edit:
-                editContact(contactId);
-                Log.d(LOG_TAG, "Edit pressed");
-                return true;
-            case R.id.contact_delete:
-                Log.d(LOG_TAG, "Delete pressed");
-                deleteContact(rawId, gwid);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String accountName = getString(R.string.account_name);
         String accountType = getString(R.string.account_type);
@@ -175,36 +116,18 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
 
     }
 
-    @OnItemClick(R.id.contacts_listview)
-    public void onContactClicked(AdapterView<?> parent, int position) {
-        Log.i(LOG_TAG, "Item clicked: " + position);
-        viewContact((ContactAdapter)parent.getAdapter(), position);
-    }
-
-    private void viewContact(CursorAdapter adapter, int position) {
-        // Get the Cursor
-        Cursor cursor = adapter.getCursor();
-
-        // Extract data from the item in the Cursor:
-        cursor.moveToPosition(position);
-        String contactId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_ID);
-        String contactName = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_NAME);
-        String rawId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_RAW_CONTACT_ID);
-        String gwId = cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
-
-        //String mContactKey = getString(CONTACT_KEY_INDEX);
-        // Create the contact's content Uri
-        //Uri mContactUri = Contacts.getLookupUri(mContactId, mContactKey);
-
+    @Override
+    public void viewContact(String contactName, long contactId, long rawId, String gwId) {
         Intent intent = new Intent(getActivity(), ContactActivity.class);
         intent.putExtra("name", contactName );
-        intent.putExtra("contactId", contactId );
-        intent.putExtra("rawId", rawId );
+        intent.putExtra("contactId", String.valueOf(contactId));
+        intent.putExtra("rawId", String.valueOf(rawId));
         intent.putExtra("gwId", gwId );
         getActivity().startActivity(intent);
     }
 
-    private void deleteContact(long rawContactId, String gwid) {
+    @Override
+    public void deleteContact(long rawContactId, String gwid) {
         Log.d(LOG_TAG, "rawContactId: " + rawContactId + " gwid: " + gwid);
 
         // uris for deleting data
@@ -240,7 +163,8 @@ public  class ContactsFragment extends Fragment implements LoaderManager.LoaderC
         ContactsUtils.deleteRawContact(getActivity(), rawContactId, gwid, accountName, accountType);
     }
 
-    private void editContact(long contactId) {
+    @Override
+    public void editContact(long contactId) {
         // use content uri to edit contacts:
         Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
 

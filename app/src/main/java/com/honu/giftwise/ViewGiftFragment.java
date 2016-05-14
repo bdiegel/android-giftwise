@@ -238,7 +238,7 @@ public class ViewGiftFragment extends Fragment implements ContactEventDateLoader
      * Start an async task to load image from the contacts content provider. If an
      * image is found, replace the place-holder and cache the image.
      */
-    public void loadContactBitmap(ContentResolver contentResolver, int resId, ImageView imageView) {
+    public void loadContactBitmap(ContentResolver contentResolver, long resId, ImageView imageView) {
         final String imageKey = String.valueOf(resId);
 
         final RoundedBitmapDrawable bitmap = mContactImageCache.getBitmapFromMemCache(imageKey);

@@ -25,7 +25,7 @@ import java.lang.ref.WeakReference;
 /**
  * Background task to load image from the contacts provider.
  */
-public class ContactBitmapTask extends AsyncTask<Integer, Void, Drawable> {
+public class ContactBitmapTask extends AsyncTask<Long, Void, Drawable> {
 
     private static final String LOG_TAG = ContactBitmapTask.class.getSimpleName();
 
@@ -43,8 +43,8 @@ public class ContactBitmapTask extends AsyncTask<Integer, Void, Drawable> {
 
     // Decode image in background.
     @Override
-    protected Drawable doInBackground(Integer... params) {
-        int contactId = params[0];
+    protected Drawable doInBackground(Long... params) {
+        long contactId = params[0];
         final Bitmap bitmap = getContactPhoto(contactId);
 
         if (bitmap != null) {
@@ -66,7 +66,7 @@ public class ContactBitmapTask extends AsyncTask<Integer, Void, Drawable> {
         }
     }
 
-    final public Bitmap getContactPhoto(int contactId) {
+    final public Bitmap getContactPhoto(long contactId) {
         ContentResolver cr = mImageView.get().getContext().getContentResolver();
         Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
 

@@ -8,11 +8,11 @@
     tools:context="com.honu.giftwise.ContactsFragment"
     >
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/contacts_listview"
-        android:divider="@null"/>
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_contact_fab"
