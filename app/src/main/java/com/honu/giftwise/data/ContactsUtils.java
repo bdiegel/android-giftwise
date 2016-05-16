@@ -24,8 +24,6 @@ import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Currency;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 
@@ -64,6 +62,7 @@ public class ContactsUtils {
     public static Loader<Cursor> loadRawContacts(Context context, String accountName, String accountType) {
 
         Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI.buildUpon()
+        //Uri rawContactUri = ContactsContract.RawContactsEntity.CONTENT_URI.buildUpon()
               .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_NAME, accountName)
               .appendQueryParameter(ContactsContract.RawContacts.ACCOUNT_TYPE, accountType)
               .appendQueryParameter(ContactsContract.RawContacts.DELETED, "0")
@@ -278,37 +277,37 @@ public class ContactsUtils {
         cursor.close();
     }
 
-    public static String getUsername(Context context) {
-        AccountManager manager = AccountManager.get(context);
-        Account[] accounts = manager.getAccountsByType("com.google");
-        List<String> possibleEmails = new LinkedList<String>();
-
-        for (Account account : accounts) {
-            // TODO: Check possibleEmail against an email regex or treat
-            // account.name as an email address only for certain account.type
-            // values.
-
-            String possibleEmail = account.name;
-            String type = account.type;
-
-            if (type.equals("com.google")) {
-                Log.e("", "Emails: " + possibleEmail);
-                break;
-            }
-
-            possibleEmails.add(possibleEmail);
-        }
-
-        if (!possibleEmails.isEmpty() && possibleEmails.get(0) != null) {
-            String email = possibleEmails.get(0);
-            String[] parts = email.split("@");
-            if (parts.length > 0 && parts[0] != null)
-                return parts[0];
-            else
-                return null;
-        } else
-            return null;
-    }
+//    public static String getUsername(Context context) {
+//        AccountManager manager = AccountManager.get(context);
+//        Account[] accounts = manager.getAccountsByType("com.google");
+//        List<String> possibleEmails = new LinkedList<String>();
+//
+//        for (Account account : accounts) {
+//            // TODO: Check possibleEmail against an email regex or treat
+//            // account.name as an email address only for certain account.type
+//            // values.
+//
+//            String possibleEmail = account.name;
+//            String type = account.type;
+//
+//            if (type.equals("com.google")) {
+//                Log.e("", "Emails: " + possibleEmail);
+//                break;
+//            }
+//
+//            possibleEmails.add(possibleEmail);
+//        }
+//
+//        if (!possibleEmails.isEmpty() && possibleEmails.get(0) != null) {
+//            String email = possibleEmails.get(0);
+//            String[] parts = email.split("@");
+//            if (parts.length > 0 && parts[0] != null)
+//                return parts[0];
+//            else
+//                return null;
+//        } else
+//            return null;
+//    }
 
     /**
      * Load all visible Contacts from the content provider

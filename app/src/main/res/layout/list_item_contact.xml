@@ -1,36 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/list_item_contact"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/list_item_contact"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
-
-    <FrameLayout
-        android:layout_width="72dp"
-        android:layout_height="72dp">
-
-        <ImageView
-            android:id="@+id/list_item_contact_image"
-            android:layout_gravity="center"
-            android:layout_width="48dp"
-            android:layout_height="48dp"/>
-
-    </FrameLayout>
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
 
 
-    <TextView
-        android:id="@+id/list_item_contact_name_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:textAppearanceLarge"
+    <ImageView
+        android:id="@+id/list_item_contact_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        tools:src="@drawable/ic_face_grey600_48dp"
         />
 
-    <!--<ImageView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/imageView"/>-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/list_item_contact_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            tools:text="Contact Name"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            />
+
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/list_item_contact_name_textview"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="@android:style/TextAppearance.Medium"-->
+            <!--tools:text="Contact Name"-->
+            <!--/>-->
+        <!--android:textAppearance="@android:style/TextAppearance.Medium"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/list_item_contact_events"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="@android:style/TextAppearance.Small"-->
+            <!--android:layout_below="@+id/list_item_contact_name_textview"-->
+            <!--tools:text="subtext line"-->
+            <!--/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/list_item_contact_gift_count"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:fontFamily="sans-serif-condensed"-->
+            <!--android:paddingLeft="@dimen/activity_horizontal_margin"-->
+            <!--android:paddingStart="@dimen/activity_horizontal_margin"-->
+            <!--android:textAppearance="@android:style/TextAppearance.Small"-->
+            <!--tools:text="99"-->
+            <!--/>-->
+
+    </RelativeLayout>
+
 </LinearLayout>
