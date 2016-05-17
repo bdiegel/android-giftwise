@@ -1,7 +1,10 @@
 package com.honu.giftwise.data;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import java.io.ByteArrayOutputStream;
 
@@ -37,5 +40,11 @@ public class BitmapUtils {
         }
 
         return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    public static RoundedBitmapDrawable getRoundedBitmapDrawable(Resources res, Bitmap src) {
+        RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(res, src);
+        dr.setCornerRadius(5);
+        return dr;
     }
 }

@@ -26,10 +26,26 @@
     <color name="primary">#009688</color>
     <color name="primary_dark">#00796B</color>
     <!--<color name="primary_light">#B2DFDB</color>-->
-    <color name="accent">#FF4081</color>
-    <color name="accent_400">#F50057</color>
-    <!--<color name="primary_text">#212121</color>-->
-    <!--<color name="secondary_text">#727272</color>-->
+
+    <!-- pink accent -->
+    <!--<color name="accent">#FF4081</color>-->
+    <!--<color name="accent_400">#F50057</color>-->
+    <color name="pink_accent">#FF4081</color>
+
+    <!-- teal accent: A200, A400 -->
+    <!--<color name="accent">#64FFDA</color>-->
+    <!--<color name="accent_400">#1DE9B6</color>-->
+
+    <!-- teal: 500 (primary), 600 -->
+    <color name="accent">#009688</color>
+    <color name="accent_400">#00897B</color>
+
+    <!-- yellow accent -->
+    <!--<color name="accent">#FFEB3B</color>-->
+    <!--<color name="accent_400">#FFEA00</color>-->
+
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
     <!--<color name="icons">#FFFFFF</color>-->
     <!--<color name="divider">#B6B6B6</color>-->
 
@@ -42,7 +58,8 @@
     <!--<color name="colorSecondary">@color/md_yellow_400</color>-->
     <!--<color name="colorSecondaryDark">@color/md_yellow_500</color>-->
 
-    <color name="tabsScrollColor">@color/accent</color>
+    <!--<color name="tabsScrollColor">@color/accent</color>-->
+    <color name="tabsScrollColor">@color/md_yellow_500</color>
 
     <!-- Floating Action Button -->
     <color name="fab_color_1">@color/accent</color>
@@ -68,7 +85,9 @@
     </string-array>
 
     <color name="welcome_color_0">@color/primary</color>
-    <color name="welcome_color_1">@color/accent</color>
+    <color name="welcome_color_1">@color/pink_accent</color>
     <color name="welcome_color_2">@color/md_yellow_700</color>
 
+    <color name="divider">#1F000000</color>
+    <color name="window_background">#FFF5F5F5</color>
 </resources>

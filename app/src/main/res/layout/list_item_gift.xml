@@ -1,70 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView
+    android:id="@+id/list_item_card"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:layout_margin="4dp"
+    >
 
-    <FrameLayout
-        android:layout_width="72dp"
-        android:layout_height="72dp">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
 
         <ImageView
             android:id="@+id/list_item_gift_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:src="@drawable/gift_silhouette_48dp"
             />
 
-    </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingLeft="8dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/list_item_gift_name_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:fontFamily="sans-serif-condensed"
-            android:textAppearance="?android:textAppearanceLarge"
-        />
+            android:layout_marginTop="@dimen/activity_vertical_margin_half"
+            android:layout_marginLeft="@dimen/activity_vertical_margin_half"
+            android:layout_marginRight="@dimen/activity_vertical_margin_half"
+            android:orientation="vertical"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <!--<TextView-->
-            <!--android:id="@+id/list_item_gift_url_textview"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:text="URL"-->
-            <!--android:singleLine="true"-->
-            <!--android:ellipsize="end"-->
-            <!--android:gravity="bottom"-->
-            <!--android:fontFamily="sans-serif-condensed"-->
-            <!--android:textAppearance="?android:textAppearanceSmall"-->
-            <!--/>-->
+                <TextView
+                    android:id="@+id/list_item_gift_name_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    tools:text="Gift name"
+                    android:textAppearance="@style/CardTextTitle"
+                    />
+
+                <TextView
+                    android:id="@+id/list_item_gift_price_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text=""
+                    android:layout_below="@+id/list_item_gift_name_textview"
+                    tools:text="$59.99"
+                    android:textAppearance="@style/CardTextPrice"
+                    />
+
+                <ImageButton
+                    android:id="@+id/card_overflow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/list_item_gift_name_textview"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/ic_menu_overflow_card_dark_normal"
+                    />
+
+            </RelativeLayout>
+
+
+
+            <TextView
+                android:id="@+id/list_item_gift_notes"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                android:layout_marginBottom="@dimen/activity_vertical_margin_half"
+                tools:text="Some notes about the gift to buy"
+                android:textAppearance="@style/CardTextBody"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/list_item_gift_price_textview"
-        android:singleLine="true"
-        android:ellipsize="none"
-        android:layout_width="116dp"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_gravity="center_vertical"
-        android:text=""
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:fontFamily="sans-serif-condensed"
-        android:textAppearance="?android:textAppearanceMedium"
-        />
 
-</LinearLayout>
+</android.support.v7.widget.CardView>

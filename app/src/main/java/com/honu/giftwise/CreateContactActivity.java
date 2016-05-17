@@ -3,7 +3,7 @@ package com.honu.giftwise;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.honu.giftwise.data.ContactsUtils;
 
 
-public class CreateContactActivity extends ActionBarActivity {
+public class CreateContactActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = CreateContactActivity.class.getSimpleName();
 
@@ -52,19 +52,10 @@ public class CreateContactActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
 
         // navigation icon selected (done)
         if (id == android.R.id.home) {
-            Log.i(LOG_TAG, "navigation icon clicked");
             EditText nameEditText = (EditText) findViewById(R.id.contact_display_name);
             createRawContact(nameEditText.getText().toString());
             NavUtils.navigateUpFromSameTask(this);
@@ -115,7 +106,7 @@ public class CreateContactActivity extends ActionBarActivity {
                 String displayName = args.getString(ContactsUtils.DISPLAY_NAME);
 
                 if (!TextUtils.isEmpty(displayName)) {
-                    Log.i(LOG_TAG, "Set displayName: " + displayName);
+                    Log.d(LOG_TAG, "Set displayName: " + displayName);
                     EditText nameEditText = (EditText) rootView.findViewById(R.id.contact_display_name);
 
                     // hide keyboard and don't let user edit name

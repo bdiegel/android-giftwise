@@ -12,6 +12,7 @@ import com.honu.giftwise.data.GiftImageCache;
 public class GiftwiseApplication extends Application {
 
     private ContactImageCache mContactImageCache;
+
     private GiftImageCache mGiftImageCache;
 
     public static ContactImageCache getContactImageCache(Context context) {
@@ -19,7 +20,6 @@ public class GiftwiseApplication extends Application {
     }
 
     public ContactImageCache getContactImageCache() {
-
         if (mContactImageCache == null) {
             mContactImageCache = new ContactImageCache(this);
         }
@@ -32,7 +32,6 @@ public class GiftwiseApplication extends Application {
     }
 
     public GiftImageCache getGiftImageCache() {
-
         if (mGiftImageCache == null) {
             mGiftImageCache = new GiftImageCache(this);
         }

@@ -15,10 +15,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.honu.giftwise.data.GiftwiseContract;
 import com.honu.giftwise.data.Size;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
 public class EditSizeFragment extends Fragment {
@@ -26,6 +30,12 @@ public class EditSizeFragment extends Fragment {
     private static final String LOG_TAG = EditSizeFragment.class.getSimpleName();
 
     private Size size;
+
+    @Bind(R.id.item_textview) TextView mItemText;
+    @Bind(R.id.size_textview) TextView mSizeText;
+    @Bind(R.id.size_notes) EditText mNotesEdit;
+    @Bind(R.id.item_spinner) AutoCompleteTextView mItemAutocomplete;
+    @Bind(R.id.size_spinner) AutoCompleteTextView mSizeAutocomplete;
 
     public static EditSizeFragment getInstance(Size size) {
         EditSizeFragment fragment = new EditSizeFragment();
@@ -42,20 +52,16 @@ public class EditSizeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_edit_size, container, false);
-
-        // find views to configure
-        EditText itemEdit = (EditText) rootView.findViewById(R.id.item_spinner);
-        EditText sizeEdit = (EditText) rootView.findViewById(R.id.size_spinner);
-        EditText notesEdit = (EditText) rootView.findViewById(R.id.size_notes);
+        ButterKnife.bind(this, rootView);
 
         // Get the Id of the raw contact
         Bundle args = getArguments();
         size = args.getParcelable("size");
 
         // Populate fields from parcelable
-        if (!TextUtils.isEmpty(size.getItem())) itemEdit.setText(size.getItem());
-        if (!TextUtils.isEmpty(size.getSize())) sizeEdit.setText(size.getSize());
-        if (!TextUtils.isEmpty(size.getNotes())) notesEdit.setText(size.getNotes());
+        if (!TextUtils.isEmpty(size.getItem())) mItemText.setText(size.getItem());
+        if (!TextUtils.isEmpty(size.getSize())) mSizeText.setText(size.getSize());
+        if (!TextUtils.isEmpty(size.getNotes())) mNotesEdit.setText(size.getNotes());
 
         // initialize the auto-complete textviews
         initItemView(rootView);
@@ -63,9 +69,9 @@ public class EditSizeFragment extends Fragment {
 
         // repopulate form fields from state:
         if (savedInstanceState != null) {
-            itemEdit.setText(savedInstanceState.getString("size_item"));
-            sizeEdit.setText(savedInstanceState.getString("size_size"));
-            notesEdit.setText(savedInstanceState.getString("size_notes"));
+            mItemText.setText(savedInstanceState.getString("size_item"));
+            mSizeText.setText(savedInstanceState.getString("size_size"));
+            mNotesEdit.setText(savedInstanceState.getString("size_notes"));
         }
 
         // show options menu
@@ -78,21 +84,14 @@ public class EditSizeFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // get values from all fields:
-        View rootView = getView();
-        EditText itemEdit = (EditText) rootView.findViewById(R.id.item_spinner);
-        EditText sizeEdit = (EditText) rootView.findViewById(R.id.size_spinner);
-        EditText notesEdit = (EditText) rootView.findViewById(R.id.size_notes);
-
         // save values to bundle
-        outState.putString("size_item", itemEdit.getText().toString());
-        outState.putString("size_size", sizeEdit.getText().toString());
-        outState.putString("size_notes", notesEdit.getText().toString());
+        outState.putString("size_item", mItemText.getText().toString());
+        outState.putString("size_size", mSizeText.getText().toString());
+        outState.putString("size_notes", mNotesEdit.getText().toString());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
@@ -111,54 +110,43 @@ public class EditSizeFragment extends Fragment {
 
 
     private void initItemView(View rootView) {
-
-        AutoCompleteTextView mItemView = (AutoCompleteTextView) rootView.findViewById(R.id.item_spinner);
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
               R.array.clothing_choices,
               android.R.layout.simple_dropdown_item_1line);
 
-        mItemView.setAdapter(adapter);
+        mItemAutocomplete.setAdapter(adapter);
     }
 
     private void initSizeView(View rootView) {
-
-        AutoCompleteTextView mSizeView = (AutoCompleteTextView) rootView.findViewById(R.id.size_spinner);
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
               R.array.size_choices,
               android.R.layout.simple_dropdown_item_1line);
 
-        mSizeView.setAdapter(adapter);
+        mSizeAutocomplete.setAdapter(adapter);
     }
 
     private boolean createOrSaveSize() {
-
-        EditText itemEdit = (EditText) getActivity().findViewById(R.id.item_spinner);
-        EditText sizeEdit = (EditText) getActivity().findViewById(R.id.size_spinner);
-        EditText notesEdit = (EditText) getActivity().findViewById(R.id.size_notes);
-
         ContentValues values = new ContentValues();
 
-        String itemName = itemEdit.getText().toString();
-        String sizeName = sizeEdit.getText().toString();
+        String itemName = mItemText.getText().toString();
+        String sizeName = mSizeText.getText().toString();
 
         if (TextUtils.isEmpty(itemName)) {
             Toast.makeText(getActivity(), "Item name is required", Toast.LENGTH_LONG).show();
-            itemEdit.requestFocus();
+            mItemText.requestFocus();
             return false;
         }
 
         if (TextUtils.isEmpty(sizeName)) {
             Toast.makeText(getActivity(), "Size is required", Toast.LENGTH_LONG).show();
-            sizeEdit.requestFocus();
+            mSizeText.requestFocus();
             return false;
         }
 
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_GIFTWISE_ID, size.getGiftwiseId());
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_ITEM_NAME, itemName);
         values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME, sizeName);
-        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES, notesEdit.getText().toString());
+        values.put(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES, mNotesEdit.getText().toString());
 
         Uri uri = GiftwiseContract.SizeEntry.buildSizesForGiftwiseIdUri(size.getGiftwiseId());
 

@@ -36,7 +36,8 @@
         </activity>
         <activity
             android:name=".ContactActivity"
-            android:label="@string/title_activity_contact" >
+            android:label="@string/title_activity_contact"
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
@@ -44,6 +45,7 @@
         <activity
             android:name=".CreateContactActivity"
             android:label="@string/title_activity_create_contact"
+            android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -52,10 +54,11 @@
         <activity
             android:name=".EditGiftActivity"
             android:label="@string/title_activity_edit_gift"
+            android:parentActivityName=".ViewGiftActivity"
             android:windowSoftInputMode="stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ContactActivity" />
+                android:value=".ViewGiftActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

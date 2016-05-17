@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.honu.giftwise.data.GiftwiseContract;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 
 public class SizeAdapter extends CursorAdapter {
 
@@ -40,18 +43,17 @@ public class SizeAdapter extends CursorAdapter {
         String size = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_NAME));
         String notes = cursor.getString(cursor.getColumnIndex(GiftwiseContract.SizeEntry.COLUMN_SIZE_NOTES));
 
-        viewHolder.tvSize.setText(item + " - " + size);
-        viewHolder.tvNotes.setText(notes);
+        viewHolder.sizeText.setText(item + " - " + size);
+        viewHolder.notesText.setText(notes);
     }
 
     public static class ViewHolder {
 
-        public final TextView tvSize;
-        public final TextView tvNotes;
+        @Bind(R.id.list_item_with_size) TextView sizeText;
+        @Bind(R.id.list_item_with_size_notes) TextView notesText;
 
         public ViewHolder(final View view) {
-            tvSize = (TextView) view.findViewById(R.id.list_item_with_size);
-            tvNotes = (TextView) view.findViewById(R.id.list_item_with_size_notes);
+            ButterKnife.bind(this, view);
         }
     }
 }

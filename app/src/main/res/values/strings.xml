@@ -31,7 +31,7 @@
     </string-array>
     <string name="title_activity_create_contact">Create contact</string>
     <string name="title_activity_edit_gift">GiftWise</string>
-    <string name="gift_name">Name</string>
+    <string name="gift_name">Gift</string>
     <string name="action_share">Share</string>
     <string name="action_browse">Open URL</string>
 
@@ -77,6 +77,8 @@
     <string name="profile_events_label">EVENTS</string>
     <string name="contact_birthday_text">Birthday:</string>
     <string name="contact_anniversary">Anniversary:</string>
+    <string name="contact_birthday_text2">Birthday</string>
+    <string name="contact_anniversary2">Anniversary</string>
     <string name="profile_colors_label">COLORS</string>
     <string name="profile_sizes_label">SIZES</string>
     <string name="profile_addsize_button_label">Add Size</string>
@@ -84,7 +86,7 @@
     <string name="gift_recipient_label">Recipient</string>
     <string name="gift_details_label">Gift</string>
     <string name="gift_price_label">Price</string>
-    <string name="gift_url_label">URL</string>
+    <string name="gift_url_label">Website URL</string>
     <string name="gift_notes_label">Notes</string>
     <string name="gift_item_label">Item</string>
     <string name="item_spinner_hint">Shirt</string>
@@ -126,4 +128,6 @@
         </p>
         </html>]]>
     </string>
+    <string name="view_button">View</string>
+    <string name="label_gift_url">Gift from:</string>
 </resources>

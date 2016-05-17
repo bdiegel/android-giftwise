@@ -46,7 +46,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_cake_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_cake_grey600_24dp"
                     />
 
                 <TextView
@@ -71,16 +72,7 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     />
 
-                <!--<TextView-->
-                    <!--android:id="@+id/contact_birthday_label"-->
-                    <!--android:layout_width="100dp"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center_vertical"-->
-                    <!--android:text="birthday"-->
-                    <!--android:textAppearance="?android:textAppearanceSmall"-->
-                    <!--/>-->
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/contact_anniversary"
                 android:layout_width="fill_parent"
@@ -95,7 +87,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_local_bar_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_local_bar_grey600_24dp"
                     />
 
                 <TextView
@@ -120,14 +113,6 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     />
 
-                <!--<TextView-->
-                    <!--android:id="@+id/contact_anniversary_label"-->
-                    <!--android:layout_width="100dp"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center_vertical"-->
-                    <!--android:text="anniversary"-->
-                    <!--android:textAppearance="?android:textAppearanceSmall"-->
-                    <!--/>-->
             </LinearLayout>
 
         </LinearLayout>
@@ -169,7 +154,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_thumb_up_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_thumb_up_grey600_24dp"
                     />
 
                 <!-- this is a container where ImageViews for liked colors are dynamically added -->
@@ -201,7 +187,8 @@
                     android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:paddingRight="8dp"
-                    android:src="@drawable/ic_thumb_down_grey600_24dp"
+                    android:backgroundTint="@color/primary"
+                    android:background="@drawable/ic_thumb_down_grey600_24dp"
                     />
 
                 <!-- this is a container where ImageViews for disliked colors are dynamically added -->

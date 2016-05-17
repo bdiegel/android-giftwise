@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/contact_birthday"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin_half"
+    >
+
+    <!--<ImageView-->
+        <!--android:id="@+id/ic_contact_birthday"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:background="@drawable/ic_cake_grey600_24dp"-->
+        <!--android:backgroundTint="@color/primary"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--/>-->
+
+    <TextView
+        android:id="@+id/contact_birthday_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/contact_birthday_text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        />
+
+    <TextView
+        android:id="@+id/contact_birthday_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        tools:text="December 15, 1980"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/grey_700"
+        android:layout_toRightOf="@+id/contact_birthday_label"
+        android:layout_alignBottom="@+id/contact_birthday_label"
+        />
+
+
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/contact_birthday_date"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:text=""-->
+        <!--tools:text="December 15, 1980"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body2"-->
+        <!--android:textColor="@color/grey_700"-->
+
+        <!--/>-->
+
+    <!--&lt;!&ndash;android:layout_toRightOf="@+id/ic_contact_birthday"&ndash;&gt;-->
+    <!--&lt;!&ndash;android:layout_alignBottom="@+id/ic_contact_birthday"&ndash;&gt;-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/contact_birthday_label"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/contact_birthday_text2"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Caption"-->
+        <!--android:layout_toRightOf="@+id/contact_birthday_date"-->
+        <!--android:layout_alignBottom="@+id/contact_birthday_date"-->
+        <!--/>-->
+
+
+
+    <!--<TextView-->
+        <!--android:id="@+id/contact_birthday_label"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:text="@string/contact_birthday_text"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Caption"-->
+        <!--android:layout_toRightOf="@+id/ic_contact_birthday"-->
+        <!--android:layout_alignBottom="@+id/ic_contact_birthday"-->
+        <!--/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/contact_birthday_date"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text=""-->
+        <!--tools:text="December 15, 1980"-->
+        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body2"-->
+        <!--android:textColor="@color/grey_700"-->
+        <!--android:layout_toRightOf="@+id/contact_birthday_label"-->
+        <!--android:layout_alignBottom="@+id/contact_birthday_label"-->
+        <!--/>-->
+
+</RelativeLayout>

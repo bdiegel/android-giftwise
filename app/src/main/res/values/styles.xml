@@ -18,8 +18,11 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <!--<item name="android:textColorPrimary">@color/primary_text</item>-->
+        <!--<item name="android:textColorSecondary">@color/secondary_text</item>-->
 
         <!--<item name="android:datePickerStyle">@android:style/Widget.DatePicker</item>-->
+        <item name="android:windowBackground">@color/window_background</item>
     </style>
 
     <!--<style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark">-->
@@ -41,4 +44,33 @@
         <item name="android:paddingLeft">8dip</item>
     </style>
 
+    <style name="FabStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/fab_compat_margin</item>
+        <item name="rippleColor">@color/fab_color_1_muted</item>
+    </style>
+
+    <style name="CardTextTitle" parent="@android:style/TextAppearance">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="CardTextPrice" parent="@android:style/TextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif-regular</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="CardTextBody" parent="@android:style/TextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">?android:attr/textColorTertiary</item>
+    </style>
+
+    <dimen name="fab_compat_margin">0dp</dimen>
 </resources>

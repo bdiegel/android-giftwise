@@ -8,7 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,7 +26,7 @@ import com.honu.giftwise.data.GiftwiseContract;
 /**
  * Edit details of gift item
  */
-public class EditGiftActivity extends ActionBarActivity {
+public class EditGiftActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = EditGiftActivity.class.getSimpleName();
 
@@ -46,8 +46,6 @@ public class EditGiftActivity extends ActionBarActivity {
             setSupportActionBar(toolbar);
             toolbar.setNavigationIcon(R.drawable.ic_action_accept);
         }
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeButtonEnabled(true);
 
         // Set title (for both add or edit mode):
         getSupportActionBar().setTitle("Save Gift");
@@ -84,23 +82,18 @@ public class EditGiftActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // handle action bar item clicks here
         int id = item.getItemId();
 
-        Log.i(LOG_TAG, "onOptionsItemSelected id: " + id );
+        Log.d(LOG_TAG, "onOptionsItemSelected id: " + id );
 
         // navigation icon selected (done)
         if (id == android.R.id.home) {
-            Log.i(LOG_TAG, "navigation icon clicked");
-
             if (createOrSaveGift()) {
-//            NavUtils.navigateUpFromSameTask(this);
                 Intent intent = NavUtils.getParentActivityIntent(this);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 NavUtils.navigateUpTo(this, intent);
@@ -111,9 +104,8 @@ public class EditGiftActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     private boolean createOrSaveGift() {
-        Log.i(LOG_TAG, "create or save gift idea");
+        Log.d(LOG_TAG, "create or save gift idea");
 
         Uri prevUri = null;
 
@@ -171,7 +163,6 @@ public class EditGiftActivity extends ActionBarActivity {
         if (!TextUtils.isEmpty(notes))
             values.put(GiftwiseContract.GiftEntry.COLUMN_GIFT_NOTES, notes);
 
-        //byte[] bitmap = getImageData(gift.getGiftId());
         byte[] bitmap = gift.getBitmap();
 
         if (bitmap != null) {
@@ -181,16 +172,12 @@ public class EditGiftActivity extends ActionBarActivity {
             Log.d(LOG_TAG, "No GIFT_IMAGE for ContentValues");
         }
 
-        // insert new gift
+        // insert new gift or update existing one
         if (gift.getGiftId() == -1) {
-            //getContentResolver().insert(GiftwiseContract.GiftEntry.GIFT_URI, values);
-            //getContentResolver().insert(giftsForRawContactUri, values);
             getContentResolver().insert(uri, values);
-       // update existing gift
         } else {
             String selection = GiftwiseContract.GiftEntry._ID + " = ?";
             String[] selectionArgs = new String[] { gift.getGiftId() + "" };
-            //getContentResolver().update(GiftwiseContract.GiftEntry.GIFT_URI, values, selection, selectionArgs);
             getContentResolver().update(uri, values, selection, selectionArgs);
 
             // If recipient has changed, explicitly notify old uri
