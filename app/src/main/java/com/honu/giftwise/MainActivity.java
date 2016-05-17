@@ -2,6 +2,7 @@ package com.honu.giftwise;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +45,12 @@ public class MainActivity extends AppCompatActivity implements NotifyingAsyncQue
         }
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+            SpannableString spannableString = new SpannableString(getString(R.string.app_name));
+            Typeface titleFont = Typeface.createFromAsset(this.getAssets(), "fonts/Courgette-Regular.ttf");
+            spannableString.setSpan(new CustomTypefaceSpan(titleFont), 0, spannableString.length(),
+                  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            getSupportActionBar().setTitle(spannableString);
         }
 
         if (savedInstanceState == null) {
