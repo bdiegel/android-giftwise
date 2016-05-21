@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.honu.giftwise.data.GiftwiseContract;
@@ -31,8 +30,6 @@ public class EditSizeFragment extends Fragment {
 
     private Size size;
 
-    @Bind(R.id.item_textview) TextView mItemText;
-    @Bind(R.id.size_textview) TextView mSizeText;
     @Bind(R.id.size_notes) EditText mNotesEdit;
     @Bind(R.id.item_spinner) AutoCompleteTextView mItemAutocomplete;
     @Bind(R.id.size_spinner) AutoCompleteTextView mSizeAutocomplete;
@@ -59,8 +56,8 @@ public class EditSizeFragment extends Fragment {
         size = args.getParcelable("size");
 
         // Populate fields from parcelable
-        if (!TextUtils.isEmpty(size.getItem())) mItemText.setText(size.getItem());
-        if (!TextUtils.isEmpty(size.getSize())) mSizeText.setText(size.getSize());
+        if (!TextUtils.isEmpty(size.getItem())) mItemAutocomplete.setText(size.getItem());
+        if (!TextUtils.isEmpty(size.getSize())) mSizeAutocomplete.setText(size.getSize());
         if (!TextUtils.isEmpty(size.getNotes())) mNotesEdit.setText(size.getNotes());
 
         // initialize the auto-complete textviews
@@ -69,8 +66,8 @@ public class EditSizeFragment extends Fragment {
 
         // repopulate form fields from state:
         if (savedInstanceState != null) {
-            mItemText.setText(savedInstanceState.getString("size_item"));
-            mSizeText.setText(savedInstanceState.getString("size_size"));
+            mItemAutocomplete.setText(savedInstanceState.getString("size_item"));
+            mSizeAutocomplete.setText(savedInstanceState.getString("size_size"));
             mNotesEdit.setText(savedInstanceState.getString("size_notes"));
         }
 
@@ -85,8 +82,8 @@ public class EditSizeFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         // save values to bundle
-        outState.putString("size_item", mItemText.getText().toString());
-        outState.putString("size_size", mSizeText.getText().toString());
+        outState.putString("size_item", mItemAutocomplete.getText().toString());
+        outState.putString("size_size", mSizeAutocomplete.getText().toString());
         outState.putString("size_notes", mNotesEdit.getText().toString());
     }
 
@@ -128,18 +125,18 @@ public class EditSizeFragment extends Fragment {
     private boolean createOrSaveSize() {
         ContentValues values = new ContentValues();
 
-        String itemName = mItemText.getText().toString();
-        String sizeName = mSizeText.getText().toString();
+        String itemName = mItemAutocomplete.getText().toString();
+        String sizeName = mSizeAutocomplete.getText().toString();
 
         if (TextUtils.isEmpty(itemName)) {
             Toast.makeText(getActivity(), "Item name is required", Toast.LENGTH_LONG).show();
-            mItemText.requestFocus();
+            mItemAutocomplete.requestFocus();
             return false;
         }
 
         if (TextUtils.isEmpty(sizeName)) {
             Toast.makeText(getActivity(), "Size is required", Toast.LENGTH_LONG).show();
-            mSizeText.requestFocus();
+            mSizeAutocomplete.requestFocus();
             return false;
         }
 
