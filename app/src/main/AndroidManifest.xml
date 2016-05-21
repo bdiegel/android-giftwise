@@ -54,7 +54,7 @@
         <activity
             android:name=".EditGiftActivity"
             android:label="@string/title_activity_edit_gift"
-            android:parentActivityName=".ViewGiftActivity"
+            android:parentActivityName=".ContactActivity"
             android:windowSoftInputMode="stateVisible" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
