@@ -205,10 +205,10 @@ public class EditGiftFragment extends Fragment {
         String notes = mNotesEdit.getText().toString();
 
         return ( mGiftImageUpdated ||
-              !(gift.getGiftwiseId().equals(gwidContact)) ||
-              !(gift.getName().equals(nameTxt)) ||
-              !(gift.getUrl().equals(url)) ||
-              !(gift.getNotes().equals(notes)) ||
+              !(TextUtils.equals(gift.getGiftwiseId(), gwidContact)) ||
+              !(TextUtils.equals(gift.getName(), nameTxt)) ||
+              !(TextUtils.equals(gift.getUrl(), url)) ||
+              !(TextUtils.equals(gift.getNotes(), notes)) ||
               gift.getPrice() != price
         );
     }
