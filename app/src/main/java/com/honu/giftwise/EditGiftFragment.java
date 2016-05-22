@@ -50,6 +50,8 @@ public class EditGiftFragment extends Fragment {
 
     private GiftImageCache mImageCache;
 
+    private boolean mGiftImageUpdated = false;
+
     @Bind(R.id.gift_name) EditText mNameEdit;
     @Bind(R.id.gift_price) EditText mPriceEdit;
     @Bind(R.id.gift_url) EditText mUrlEdit;
@@ -123,6 +125,7 @@ public class EditGiftFragment extends Fragment {
 
                 // save to gift
                 gift.setBitmap(BitmapUtils.getBytes(resizedBitmap));
+                mGiftImageUpdated = true;
 
                 if (gift.getGiftId() != -1) {
                     mImageCache.updateBitmapToMemoryCache(gift.getGiftId() + "", new BitmapDrawable(mImageView.getResources(), resizedBitmap));
@@ -194,6 +197,37 @@ public class EditGiftFragment extends Fragment {
         startActivityForResult(Intent.createChooser(intent, "Select image"), SELECT_IMAGE);
     }
 
+    public boolean hasUnsavedChanges() {
+        String gwidContact = getSelectedContactGWID();
+        String nameTxt = mNameEdit.getText().toString();
+        double price = getPrice();
+        String url = mUrlEdit.getText().toString();
+        String notes = mNotesEdit.getText().toString();
+
+        return ( mGiftImageUpdated ||
+              !(gift.getGiftwiseId().equals(gwidContact)) ||
+              !(gift.getName().equals(nameTxt)) ||
+              !(gift.getUrl().equals(url)) ||
+              !(gift.getNotes().equals(notes)) ||
+              gift.getPrice() != price
+        );
+    }
+
+    private double getPrice() {
+        String priceTxt = mPriceEdit.getText().toString();
+
+        double price = 0;
+
+        if (!TextUtils.isEmpty(priceTxt)) {
+            try {
+                price = Double.parseDouble(priceTxt);
+            } catch (NumberFormatException nfe) {
+                price = 0;
+            }
+        }
+        return price;
+    }
+
     private void openUrl() {
         String url = mUrlEdit.getText().toString();
 
@@ -254,5 +288,13 @@ public class EditGiftFragment extends Fragment {
             }
         }
         mContactSpinner.setSelection(position);
+    }
+
+    private String getSelectedContactGWID() {
+        Cursor cursor = (Cursor)(mContactSpinner.getSelectedItem());
+        if (cursor != null) {
+            return cursor.getString(ContactsUtils.SimpleRawContactQuery.COL_CONTACT_GWID);
+        }
+        return null;
     }
 }
