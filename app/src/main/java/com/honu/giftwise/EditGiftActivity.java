@@ -1,6 +1,7 @@
 package com.honu.giftwise;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -102,6 +104,33 @@ public class EditGiftActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (hasUnsavedChanges()) {
+            new AlertDialog.Builder(this)
+                  .setMessage(getString(R.string.edit_gift_save_dialog_message))
+                  .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                          EditGiftActivity.super.onBackPressed();
+                      }
+                  })
+                  .setNegativeButton("No", null)
+                  .show();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private boolean hasUnsavedChanges() {
+        EditGiftFragment editGiftFragment = (EditGiftFragment) getSupportFragmentManager().findFragmentByTag(EDIT_GIFT_FRAGMENT_TAG);
+        if (editGiftFragment == null) {
+            return false;
+        } else {
+            return editGiftFragment.hasUnsavedChanges();
+        }
     }
 
     private boolean createOrSaveGift() {

@@ -130,4 +130,5 @@
     </string>
     <string name="view_button">View</string>
     <string name="label_gift_url">Gift from:</string>
+    <string name="edit_gift_save_dialog_message">Do you want to discard changes?</string>
 </resources>
