@@ -1,0 +1,17 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">24dp</dimen>
+    <dimen name="activity_vertical_margin">24dp</dimen>
+    <dimen name="activity_vertical_margin_half">8dp</dimen>
+
+    <!-- Main Activity - Contact List -->
+    <dimen name="activity_main_contact_margin_start">80dp</dimen>
+    <dimen name="activity_main_contact_margin_vertical">8dp</dimen>
+    <dimen name="activity_main_contact_avatar_size">56dp</dimen>
+    <dimen name="activity_main_contact_title_size">22sp</dimen>
+
+    <dimen name="avatar_frame_small">80dp</dimen>
+    <dimen name="avatar_circle_small">56dp</dimen>
+
+    <dimen name="fab_compat_margin">24dp</dimen>
+</resources>
