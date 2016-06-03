@@ -88,11 +88,9 @@
     <string name="gift_price_label">Price</string>
     <string name="gift_url_label">Website URL</string>
     <string name="gift_notes_label">Notes</string>
-    <string name="gift_item_label">Item</string>
-    <string name="item_spinner_hint">Shirt</string>
-    <string name="size_textview_label">Size</string>
-    <string name="size_spinner_hint">Medium</string>
-    <string name="notes_textview_label">Notes</string>
+    <string name="item_spinner_hint">Item</string>
+    <string name="size_spinner_hint">Size</string>
+    <string name="notes_textview_hint">Notes</string>
     <string name="contact_display_name_label">Recipient</string>
     <string name="gift_price_label2">Price</string>
     <string name="fragment_view_gift_url_label">URL</string>
