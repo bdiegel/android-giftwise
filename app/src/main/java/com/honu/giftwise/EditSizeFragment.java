@@ -105,6 +105,19 @@ public class EditSizeFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    public boolean hasUnsavedChanges() {
+        String itemName = mItemAutocomplete.getText().toString();
+        String sizeName = mSizeAutocomplete.getText().toString();
+        String sizeNotes = mNotesEdit.getText().toString();
+
+        if (!(TextUtils.equals(size.getItem(), itemName)) ||
+              !(TextUtils.equals(size.getSize(), sizeName)) ||
+              !(TextUtils.equals(size.getNotes(), sizeNotes))) {
+            return true;
+        }
+
+        return false;
+    }
 
     private void initItemView(View rootView) {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),

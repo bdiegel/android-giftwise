@@ -1,7 +1,9 @@
 package com.honu.giftwise;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -35,6 +37,33 @@ public class EditSizeActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                   .add(R.id.container, EditSizeFragment.getInstance(size), EDIT_SIZE_FRAGMENT_TAG)
                   .commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (hasUnsavedChanges()) {
+            new AlertDialog.Builder(this)
+                  .setMessage(getString(R.string.edit_gift_save_dialog_message))
+                  .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                          EditSizeActivity.super.onBackPressed();
+                      }
+                  })
+                  .setNegativeButton("No", null)
+                  .show();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private boolean hasUnsavedChanges() {
+        EditSizeFragment fragment = (EditSizeFragment) getSupportFragmentManager().findFragmentByTag(EDIT_SIZE_FRAGMENT_TAG);
+        if (fragment == null) {
+            return false;
+        } else {
+            return fragment.hasUnsavedChanges();
         }
     }
 }
