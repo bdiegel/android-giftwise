@@ -72,5 +72,12 @@
         <item name="android:textColor">?android:attr/textColorTertiary</item>
     </style>
 
+    <style name="ContactTextName" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">@dimen/activity_main_contact_title_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
     <dimen name="fab_compat_margin">0dp</dimen>
 </resources>
