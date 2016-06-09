@@ -75,7 +75,8 @@ public class IdeasFragment extends Fragment implements LoaderManager.LoaderCallb
         mGiftAdapter = new GiftItemAdapter(getActivity(), cur, this);
 
         mGiftRecyclerView.setAdapter(mGiftAdapter);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        int numberOfColumns = getResources().getInteger(R.integer.ideas_fragment_grid_columns);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
         mGiftRecyclerView.setLayoutManager(layoutManager);
 
         // register a context menu (long-click)
